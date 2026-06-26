@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
   },
   logo: { flexDirection: 'column' },
   logoFlags: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  logoFlag: { fontSize: 18 },
-  trncFlag: { width: 27, height: 18, borderRadius: 2 },
+  logoFlag: { fontSize: 24 },
+  trncFlag: { width: 36, height: 24, borderRadius: 2 },
   logoTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   logoSub: { color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '500', marginTop: 1 },
 
