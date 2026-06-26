@@ -91,6 +91,18 @@ export default function TabsLayout() {
         name="profile"
         options={{ title: t('profile'), tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} /> }}
       />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Community',
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapCommunity]}>
+              <Text style={[styles.icon, { opacity: focused ? 1 : 0.5 }]}>👥</Text>
+            </View>
+          ),
+          tabBarActiveTintColor: '#7B2FBE',
+        }}
+      />
     </Tabs>
   );
 }
@@ -113,6 +125,7 @@ const styles = StyleSheet.create({
   plusCircleActive: { borderColor: Colors.primary },
   plusSign: { fontSize: 20, color: '#ccc', fontWeight: '300', lineHeight: 24 },
   plusSignActive: { color: Colors.primary },
+  iconWrapCommunity: { backgroundColor: '#7B2FBE18' },
   iconWrapBus: { backgroundColor: '#F5A62318' },
   iconWrapWeather: { backgroundColor: '#1565C018' },
   iconWrapEmergency: { backgroundColor: '#C0392B18' },

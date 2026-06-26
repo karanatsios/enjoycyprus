@@ -4,6 +4,7 @@ import {
   TouchableOpacity, FlatList, SafeAreaView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { CATEGORIES } from '../../constants/categories';
 import CategoryCard from '../../components/CategoryCard';
@@ -27,6 +28,7 @@ const MOCK_EVENTS: Event[] = [
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -104,7 +106,7 @@ export default function HomeScreen() {
         </View>
 
         {/* ADD BUSINESS CTA */}
-        <TouchableOpacity style={styles.ctaBanner} activeOpacity={0.88}>
+        <TouchableOpacity style={styles.ctaBanner} activeOpacity={0.88} onPress={() => router.push('/(tabs)/submit')}>
           <Text style={styles.ctaIcon}>🏢</Text>
           <View style={styles.ctaText}>
             <Text style={styles.ctaTitle}>{t('addBusiness')}</Text>
