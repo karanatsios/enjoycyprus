@@ -25,14 +25,10 @@ function StopInput({
 
   const handleChange = (text: string) => {
     onChange(text);
-    if (text.length >= 1) {
-      const filtered = BUS_STOPS.filter(s =>
-        s.toLowerCase().includes(text.toLowerCase())
-      ).slice(0, 8);
-      setSuggestions(filtered);
-    } else {
-      setSuggestions([]);
-    }
+    const filtered = text.length === 0
+      ? BUS_STOPS.slice(0, 50)
+      : BUS_STOPS.filter(s => s.toLowerCase().includes(text.toLowerCase())).slice(0, 50);
+    setSuggestions(filtered);
   };
 
   const handleSelect = (stop: string) => {
@@ -52,8 +48,14 @@ function StopInput({
           placeholderTextColor="#aaa"
           value={value}
           onChangeText={handleChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setTimeout(() => { setFocused(false); setSuggestions([]); }, 150)}
+          onFocus={() => {
+            setFocused(true);
+            const all = value.length === 0
+              ? BUS_STOPS.slice(0, 50)
+              : BUS_STOPS.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 50);
+            setSuggestions(all);
+          }}
+          onBlur={() => setTimeout(() => { setFocused(false); setSuggestions([]); }, 200)}
           autoCorrect={false}
         />
         {value.length > 0 && (

@@ -36,8 +36,16 @@ export default function TabsLayout() {
         options={{ title: t('events'), tabBarIcon: ({ focused }) => <TabIcon icon="🎉" focused={focused} /> }}
       />
       <Tabs.Screen
-        name="map"
-        options={{ title: t('map'), tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} /> }}
+        name="emergency"
+        options={{
+          title: 'Notfall',
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapEmergency]}>
+              <Text style={[styles.icon, { opacity: 1 }]}>🚨</Text>
+            </View>
+          ),
+          tabBarActiveTintColor: '#C0392B',
+        }}
       />
       <Tabs.Screen
         name="bus"
@@ -52,16 +60,8 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="emergency"
-        options={{
-          title: 'Notfall',
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconWrapEmergency]}>
-              <Text style={[styles.icon, { opacity: 1 }]}>🚨</Text>
-            </View>
-          ),
-          tabBarActiveTintColor: '#C0392B',
-        }}
+        name="map"
+        options={{ title: t('map'), tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} /> }}
       />
       <Tabs.Screen
         name="profile"
