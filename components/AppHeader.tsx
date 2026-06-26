@@ -26,7 +26,7 @@ async function fetchWeather(): Promise<Weather> {
   };
 }
 
-// TRNC flag via Wikimedia (reliable CDN, no API key needed)
+const CY_FLAG   = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Flag_of_Cyprus.svg/60px-Flag_of_Cyprus.svg.png';
 const TRNC_FLAG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg/60px-Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg.png';
 
 const MENU_SECTIONS = [
@@ -90,13 +90,9 @@ export default function AppHeader() {
         <View style={styles.row1}>
           <View style={styles.logo}>
             <View style={styles.logoFlags}>
-              <Text style={styles.logoFlag}>🇨🇾</Text>
+              <Image source={{ uri: CY_FLAG }} style={styles.flagImg} resizeMode="contain" />
               <Text style={styles.logoTitle}>Inside Cyprus</Text>
-              <Image
-                source={{ uri: TRNC_FLAG }}
-                style={styles.trncFlag}
-                resizeMode="cover"
-              />
+              <Image source={{ uri: TRNC_FLAG }} style={styles.flagImg} resizeMode="contain" />
             </View>
             <Text style={styles.logoSub}>Das Portal für Zypern</Text>
           </View>
@@ -200,9 +196,8 @@ const styles = StyleSheet.create({
   },
   logo: { flexDirection: 'column' },
   logoFlags: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  logoFlag: { fontSize: 24 },
-  trncFlag: { width: 36, height: 24, borderRadius: 2 },
-  logoTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  flagImg: { width: 34, height: 22, borderRadius: 2 },
+  logoTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
   logoSub: { color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '500', marginTop: 1 },
 
   rightActions: {
