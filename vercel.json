@@ -1,8 +1,11 @@
 {
-  "buildCommand": "npx expo export -p web",
   "outputDirectory": "dist",
   "framework": null,
   "routes": [
+    {
+      "src": "/_expo/(.*)",
+      "dest": "/_expo/$1"
+    },
     {
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
