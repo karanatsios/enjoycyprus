@@ -40,6 +40,18 @@ export default function TabsLayout() {
         options={{ title: t('map'), tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} /> }}
       />
       <Tabs.Screen
+        name="emergency"
+        options={{
+          title: 'Notfall',
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapEmergency]}>
+              <Text style={[styles.icon, { opacity: 1 }]}>🚨</Text>
+            </View>
+          ),
+          tabBarActiveTintColor: '#C0392B',
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{ title: t('profile'), tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} /> }}
       />
@@ -57,6 +69,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 10, fontWeight: '600' },
   iconWrap: { width: 36, height: 36, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   iconWrapActive: { backgroundColor: Colors.primary + '18' },
+  iconWrapEmergency: { backgroundColor: '#C0392B18' },
   icon: { fontSize: 20, opacity: 0.5 },
   iconActive: { opacity: 1 },
 });
