@@ -1,1 +1,1 @@
-# enjoycyprus
+# Inside Cyprus

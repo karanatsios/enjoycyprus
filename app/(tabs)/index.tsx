@@ -35,7 +35,7 @@ export default function HomeScreen() {
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.headerSub}>🇨🇾 Cyprus</Text>
-            <Text style={styles.headerTitle}>EnjoyСyprus</Text>
+            <Text style={styles.headerTitle}>Inside Cyprus</Text>
           </View>
           <LanguageSelector />
         </View>
