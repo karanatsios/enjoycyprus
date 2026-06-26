@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Image, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/colors';
 import { useRouter } from 'expo-router';
@@ -151,30 +151,32 @@ export default function AppHeader() {
                 <Text style={styles.drawerClose}>✕</Text>
               </TouchableOpacity>
             </View>
-            {MENU_SECTIONS.map(section => (
-              <View key={section.title}>
-                <Text style={styles.drawerSection}>{section.title}</Text>
-                {section.items.map(item => (
-                  <TouchableOpacity
-                    key={item.label}
-                    style={styles.drawerItem}
-                    onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
-                  >
-                    <View style={styles.drawerItemIconWrap}>
-                      <Text style={styles.drawerItemIcon}>{item.icon}</Text>
-                    </View>
-                    <View style={styles.drawerItemText}>
-                      <Text style={styles.drawerItemLabel}>{item.label}</Text>
-                      <Text style={styles.drawerItemSub}>{item.sub}</Text>
-                    </View>
-                    <Text style={styles.drawerItemArrow}>›</Text>
-                  </TouchableOpacity>
-                ))}
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+              {MENU_SECTIONS.map(section => (
+                <View key={section.title}>
+                  <Text style={styles.drawerSection}>{section.title}</Text>
+                  {section.items.map(item => (
+                    <TouchableOpacity
+                      key={item.label}
+                      style={styles.drawerItem}
+                      onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
+                    >
+                      <View style={styles.drawerItemIconWrap}>
+                        <Text style={styles.drawerItemIcon}>{item.icon}</Text>
+                      </View>
+                      <View style={styles.drawerItemText}>
+                        <Text style={styles.drawerItemLabel}>{item.label}</Text>
+                        <Text style={styles.drawerItemSub}>{item.sub}</Text>
+                      </View>
+                      <Text style={styles.drawerItemArrow}>›</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ))}
+              <View style={styles.drawerFooter}>
+                <Text style={styles.drawerFooterText}>Inside Cyprus v1.0</Text>
               </View>
-            ))}
-            <View style={styles.drawerFooter}>
-              <Text style={styles.drawerFooterText}>Inside Cyprus v1.0</Text>
-            </View>
+            </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
