@@ -9,7 +9,7 @@ import { CATEGORIES } from '../../constants/categories';
 import CategoryCard from '../../components/CategoryCard';
 import BusinessCard, { Business } from '../../components/BusinessCard';
 import EventCard, { Event } from '../../components/EventCard';
-import LanguageSelector from '../../components/LanguageSelector';
+import AppHeader from '../../components/AppHeader';
 
 const MOCK_BUSINESSES: Business[] = [
   { id: '1', name: 'Taverna Aphrodite', category: 'gastronomie', categoryIcon: '🍽️', rating: 4.8, reviewCount: 312, address: 'Limassol Seafront', isOpen: true, image: '', featured: true },
@@ -30,23 +30,15 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.headerSub}>🇨🇾 Cyprus</Text>
-            <Text style={styles.headerTitle}>Inside Cyprus</Text>
-          </View>
-          <LanguageSelector />
-        </View>
-        <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            style={styles.searchInput}
-            placeholder={t('search')}
-            placeholderTextColor={Colors.textMuted}
-          />
-        </View>
+      <AppHeader />
+      {/* SEARCH */}
+      <View style={styles.searchBar}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t('search')}
+          placeholderTextColor={Colors.textMuted}
+        />
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -130,19 +122,11 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: Colors.background },
 
-  header: {
-    backgroundColor: Colors.primary,
-    paddingTop: 10, paddingBottom: 16, paddingHorizontal: 20,
-    borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
-    shadowColor: Colors.primary, shadowOpacity: 0.35, shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 }, elevation: 8,
-  },
-  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
-  headerSub: { color: 'rgba(255,255,255,0.75)', fontSize: 12, fontWeight: '500' },
-  headerTitle: { color: '#fff', fontSize: 26, fontWeight: '800', letterSpacing: -0.5 },
   searchBar: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff',
     borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, gap: 8,
+    marginHorizontal: 16, marginTop: 12, marginBottom: 4,
+    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   searchIcon: { fontSize: 16 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.text },
