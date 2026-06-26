@@ -40,12 +40,11 @@ export default function TabsLayout() {
         options={{
           title: 'Eintragen',
           tabBarIcon: ({ focused }) => (
-            <View style={styles.plusWrap}>
-              <Text style={styles.plusIcon}>+</Text>
+            <View style={[styles.plusCircle, focused && styles.plusCircleActive]}>
+              <Text style={[styles.plusSign, focused && styles.plusSignActive]}>+</Text>
             </View>
           ),
           tabBarActiveTintColor: Colors.primary,
-          tabBarLabelStyle: { fontSize: 10, fontWeight: '600', color: Colors.primary },
         }}
       />
       <Tabs.Screen
@@ -106,14 +105,14 @@ const styles = StyleSheet.create({
   label: { fontSize: 10, fontWeight: '600' },
   iconWrap: { width: 36, height: 36, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   iconWrapActive: { backgroundColor: Colors.primary + '18' },
-  plusWrap: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: Colors.primary,
+  plusCircle: {
+    width: 36, height: 36, borderRadius: 18,
+    borderWidth: 2, borderColor: '#ccc',
     justifyContent: 'center', alignItems: 'center',
-    marginBottom: 4,
-    shadowColor: Colors.primary, shadowOpacity: 0.4, shadowRadius: 8, elevation: 6,
   },
-  plusIcon: { color: '#fff', fontSize: 24, fontWeight: '300', lineHeight: 28 },
+  plusCircleActive: { borderColor: Colors.primary },
+  plusSign: { fontSize: 20, color: '#ccc', fontWeight: '300', lineHeight: 24 },
+  plusSignActive: { color: Colors.primary },
   iconWrapBus: { backgroundColor: '#F5A62318' },
   iconWrapWeather: { backgroundColor: '#1565C018' },
   iconWrapEmergency: { backgroundColor: '#C0392B18' },
