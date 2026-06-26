@@ -82,6 +82,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="map" options={{ href: null }} />
       <Tabs.Screen name="weather" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
+      <Tabs.Screen name="mein-eintrag" options={{ href: null }} />
     </Tabs>
   );
 }
