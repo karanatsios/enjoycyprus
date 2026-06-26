@@ -180,12 +180,12 @@ const styles = StyleSheet.create({
 
   tabRow: {
     flexDirection: 'row', marginHorizontal: 20, marginTop: 16,
-    backgroundColor: '#E8E8EE', borderRadius: 14, padding: 4,
+    backgroundColor: Colors.primary, borderRadius: 14, padding: 4,
   },
-  tabBtn: { flex: 1, paddingVertical: 9, borderRadius: 11, alignItems: 'center' },
-  tabBtnActive: { backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 6, elevation: 3 },
-  tabBtnLabel: { fontSize: 14, fontWeight: '600', color: '#888' },
-  tabBtnLabelActive: { color: '#C0392B' },
+  tabBtn: { flex: 1, paddingVertical: 10, borderRadius: 11, alignItems: 'center', backgroundColor: '#fff' },
+  tabBtnActive: { backgroundColor: Colors.primary },
+  tabBtnLabel: { fontSize: 14, fontWeight: '700', color: '#1A1A2E' },
+  tabBtnLabelActive: { color: '#fff' },
 
   infoBanner: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 8,
@@ -196,17 +196,18 @@ const styles = StyleSheet.create({
   infoIcon: { fontSize: 15 },
   infoText: { flex: 1, fontSize: 12, color: '#555', lineHeight: 18 },
 
-  scroll: { flex: 1, marginTop: 12 },
+  scroll: { flex: 1, marginTop: 8 },
 
-  section: { marginBottom: 4, paddingHorizontal: 20 },
+  section: { marginBottom: 0, paddingHorizontal: 20 },
   sectionTitle: {
-    fontSize: 11, fontWeight: '700', color: '#999',
-    letterSpacing: 1, marginBottom: 8, marginTop: 16,
+    fontSize: 11, fontWeight: '800', color: '#888',
+    letterSpacing: 1.2, marginBottom: 8, marginTop: 18,
   },
   card: {
     backgroundColor: '#fff', borderRadius: 18,
-    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 10, elevation: 3,
     overflow: 'hidden',
+    borderWidth: 1, borderColor: '#F0F0F5',
   },
 
   row: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
