@@ -11,6 +11,8 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   );
 }
 
+const COMMUNITY_GREEN = '#27AE60';
+
 export default function TabsLayout() {
   const { t } = useTranslation();
   return (
@@ -23,18 +25,25 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: Colors.tabBarInactive,
       }}
     >
+      {/* 1 – Start */}
       <Tabs.Screen
         name="index"
         options={{ title: t('home'), tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} /> }}
       />
+
+      {/* Categories – hidden from tab bar, still navigable */}
       <Tabs.Screen
         name="categories"
-        options={{ title: t('categories'), tabBarIcon: ({ focused }) => <TabIcon icon="🗂️" focused={focused} /> }}
+        options={{ href: null }}
       />
+
+      {/* 2 – Events */}
       <Tabs.Screen
         name="events"
         options={{ title: t('events'), tabBarIcon: ({ focused }) => <TabIcon icon="🎉" focused={focused} /> }}
       />
+
+      {/* 3 – Eintragen (+) */}
       <Tabs.Screen
         name="submit"
         options={{
@@ -47,6 +56,23 @@ export default function TabsLayout() {
           tabBarActiveTintColor: Colors.primary,
         }}
       />
+
+      {/* 4 – Community (Mitte, grün) */}
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Community',
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.communityBtn, focused && styles.communityBtnActive]}>
+              <Text style={styles.communityIcon}>👥</Text>
+            </View>
+          ),
+          tabBarActiveTintColor: COMMUNITY_GREEN,
+          tabBarLabelStyle: { fontSize: 10, fontWeight: '800', color: COMMUNITY_GREEN },
+        }}
+      />
+
+      {/* 5 – Notfall */}
       <Tabs.Screen
         name="emergency"
         options={{
@@ -59,6 +85,8 @@ export default function TabsLayout() {
           tabBarActiveTintColor: '#C0392B',
         }}
       />
+
+      {/* 6 – Bus (orange) */}
       <Tabs.Screen
         name="bus"
         options={{
@@ -71,38 +99,11 @@ export default function TabsLayout() {
           tabBarActiveTintColor: '#D4891A',
         }}
       />
-      <Tabs.Screen
-        name="map"
-        options={{ title: t('map'), tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} /> }}
-      />
-      <Tabs.Screen
-        name="weather"
-        options={{
-          title: 'Wetter',
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconWrapWeather]}>
-              <Text style={[styles.icon, { opacity: 1 }]}>🌤️</Text>
-            </View>
-          ),
-          tabBarActiveTintColor: '#1565C0',
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{ title: t('profile'), tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} /> }}
-      />
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: 'Community',
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconWrapCommunity]}>
-              <Text style={[styles.icon, { opacity: focused ? 1 : 0.5 }]}>👥</Text>
-            </View>
-          ),
-          tabBarActiveTintColor: '#7B2FBE',
-        }}
-      />
+
+      {/* hidden tabs – accessible via navigation, not tab bar */}
+      <Tabs.Screen name="map" options={{ href: null }} />
+      <Tabs.Screen name="weather" options={{ href: null }} />
+      <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );
 }
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 10, fontWeight: '600' },
   iconWrap: { width: 36, height: 36, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   iconWrapActive: { backgroundColor: Colors.primary + '18' },
+
   plusCircle: {
     width: 36, height: 36, borderRadius: 18,
     borderWidth: 2, borderColor: '#ccc',
@@ -125,9 +127,18 @@ const styles = StyleSheet.create({
   plusCircleActive: { borderColor: Colors.primary },
   plusSign: { fontSize: 20, color: '#ccc', fontWeight: '300', lineHeight: 24 },
   plusSignActive: { color: Colors.primary },
-  iconWrapCommunity: { backgroundColor: '#7B2FBE18' },
+
+  communityBtn: {
+    width: 42, height: 42, borderRadius: 14,
+    backgroundColor: '#27AE6022',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  communityBtnActive: {
+    backgroundColor: '#27AE60',
+  },
+  communityIcon: { fontSize: 20 },
+
   iconWrapBus: { backgroundColor: '#F5A62318' },
-  iconWrapWeather: { backgroundColor: '#1565C018' },
   iconWrapEmergency: { backgroundColor: '#C0392B18' },
   icon: { fontSize: 20, opacity: 0.5 },
   iconActive: { opacity: 1 },
