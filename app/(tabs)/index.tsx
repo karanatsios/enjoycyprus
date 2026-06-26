@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TextInput, StyleSheet,
   TouchableOpacity, FlatList, SafeAreaView,
@@ -26,9 +26,31 @@ const MOCK_EVENTS: Event[] = [
   { id: '4', title: 'Expat Meetup Larnaca', date: '19. Jul 2026', location: 'Finikoudes Promenade', category: 'auswandern', icon: '🌍', price: null, color: Colors.primaryLight },
 ];
 
+type MiniWeather = { temp: number; wind: number; humidity: number; icon: string };
+
+async function fetchMiniWeather(): Promise<MiniWeather> {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=34.6786&longitude=33.0413&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code&wind_speed_unit=kmh`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const c = data.current;
+  const code = c.weather_code;
+  let icon = '☀️';
+  if (code >= 80) icon = '🌧️';
+  else if (code >= 61) icon = '🌦️';
+  else if (code >= 45) icon = '🌫️';
+  else if (code >= 3) icon = '☁️';
+  else if (code >= 1) icon = '⛅';
+  return { temp: Math.round(c.temperature_2m), wind: Math.round(c.wind_speed_10m), humidity: Math.round(c.relative_humidity_2m), icon };
+}
+
 export default function HomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const [weather, setWeather] = useState<MiniWeather | null>(null);
+
+  useEffect(() => {
+    fetchMiniWeather().then(setWeather).catch(() => null);
+  }, []);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -105,6 +127,19 @@ export default function HomeScreen() {
           />
         </View>
 
+        {/* WETTER-KACHEL – dezent */}
+        {weather && (
+          <TouchableOpacity style={styles.weatherTile} activeOpacity={0.85} onPress={() => router.push('/(tabs)/weather' as any)}>
+            <Text style={styles.weatherTileIcon}>{weather.icon}</Text>
+            <View style={styles.weatherTileBody}>
+              <Text style={styles.weatherTileTitle}>Wetter auf Zypern</Text>
+              <Text style={styles.weatherTileSub}>💨 {weather.wind} km/h · 💧 {weather.humidity}%</Text>
+            </View>
+            <Text style={styles.weatherTileTemp}>{weather.temp}°C</Text>
+            <Text style={styles.weatherTileArrow}>›</Text>
+          </TouchableOpacity>
+        )}
+
         {/* ADD BUSINESS CTA */}
         <TouchableOpacity style={styles.ctaBanner} activeOpacity={0.88} onPress={() => router.push('/(tabs)/submit')}>
           <Text style={styles.ctaIcon}>🏢</Text>
@@ -155,6 +190,21 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 18, fontWeight: '800', color: Colors.text },
   seeAll: { fontSize: 13, color: Colors.primary, fontWeight: '600' },
+
+  weatherTile: {
+    marginHorizontal: 20, marginTop: 20,
+    backgroundColor: '#fff',
+    borderRadius: 16, padding: 14,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderWidth: 1, borderColor: '#E8EEF5',
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1,
+  },
+  weatherTileIcon: { fontSize: 28 },
+  weatherTileBody: { flex: 1 },
+  weatherTileTitle: { fontSize: 13, fontWeight: '700', color: '#1A1A2E' },
+  weatherTileSub: { fontSize: 11, color: '#888', marginTop: 2 },
+  weatherTileTemp: { fontSize: 20, fontWeight: '800', color: Colors.primary },
+  weatherTileArrow: { fontSize: 20, color: '#ccc' },
 
   ctaBanner: {
     margin: 20, marginTop: 24, backgroundColor: Colors.coral,
