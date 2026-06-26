@@ -40,6 +40,18 @@ export default function TabsLayout() {
         options={{ title: t('map'), tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} /> }}
       />
       <Tabs.Screen
+        name="bus"
+        options={{
+          title: 'Bus',
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapBus]}>
+              <Text style={[styles.icon, { opacity: 1 }]}>🚌</Text>
+            </View>
+          ),
+          tabBarActiveTintColor: '#D4891A',
+        }}
+      />
+      <Tabs.Screen
         name="emergency"
         options={{
           title: 'Notfall',
@@ -69,6 +81,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 10, fontWeight: '600' },
   iconWrap: { width: 36, height: 36, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   iconWrapActive: { backgroundColor: Colors.primary + '18' },
+  iconWrapBus: { backgroundColor: '#F5A62318' },
   iconWrapEmergency: { backgroundColor: '#C0392B18' },
   icon: { fontSize: 20, opacity: 0.5 },
   iconActive: { opacity: 1 },
