@@ -6,8 +6,8 @@ import { Platform } from 'react-native';
 // 2. Neues Projekt anlegen
 // 3. Unter Settings → API die URL und den anon key kopieren
 // 4. Hier einsetzen:
-const SUPABASE_URL  = 'https://DEIN_PROJEKT.supabase.co';
-const SUPABASE_ANON = 'DEIN_ANON_KEY';
+const SUPABASE_URL  = 'https://jewactcyhvzrceoiajau.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_pL8YXchXN3EsRs8_K7A8PA_C45DftbB';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: {
