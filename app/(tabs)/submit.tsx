@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TextInput, TouchableOpacity, Switch,
+  TextInput, TouchableOpacity,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
 
 const STEP_LABELS = ['Firma', 'Kontakt', 'Beschreibung', 'Zahlung'];
@@ -410,6 +411,7 @@ function Step4({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 
 // ── Main Screen ──────────────────────────────────────────────────
 export default function SubmitScreen() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(INIT);
   const [submitted, setSubmitted] = useState(false);
@@ -418,9 +420,14 @@ export default function SubmitScreen() {
 
   const canNext = () => {
     if (step === 0) return data.companyName.trim() && data.category && data.regionGroup && data.region;
-    if (step === 1) return data.phone.trim() || data.email.trim();
+    if (step === 1) return data.phone.trim().length > 0 || data.email.trim().length > 0;
     if (step === 2) return data.shortDesc.trim().length > 10;
     return true;
+  };
+
+  const handleBack = () => {
+    if (step === 0) router.back();
+    else setStep(step - 1);
   };
 
   const handleNext = () => {
@@ -450,12 +457,11 @@ export default function SubmitScreen() {
     <SafeAreaView style={s.safe}>
       {/* Header */}
       <View style={s.header}>
-        {step > 0 && (
-          <TouchableOpacity style={s.backBtn} onPress={() => setStep(step - 1)}>
-            <Text style={s.backText}>← Zurück</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={s.backBtn} onPress={handleBack}>
+          <Text style={s.backText}>← Zurück</Text>
+        </TouchableOpacity>
         <Text style={s.headerTitle}>Eintrag erstellen</Text>
+        <View style={s.headerSpacer} />
       </View>
 
       <StepIndicator current={step} />
@@ -489,11 +495,12 @@ const s = StyleSheet.create({
   header: {
     backgroundColor: Colors.primary, padding: 16, paddingTop: 20,
     borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
-    flexDirection: 'row', alignItems: 'center', gap: 12,
+    flexDirection: 'row', alignItems: 'center',
   },
-  backBtn: { paddingRight: 4 },
+  backBtn: { paddingRight: 12, minWidth: 70 },
   backText: { color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '600' },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  headerTitle: { flex: 1, color: '#fff', fontSize: 18, fontWeight: '800', textAlign: 'center' },
+  headerSpacer: { minWidth: 70 },
 
   stepRow: {
     flexDirection: 'row', alignItems: 'center',
