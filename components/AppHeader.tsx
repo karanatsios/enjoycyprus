@@ -26,13 +26,31 @@ async function fetchWeather(): Promise<Weather> {
   };
 }
 
-const MENU_ITEMS = [
-  { icon: '🏠', label: 'Start', route: '/(tabs)/' },
-  { icon: '🚌', label: 'Bus', route: '/(tabs)/bus' },
-  { icon: '🚨', label: 'Notfall', route: '/(tabs)/emergency' },
-  { icon: '🌤️', label: 'Wetter', route: '/(tabs)/weather' },
-  { icon: '⚙️', label: 'Einstellungen', route: null },
-  { icon: '🤝', label: 'Partner', route: null },
+const MENU_SECTIONS = [
+  {
+    title: 'NAVIGATION',
+    items: [
+      { icon: '🏠', label: 'Start', sub: 'Kategorien und Suche', route: '/(tabs)/' },
+      { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
+      { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: null },
+    ],
+  },
+  {
+    title: 'FÜR UNTERNEHMEN',
+    items: [
+      { icon: '➕', label: 'Eintrag erstellen', sub: 'Unternehmen eintragen', route: '/(tabs)/submit' },
+      { icon: '👤', label: 'Mein Eintrag', sub: 'Eintrag bearbeiten / verlängern', route: null },
+    ],
+  },
+  {
+    title: 'MEHR',
+    items: [
+      { icon: '🚌', label: 'Bus', sub: 'Busverbindungen auf Zypern', route: '/(tabs)/bus' },
+      { icon: '🚨', label: 'Notfall', sub: 'Wichtige Notrufnummern', route: '/(tabs)/emergency' },
+      { icon: '🌤️', label: 'Wetter', sub: '7-Tage-Vorschau', route: '/(tabs)/weather' },
+      { icon: '⚙️', label: 'Einstellungen', sub: 'App konfigurieren', route: null },
+    ],
+  },
 ];
 
 const LANGUAGES = [
@@ -64,8 +82,12 @@ export default function AppHeader() {
         {/* Row 1: Logo + Lang + Menu */}
         <View style={styles.row1}>
           <View style={styles.logo}>
-            <Text style={styles.logoSub}>🇨🇾 Cyprus</Text>
-            <Text style={styles.logoTitle}>Inside Cyprus</Text>
+            <View style={styles.logoFlags}>
+              <Text style={styles.logoFlag}>🇨🇾</Text>
+              <Text style={styles.logoTitle}>Inside Cyprus</Text>
+              <Text style={styles.logoFlag}>🇨🇾</Text>
+            </View>
+            <Text style={styles.logoSub}>Das Portal für Zypern</Text>
           </View>
 
           <View style={styles.rightActions}>
@@ -122,16 +144,26 @@ export default function AppHeader() {
                 <Text style={styles.drawerClose}>✕</Text>
               </TouchableOpacity>
             </View>
-            {MENU_ITEMS.map(item => (
-              <TouchableOpacity
-                key={item.label}
-                style={styles.drawerItem}
-                onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
-              >
-                <Text style={styles.drawerItemIcon}>{item.icon}</Text>
-                <Text style={styles.drawerItemLabel}>{item.label}</Text>
-                <Text style={styles.drawerItemArrow}>›</Text>
-              </TouchableOpacity>
+            {MENU_SECTIONS.map(section => (
+              <View key={section.title}>
+                <Text style={styles.drawerSection}>{section.title}</Text>
+                {section.items.map(item => (
+                  <TouchableOpacity
+                    key={item.label}
+                    style={styles.drawerItem}
+                    onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
+                  >
+                    <View style={styles.drawerItemIconWrap}>
+                      <Text style={styles.drawerItemIcon}>{item.icon}</Text>
+                    </View>
+                    <View style={styles.drawerItemText}>
+                      <Text style={styles.drawerItemLabel}>{item.label}</Text>
+                      <Text style={styles.drawerItemSub}>{item.sub}</Text>
+                    </View>
+                    <Text style={styles.drawerItemArrow}>›</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             ))}
             <View style={styles.drawerFooter}>
               <Text style={styles.drawerFooterText}>Inside Cyprus v1.0</Text>
@@ -155,11 +187,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  logo: {
-    flexDirection: 'column',
-  },
-  logoSub: { color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: '500' },
-  logoTitle: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  logo: { flexDirection: 'column' },
+  logoFlags: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  logoFlag: { fontSize: 18 },
+  logoTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  logoSub: { color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '500', marginTop: 1 },
 
   rightActions: {
     flexDirection: 'row',
@@ -216,12 +248,23 @@ const styles = StyleSheet.create({
   },
   drawerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   drawerClose: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  drawerItem: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    padding: 18, borderBottomWidth: 1, borderBottomColor: '#F5F5F8',
+  drawerSection: {
+    fontSize: 11, fontWeight: '800', color: '#999', letterSpacing: 1,
+    paddingHorizontal: 18, paddingTop: 18, paddingBottom: 6,
   },
-  drawerItemIcon: { fontSize: 22, width: 30 },
-  drawerItemLabel: { flex: 1, fontSize: 16, fontWeight: '600', color: '#1A1A2E' },
+  drawerItem: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingHorizontal: 18, paddingVertical: 12,
+    borderBottomWidth: 1, borderBottomColor: '#F5F5F8',
+  },
+  drawerItemIconWrap: {
+    width: 38, height: 38, borderRadius: 10,
+    backgroundColor: '#F0F4F8', justifyContent: 'center', alignItems: 'center',
+  },
+  drawerItemIcon: { fontSize: 20 },
+  drawerItemText: { flex: 1 },
+  drawerItemLabel: { fontSize: 15, fontWeight: '700', color: '#1A1A2E' },
+  drawerItemSub: { fontSize: 11, color: '#999', marginTop: 1 },
   drawerItemArrow: { fontSize: 20, color: '#ccc' },
   drawerFooter: { padding: 20, marginTop: 'auto' },
   drawerFooterText: { color: '#ccc', fontSize: 12 },
