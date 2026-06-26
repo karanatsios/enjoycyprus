@@ -11,8 +11,6 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   );
 }
 
-const COMMUNITY_GREEN = '#27AE60';
-
 export default function TabsLayout() {
   const { t } = useTranslation();
   return (
@@ -31,48 +29,26 @@ export default function TabsLayout() {
         options={{ title: t('home'), tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} /> }}
       />
 
-      {/* Categories – hidden from tab bar, still navigable */}
-      <Tabs.Screen
-        name="categories"
-        options={{ href: null }}
-      />
-
       {/* 2 – Events */}
       <Tabs.Screen
         name="events"
         options={{ title: t('events'), tabBarIcon: ({ focused }) => <TabIcon icon="🎉" focused={focused} /> }}
       />
 
-      {/* 3 – Eintragen (+) */}
-      <Tabs.Screen
-        name="submit"
-        options={{
-          title: 'Eintragen',
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.plusCircle, focused && styles.plusCircleActive]}>
-              <Text style={[styles.plusSign, focused && styles.plusSignActive]}>+</Text>
-            </View>
-          ),
-          tabBarActiveTintColor: Colors.primary,
-        }}
-      />
-
-      {/* 4 – Community (Mitte, grün) */}
+      {/* 3 – Community (grünes Oval, nur Text, kein Icon) */}
       <Tabs.Screen
         name="community"
         options={{
-          title: 'Community',
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.communityBtn, focused && styles.communityBtnActive]}>
-              <Text style={styles.communityIcon}>👥</Text>
+          tabBarLabel: () => null,
+          tabBarIcon: () => (
+            <View style={styles.communityOval}>
+              <Text style={styles.communityText}>Community</Text>
             </View>
           ),
-          tabBarActiveTintColor: COMMUNITY_GREEN,
-          tabBarLabelStyle: { fontSize: 10, fontWeight: '800', color: COMMUNITY_GREEN },
         }}
       />
 
-      {/* 5 – Notfall */}
+      {/* 4 – Notfall */}
       <Tabs.Screen
         name="emergency"
         options={{
@@ -86,7 +62,7 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* 6 – Bus (orange) */}
+      {/* 5 – Bus (orange) */}
       <Tabs.Screen
         name="bus"
         options={{
@@ -100,7 +76,9 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* hidden tabs – accessible via navigation, not tab bar */}
+      {/* hidden – erreichbar über Hamburger-Menü */}
+      <Tabs.Screen name="categories" options={{ href: null }} />
+      <Tabs.Screen name="submit" options={{ href: null }} />
       <Tabs.Screen name="map" options={{ href: null }} />
       <Tabs.Screen name="weather" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
@@ -119,24 +97,16 @@ const styles = StyleSheet.create({
   iconWrap: { width: 36, height: 36, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   iconWrapActive: { backgroundColor: Colors.primary + '18' },
 
-  plusCircle: {
-    width: 36, height: 36, borderRadius: 18,
-    borderWidth: 2, borderColor: '#ccc',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  plusCircleActive: { borderColor: Colors.primary },
-  plusSign: { fontSize: 20, color: '#ccc', fontWeight: '300', lineHeight: 24 },
-  plusSignActive: { color: Colors.primary },
-
-  communityBtn: {
-    width: 42, height: 42, borderRadius: 14,
-    backgroundColor: '#27AE6022',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  communityBtnActive: {
+  communityOval: {
     backgroundColor: '#27AE60',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 2,
   },
-  communityIcon: { fontSize: 20 },
+  communityText: { color: '#fff', fontSize: 12, fontWeight: '800' },
 
   iconWrapBus: { backgroundColor: '#F5A62318' },
   iconWrapEmergency: { backgroundColor: '#C0392B18' },

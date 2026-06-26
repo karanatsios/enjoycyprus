@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/colors';
 import { useRouter } from 'expo-router';
@@ -26,12 +26,16 @@ async function fetchWeather(): Promise<Weather> {
   };
 }
 
+// TRNC flag via Wikimedia (reliable CDN, no API key needed)
+const TRNC_FLAG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg/60px-Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg.png';
+
 const MENU_SECTIONS = [
   {
     title: 'NAVIGATION',
     items: [
       { icon: '🏠', label: 'Start', sub: 'Kategorien und Suche', route: '/(tabs)/' },
       { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
+      { icon: '🗺️', label: 'Karte', sub: 'Orte auf der Karte finden', route: '/(tabs)/map' },
       { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: null },
     ],
   },
@@ -45,9 +49,12 @@ const MENU_SECTIONS = [
   {
     title: 'MEHR',
     items: [
+      { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
+      { icon: '🎉', label: 'Events', sub: 'Veranstaltungen auf Zypern', route: '/(tabs)/events' },
       { icon: '🚌', label: 'Bus', sub: 'Busverbindungen auf Zypern', route: '/(tabs)/bus' },
       { icon: '🚨', label: 'Notfall', sub: 'Wichtige Notrufnummern', route: '/(tabs)/emergency' },
       { icon: '🌤️', label: 'Wetter', sub: '7-Tage-Vorschau', route: '/(tabs)/weather' },
+      { icon: '👤', label: 'Profil', sub: 'Mein Profil', route: '/(tabs)/profile' },
       { icon: '⚙️', label: 'Einstellungen', sub: 'App konfigurieren', route: null },
     ],
   },
@@ -85,7 +92,11 @@ export default function AppHeader() {
             <View style={styles.logoFlags}>
               <Text style={styles.logoFlag}>🇨🇾</Text>
               <Text style={styles.logoTitle}>Inside Cyprus</Text>
-              <Text style={styles.logoFlag}>🇨🇾</Text>
+              <Image
+                source={{ uri: TRNC_FLAG }}
+                style={styles.trncFlag}
+                resizeMode="cover"
+              />
             </View>
             <Text style={styles.logoSub}>Das Portal für Zypern</Text>
           </View>
@@ -190,6 +201,7 @@ const styles = StyleSheet.create({
   logo: { flexDirection: 'column' },
   logoFlags: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   logoFlag: { fontSize: 18 },
+  trncFlag: { width: 27, height: 18, borderRadius: 2 },
   logoTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   logoSub: { color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '500', marginTop: 1 },
 
