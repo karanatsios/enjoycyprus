@@ -21,18 +21,10 @@ const CATEGORIES = [
   { id: 'auswandern', icon: '✈️', label: 'Auswandern' },
 ];
 
-const REGIONS = [
-  'Nikosia / Lefkosia',
-  'Limassol / Lemesos',
-  'Larnaka',
-  'Paphos',
-  'Famagusta / Ammochostos',
-  'Ayia Napa',
-  'Protaras / Paralimni',
-  'Troodos',
-  'Polis Chrysochous',
-  'Norden (KKTC)',
-];
+const REGION_CITIES: Record<string, string[]> = {
+  'Süden': ['Limassol', 'Nikosia / Nicosia', 'Larnaka / Larnaca', 'Paphos', 'Ayia Napa', 'Paralimni', 'Protaras', 'Famagusta Süd'],
+  'Norden': ['Kyrenia / Girne', 'Nikosia Nord / Lefkoşa', 'Famagusta Nord / Gazimağusa', 'Morphou / Güzelyurt'],
+};
 
 const LANGUAGES_AVAILABLE = [
   { code: 'DE', label: 'Deutsch' },
@@ -49,6 +41,7 @@ type FormData = {
   companyName: string;
   category: string;
   locationType: 'local' | 'online';
+  regionGroup: string;
   region: string;
   street: string;
   plz: string;
@@ -59,6 +52,7 @@ type FormData = {
   whatsapp: string;
   email: string;
   website: string;
+  openingHours: string;
   languages: string[];
   // Step 3 – Beschreibung
   description: string;
@@ -68,9 +62,9 @@ type FormData = {
 };
 
 const INIT: FormData = {
-  companyName: '', category: '', locationType: 'online', region: '',
+  companyName: '', category: '', locationType: 'online', regionGroup: '', region: '',
   street: '', plz: '', city: '', mapsLink: '',
-  phone: '', whatsapp: '', email: '', website: '', languages: ['DE'],
+  phone: '', whatsapp: '', email: '', website: '', openingHours: '', languages: ['DE'],
   description: '', shortDesc: '',
   plan: 'free',
 };
@@ -129,8 +123,10 @@ function StepIndicator({ current }: { current: number }) {
 // ── Step 1: Firma ────────────────────────────────────────────────
 function Step1({ data, set }: { data: FormData; set: (d: Partial<FormData>) => void }) {
   const [catOpen, setCatOpen] = useState(false);
-  const [regionOpen, setRegionOpen] = useState(false);
+  const [regionGroupOpen, setRegionGroupOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
   const selectedCat = CATEGORIES.find(c => c.id === data.category);
+  const cities = data.regionGroup ? REGION_CITIES[data.regionGroup] : [];
 
   return (
     <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
@@ -142,7 +138,7 @@ function Step1({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 
       <View style={s.fieldWrap}>
         <FieldLabel text="Kategorie" required />
-        <TouchableOpacity style={s.select} onPress={() => { setCatOpen(!catOpen); setRegionOpen(false); }}>
+        <TouchableOpacity style={s.select} onPress={() => { setCatOpen(!catOpen); setRegionGroupOpen(false); setCityOpen(false); }}>
           <Text style={[s.selectText, !data.category && s.selectPlaceholder]}>
             {selectedCat ? `${selectedCat.icon} ${selectedCat.label}` : '— Kategorie wählen —'}
           </Text>
@@ -188,24 +184,47 @@ function Step1({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 
       <View style={s.fieldWrap}>
         <FieldLabel text="Region" required />
-        <TouchableOpacity style={s.select} onPress={() => { setRegionOpen(!regionOpen); setCatOpen(false); }}>
-          <Text style={[s.selectText, !data.region && s.selectPlaceholder]}>
-            {data.region || '— Region wählen —'}
+        <TouchableOpacity style={s.select} onPress={() => { setRegionGroupOpen(!regionGroupOpen); setCatOpen(false); setCityOpen(false); }}>
+          <Text style={[s.selectText, !data.regionGroup && s.selectPlaceholder]}>
+            {data.regionGroup || '— Süden / Norden —'}
           </Text>
           <Text style={s.selectArrow}>▾</Text>
         </TouchableOpacity>
-        {regionOpen && (
+        {regionGroupOpen && (
           <View style={s.dropdown}>
-            {REGIONS.map(r => (
-              <TouchableOpacity key={r} style={[s.dropItem, data.region === r && s.dropItemActive]}
-                onPress={() => { set({ region: r }); setRegionOpen(false); }}>
-                <Text style={s.dropItemText}>{r}</Text>
-                {data.region === r && <Text style={s.dropCheck}>✓</Text>}
+            {Object.keys(REGION_CITIES).map(g => (
+              <TouchableOpacity key={g} style={[s.dropItem, data.regionGroup === g && s.dropItemActive]}
+                onPress={() => { set({ regionGroup: g, region: '' }); setRegionGroupOpen(false); }}>
+                <Text style={s.dropItemText}>{g}</Text>
+                {data.regionGroup === g && <Text style={s.dropCheck}>✓</Text>}
               </TouchableOpacity>
             ))}
           </View>
         )}
       </View>
+
+      {data.regionGroup !== '' && (
+        <View style={s.fieldWrap}>
+          <FieldLabel text="Stadt" required />
+          <TouchableOpacity style={s.select} onPress={() => { setCityOpen(!cityOpen); setRegionGroupOpen(false); setCatOpen(false); }}>
+            <Text style={[s.selectText, !data.region && s.selectPlaceholder]}>
+              {data.region || '— Stadt wählen —'}
+            </Text>
+            <Text style={s.selectArrow}>▾</Text>
+          </TouchableOpacity>
+          {cityOpen && (
+            <View style={s.dropdown}>
+              {cities.map(c => (
+                <TouchableOpacity key={c} style={[s.dropItem, data.region === c && s.dropItemActive]}
+                  onPress={() => { set({ region: c }); setCityOpen(false); }}>
+                  <Text style={s.dropItemText}>{c}</Text>
+                  {data.region === c && <Text style={s.dropCheck}>✓</Text>}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
 
       <Input label="Straße & Hausnummer" placeholder="z.B. Makariou Avenue 45"
         value={data.street} onChange={(v: string) => set({ street: v })} />
@@ -248,12 +267,31 @@ function Step2({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 
       <Input label="Telefon" required placeholder="+357 99 000 000"
         value={data.phone} onChange={(v: string) => set({ phone: v })} keyboardType="phone-pad" />
-      <Input label="WhatsApp" placeholder="+357 99 000 000"
-        value={data.whatsapp} onChange={(v: string) => set({ whatsapp: v })} keyboardType="phone-pad" />
-      <Input label="E-Mail" placeholder="info@firma.cy"
+
+      <View style={s.fieldWrap}>
+        <Text style={s.fieldLabel}>WhatsApp <Text style={{ color: '#aaa', fontWeight: '400' }}>(optional)</Text></Text>
+        <TextInput
+          style={s.input}
+          placeholder="+357 99 000 000"
+          placeholderTextColor="#bbb"
+          value={data.whatsapp}
+          onChangeText={(v: string) => set({ whatsapp: v })}
+          keyboardType="phone-pad"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <Text style={s.hint}>Lassen Sie dieses Feld frei, wenn WhatsApp = Telefon.</Text>
+      </View>
+
+      <Input label="Geschäfts-E-Mail" placeholder="info@firma.cy"
         value={data.email} onChange={(v: string) => set({ email: v })} keyboardType="email-address" />
       <Input label="Webseite" placeholder="https://www.firma.cy"
         value={data.website} onChange={(v: string) => set({ website: v })} />
+
+      <Text style={s.sectionTitle}>Öffnungszeiten</Text>
+      <Text style={s.sectionSub}>Wann ist Ihr Unternehmen geöffnet?</Text>
+      <Input placeholder="Mo-Fr 09:00-17:00"
+        value={data.openingHours} onChange={(v: string) => set({ openingHours: v })} />
 
       <Text style={s.sectionTitle}>Sprachen</Text>
       <Text style={s.sectionSub}>In welchen Sprachen bieten Sie Ihre Leistungen an?</Text>
@@ -379,7 +417,7 @@ export default function SubmitScreen() {
   const set = (d: Partial<FormData>) => setData(prev => ({ ...prev, ...d }));
 
   const canNext = () => {
-    if (step === 0) return data.companyName.trim() && data.category && data.region;
+    if (step === 0) return data.companyName.trim() && data.category && data.regionGroup && data.region;
     if (step === 1) return data.phone.trim() || data.email.trim();
     if (step === 2) return data.shortDesc.trim().length > 10;
     return true;
