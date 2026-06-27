@@ -24,8 +24,8 @@ const CATEGORIES = [
 ];
 
 const REGION_CITIES: Record<string, string[]> = {
-  'Süden': ['Limassol', 'Nikosia / Nicosia', 'Larnaka / Larnaca', 'Paphos', 'Ayia Napa', 'Paralimni', 'Protaras', 'Famagusta Süd'],
-  'Norden': ['Kyrenia / Girne', 'Nikosia Nord / Lefkoşa', 'Famagusta Nord / Gazimağusa', 'Morphou / Güzelyurt'],
+  'Süden': ['Ayia Napa', 'Famagusta Süd', 'Larnaka / Larnaca', 'Limassol', 'Nikosia / Nicosia', 'Paphos', 'Paralimni', 'Protaras'],
+  'Norden': ['Famagusta Nord / Gazimağusa', 'Kyrenia / Girne', 'Morphou / Güzelyurt', 'Nikosia Nord / Lefkoşa'],
 };
 
 const LANGUAGES_AVAILABLE = [
