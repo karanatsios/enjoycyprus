@@ -86,9 +86,11 @@ export default function CategoriesScreen() {
 
   const fetchBusinesses = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('businesses')
       .select('*')
+      .eq('status', 'approved')
+      .order('plan_score', { ascending: false })
       .order('created_at', { ascending: false });
     if (data && data.length > 0) setBusinesses([...data, ...MOCK]);
     setLoading(false);

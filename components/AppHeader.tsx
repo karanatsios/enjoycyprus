@@ -56,6 +56,7 @@ const MENU_SECTIONS = [
       { icon: '🌤️', label: 'Wetter', sub: '7-Tage-Vorschau', route: '/(tabs)/weather' },
       { icon: '👤', label: 'Profil', sub: 'Mein Profil', route: '/(tabs)/profile' },
       { icon: '⚙️', label: 'Einstellungen', sub: 'App konfigurieren', route: null },
+      { icon: '🔐', label: 'Admin', sub: 'Verwaltung & Freischaltung', route: '/(tabs)/admin' },
     ],
   },
 ];
