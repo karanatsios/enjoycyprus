@@ -30,9 +30,15 @@ type Business = {
 
 type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'users';
 
+type UserBusiness = {
+  company_name: string; plan: string; plan_score: number; status: string; expires_at: string | null;
+};
+
 type UserProfile = {
   id: string; email: string; role: string; created_at: string;
   isPartner?: boolean; partnerCode?: string;
+  partnerBalance?: number; partnerProvisions?: number;
+  userBusinesses?: UserBusiness[];
 };
 
 function PlanBadge({ plan }: { plan: string }) {
@@ -59,7 +65,29 @@ export default function AdminScreen() {
   const [counts, setCounts] = useState({ pending: 0, approved: 0, expired: 0, all: 0 });
 
   useEffect(() => { checkAdmin(); }, []);
-  useEffect(() => { if (isAdmin) { fetchAll(); fetchUsers(); } }, [isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    fetchAll();
+    fetchUsers();
+
+    // Echtzeit-Abo: Änderungen sofort anzeigen ohne Neuladen
+    const bizSub = supabase.channel('businesses-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'businesses' }, () => fetchAll())
+      .subscribe();
+    const profileSub = supabase.channel('profiles-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => fetchUsers())
+      .subscribe();
+    const partnerSub = supabase.channel('partners-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'partners' }, () => fetchUsers())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bizSub);
+      supabase.removeChannel(profileSub);
+      supabase.removeChannel(partnerSub);
+    };
+  }, [isAdmin]);
 
   const checkAdmin = async () => {
     const { data } = await supabase.auth.getSession();
@@ -71,13 +99,22 @@ export default function AdminScreen() {
 
   const fetchUsers = async () => {
     const { data: profiles } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-    const { data: partners } = await supabase.from('partners').select('user_id, affiliate_code');
+    const { data: partners } = await supabase.from('partners').select('user_id, affiliate_code, balance, provisions');
+    const { data: bizList } = await supabase.from('businesses').select('user_id, company_name, plan, plan_score, status, expires_at');
     if (profiles) {
-      const partnerMap = new Map((partners ?? []).map(p => [p.user_id, p.affiliate_code]));
+      const partnerMap = new Map((partners ?? []).map(p => [p.user_id, p]));
+      const bizMap = new Map<string, typeof bizList>() ;
+      (bizList ?? []).forEach(b => {
+        if (!bizMap.has(b.user_id)) bizMap.set(b.user_id, []);
+        bizMap.get(b.user_id)!.push(b);
+      });
       setUsers(profiles.map(p => ({
         ...p,
         isPartner: partnerMap.has(p.id),
-        partnerCode: partnerMap.get(p.id),
+        partnerCode: partnerMap.get(p.id)?.affiliate_code,
+        partnerBalance: partnerMap.get(p.id)?.balance ?? 0,
+        partnerProvisions: partnerMap.get(p.id)?.provisions ?? 0,
+        userBusinesses: bizMap.get(p.id) ?? [],
       })));
     }
   };
@@ -85,7 +122,7 @@ export default function AdminScreen() {
   const toggleAdmin = async (userId: string, currentRole: string) => {
     const newRole = currentRole === 'admin' ? 'user' : 'admin';
     await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
-    fetchUsers();
+    // Echtzeit-Abo aktualisiert automatisch — kein manuelles fetchUsers() nötig
   };
 
   const handleLogin = async () => {
@@ -240,7 +277,12 @@ export default function AdminScreen() {
                 <View style={bs.cardInfo}>
                   <Text style={bs.cardName}>{item.email}</Text>
                   <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
-                  {item.isPartner && <Text style={[bs.cardMeta, { color: Colors.primary }]}>⭐ Partner · {item.partnerCode}</Text>}
+                  {item.isPartner && (
+                    <View style={bs.partnerBlock}>
+                      <Text style={bs.partnerLabel}>⭐ Partner · {item.partnerCode}</Text>
+                      <Text style={bs.partnerMeta}>💰 Guthaben: {item.partnerBalance?.toFixed(2)} € · 📦 Provisionen: {item.partnerProvisions}</Text>
+                    </View>
+                  )}
                 </View>
                 <TouchableOpacity
                   style={[bs.roleToggle, item.role === 'admin' && bs.roleToggleActive]}
@@ -252,6 +294,33 @@ export default function AdminScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
+              {(item.userBusinesses ?? []).length > 0 && (
+                <View style={bs.bizSection}>
+                  <Text style={bs.bizSectionTitle}>🏢 Einträge</Text>
+                  {(item.userBusinesses ?? []).map((b, i) => {
+                    const p = PLANS.find(x => x.id === b.plan) ?? PLANS[0];
+                    const expired = b.expires_at ? new Date(b.expires_at) < new Date() : false;
+                    return (
+                      <View key={i} style={bs.bizRow}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={bs.bizName}>{b.company_name}</Text>
+                          {b.expires_at && (
+                            <Text style={[bs.bizMeta, { color: expired ? '#C0392B' : '#27AE60' }]}>
+                              {expired ? '⚠️ Abgelaufen' : '✓ Aktiv'} bis {new Date(b.expires_at).toLocaleDateString('de-DE')}
+                            </Text>
+                          )}
+                        </View>
+                        <View style={[bs.planBadge, { borderColor: p.color }]}>
+                          <Text style={[bs.planBadgeText, { color: p.color }]}>{p.label}</Text>
+                        </View>
+                        <View style={[bs.statusBadge, { borderColor: STATUS_COLORS[b.status] ?? '#888', backgroundColor: (STATUS_COLORS[b.status] ?? '#888') + '20' }]}>
+                          <Text style={[bs.statusText, { color: STATUS_COLORS[b.status] ?? '#888' }]}>{b.status}</Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
+              )}
             </View>
           )}
         />
@@ -390,6 +459,16 @@ const bs = StyleSheet.create({
 
   empty: { alignItems: 'center', paddingVertical: 40 },
   emptyText: { fontSize: 14, color: '#888' },
+
+  partnerBlock: { marginTop: 4 },
+  partnerLabel: { fontSize: 11, fontWeight: '700', color: Colors.primary },
+  partnerMeta: { fontSize: 11, color: '#888', marginTop: 1 },
+
+  bizSection: { borderTopWidth: 1, borderTopColor: '#F0F0F5', marginTop: 10, paddingTop: 8, gap: 6 },
+  bizSectionTitle: { fontSize: 11, fontWeight: '800', color: '#999', letterSpacing: 0.5, marginBottom: 2 },
+  bizRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  bizName: { fontSize: 12, fontWeight: '700', color: '#1A1A2E' },
+  bizMeta: { fontSize: 10, marginTop: 1 },
 
   roleToggle: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
