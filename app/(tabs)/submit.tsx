@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TextInput, TouchableOpacity,
+  TextInput, TouchableOpacity, ActivityIndicator, Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
+import { supabase } from '../../lib/supabase';
 
 const STEP_LABELS = ['Firma', 'Kontakt', 'Beschreibung', 'Zahlung'];
 
@@ -415,6 +416,7 @@ export default function SubmitScreen() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(INIT);
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const set = (d: Partial<FormData>) => setData(prev => ({ ...prev, ...d }));
 
@@ -430,9 +432,42 @@ export default function SubmitScreen() {
     else setStep(step - 1);
   };
 
-  const handleNext = () => {
-    if (step < 3) setStep(step + 1);
-    else setSubmitted(true);
+  const handleNext = async () => {
+    if (step < 3) { setStep(step + 1); return; }
+
+    setSaving(true);
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session?.session?.user?.id ?? null;
+
+    const { error } = await supabase.from('businesses').insert({
+      user_id: userId,
+      company_name: data.companyName,
+      category: data.category,
+      location_type: data.locationType,
+      region_group: data.regionGroup,
+      region: data.region,
+      street: data.street,
+      plz: data.plz,
+      city: data.city,
+      maps_link: data.mapsLink,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      email: data.email,
+      website: data.website,
+      opening_hours: data.openingHours,
+      languages: data.languages,
+      short_desc: data.shortDesc,
+      description: data.description,
+      plan: data.plan,
+      status: 'pending',
+    });
+    setSaving(false);
+
+    if (error) {
+      Alert.alert('Fehler', 'Der Eintrag konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.\n\n' + error.message);
+      return;
+    }
+    setSubmitted(true);
   };
 
   if (submitted) {
@@ -476,13 +511,14 @@ export default function SubmitScreen() {
       {/* Footer button */}
       <View style={s.footer}>
         <TouchableOpacity
-          style={[s.nextBtn, !canNext() && s.nextBtnDisabled]}
+          style={[s.nextBtn, (!canNext() || saving) && s.nextBtnDisabled]}
           onPress={handleNext}
-          disabled={!canNext()}
+          disabled={!canNext() || saving}
         >
-          <Text style={s.nextBtnText}>
-            {step < 3 ? `Weiter →` : '✓ Eintrag absenden'}
-          </Text>
+          {saving
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={s.nextBtnText}>{step < 3 ? 'Weiter →' : '✓ Eintrag absenden'}</Text>
+          }
         </TouchableOpacity>
       </View>
     </SafeAreaView>
