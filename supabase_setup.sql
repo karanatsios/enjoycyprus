@@ -31,3 +31,21 @@ create policy "Öffentlich lesbar" on businesses for select using (status = 'app
 create policy "Eigene Einträge lesbar" on businesses for select using (auth.uid() = user_id);
 create policy "Eintrag erstellen" on businesses for insert with check (true);
 create policy "Eigene Einträge bearbeiten" on businesses for update using (auth.uid() = user_id);
+
+-- ── Partner-Tabelle ───────────────────────────────────────────────
+create table if not exists partners (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  name text not null,
+  email text not null,
+  affiliate_code text unique not null,
+  balance numeric default 0,
+  paid_out numeric default 0,
+  provisions integer default 0,
+  created_at timestamptz default now()
+);
+
+alter table partners enable row level security;
+create policy "Eigene Partner-Daten lesen" on partners for select using (auth.uid() = user_id);
+create policy "Partner registrieren" on partners for insert with check (true);
+create policy "Eigene Partner-Daten bearbeiten" on partners for update using (auth.uid() = user_id);

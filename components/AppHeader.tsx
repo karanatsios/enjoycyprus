@@ -36,7 +36,7 @@ const MENU_SECTIONS = [
       { icon: '🏠', label: 'Start', sub: 'Kategorien und Suche', route: '/(tabs)/' },
       { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
       { icon: '🗺️', label: 'Karte', sub: 'Orte auf der Karte finden', route: '/(tabs)/map' },
-      { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: null },
+      { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: '/(tabs)/partner' },
     ],
   },
   {
