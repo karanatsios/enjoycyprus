@@ -254,11 +254,14 @@ export default function PartnerScreen() {
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
             <Text style={s.backText}>← Zurück</Text>
           </TouchableOpacity>
-          <Text style={s.subHeaderTitle}>Partner werden</Text>
+          <Text style={s.subHeaderTitle}>Partner</Text>
           <View style={{ minWidth: 70 }} />
         </View>
-        <Text style={s.subHeaderDomain}>enjoycyprus.de</Text>
-        <Text style={s.subHeaderTagline}>💰 Verdiene Provision</Text>
+        <View style={s.subHeaderHero}>
+          <Text style={s.subHeaderEmoji}>🤝</Text>
+          <Text style={s.subHeaderHeroTitle}>Partner werden</Text>
+          <Text style={s.subHeaderHeroSub}>Empfehle enjoycyprus.de und verdiene Provisionen.</Text>
+        </View>
       </View>
 
       <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
@@ -353,8 +356,10 @@ const s = StyleSheet.create({
   subHeaderTitle: { flex: 1, color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center' },
   logoutBtn: { minWidth: 70, alignItems: 'flex-end' },
   logoutText: { color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: '600' },
-  subHeaderDomain: { color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: '700', textAlign: 'center', marginTop: 6 },
-  subHeaderTagline: { color: 'rgba(255,255,255,0.7)', fontSize: 13, textAlign: 'center', marginTop: 2 },
+  subHeaderHero: { alignItems: 'center', paddingTop: 12, paddingBottom: 6 },
+  subHeaderEmoji: { fontSize: 40, marginBottom: 8 },
+  subHeaderHeroTitle: { color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center' },
+  subHeaderHeroSub: { color: 'rgba(255,255,255,0.8)', fontSize: 13, textAlign: 'center', marginTop: 4 },
   welcomeName: { color: '#fff', fontSize: 18, fontWeight: '800', marginTop: 10 },
   welcomeEmail: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 2 },
 
