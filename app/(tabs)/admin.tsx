@@ -8,7 +8,7 @@ import { Colors } from '../../constants/colors';
 import AppHeader from '../../components/AppHeader';
 import { supabase } from '../../lib/supabase';
 
-const ADMIN_EMAIL = 'karanatsios@mailbox.org';
+const ADMIN_EMAILS = ['karanatsios@mailbox.org', 'vitali.vs@gmx.de'];
 
 const PLANS = [
   { id: 'free',    label: 'Free',    score: 0,   price: '0 €',      color: '#888',    days: 30  },
@@ -28,7 +28,12 @@ type Business = {
   status: string; created_at: string; expires_at: string | null; user_id: string;
 };
 
-type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'partners';
+type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'users';
+
+type UserProfile = {
+  id: string; email: string; role: string; created_at: string;
+  isPartner?: boolean; partnerCode?: string;
+};
 
 function PlanBadge({ plan }: { plan: string }) {
   const p = PLANS.find(x => x.id === plan) ?? PLANS[0];
@@ -49,18 +54,38 @@ export default function AdminScreen() {
 
   const [tab, setTab] = useState<Tab>('pending');
   const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [counts, setCounts] = useState({ pending: 0, approved: 0, expired: 0, all: 0 });
 
   useEffect(() => { checkAdmin(); }, []);
-  useEffect(() => { if (isAdmin) fetchAll(); }, [isAdmin]);
+  useEffect(() => { if (isAdmin) { fetchAll(); fetchUsers(); } }, [isAdmin]);
 
   const checkAdmin = async () => {
     const { data } = await supabase.auth.getSession();
-    if (data.session?.user?.email === ADMIN_EMAIL) {
+    if (ADMIN_EMAILS.includes(data.session?.user?.email ?? '')) {
       setIsAdmin(true);
     }
     setChecking(false);
+  };
+
+  const fetchUsers = async () => {
+    const { data: profiles } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    const { data: partners } = await supabase.from('partners').select('user_id, affiliate_code');
+    if (profiles) {
+      const partnerMap = new Map((partners ?? []).map(p => [p.user_id, p.affiliate_code]));
+      setUsers(profiles.map(p => ({
+        ...p,
+        isPartner: partnerMap.has(p.id),
+        partnerCode: partnerMap.get(p.id),
+      })));
+    }
+  };
+
+  const toggleAdmin = async (userId: string, currentRole: string) => {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
+    fetchUsers();
   };
 
   const handleLogin = async () => {
@@ -193,6 +218,7 @@ export default function AdminScreen() {
           { key: 'approved', label: `Aktiv (${counts.approved})` },
           { key: 'expired', label: `Abgelaufen (${counts.expired})` },
           { key: 'all', label: `Alle (${counts.all})` },
+          { key: 'users', label: `👥 Nutzer (${users.length})` },
         ] as const).map(t => (
           <TouchableOpacity key={t.key} style={[bs.tabChip, tab === t.key && bs.tabChipActive]}
             onPress={() => setTab(t.key)}>
@@ -201,7 +227,35 @@ export default function AdminScreen() {
         ))}
       </ScrollView>
 
-      {loading ? (
+      {tab === 'users' ? (
+        <FlatList
+          data={users}
+          keyExtractor={item => item.id}
+          contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 30, paddingTop: 8 }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<View style={bs.empty}><Text style={bs.emptyText}>Keine Nutzer</Text></View>}
+          renderItem={({ item }) => (
+            <View style={bs.card}>
+              <View style={bs.cardTop}>
+                <View style={bs.cardInfo}>
+                  <Text style={bs.cardName}>{item.email}</Text>
+                  <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
+                  {item.isPartner && <Text style={[bs.cardMeta, { color: Colors.primary }]}>⭐ Partner · {item.partnerCode}</Text>}
+                </View>
+                <TouchableOpacity
+                  style={[bs.roleToggle, item.role === 'admin' && bs.roleToggleActive]}
+                  onPress={() => toggleAdmin(item.id, item.role)}
+                >
+                  <View style={[bs.roleToggleDot, item.role === 'admin' && bs.roleToggleDotActive]} />
+                  <Text style={[bs.roleToggleText, item.role === 'admin' && { color: '#fff' }]}>
+                    {item.role === 'admin' ? '🔐 Admin' : 'User'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
+      ) : loading ? (
         <ActivityIndicator color={Colors.primary} size="large" style={{ marginTop: 30 }} />
       ) : (
         <FlatList
@@ -336,4 +390,14 @@ const bs = StyleSheet.create({
 
   empty: { alignItems: 'center', paddingVertical: 40 },
   emptyText: { fontSize: 14, color: '#888' },
+
+  roleToggle: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1.5, borderColor: '#D0D8E8', borderRadius: 20,
+    paddingHorizontal: 12, paddingVertical: 7, backgroundColor: '#F5F6FA',
+  },
+  roleToggleActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  roleToggleDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#ccc' },
+  roleToggleDotActive: { backgroundColor: '#fff' },
+  roleToggleText: { fontSize: 12, fontWeight: '700', color: '#888' },
 });
