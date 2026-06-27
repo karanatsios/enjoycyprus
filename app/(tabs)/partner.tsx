@@ -116,6 +116,24 @@ export default function PartnerScreen() {
       Alert.alert('Fehler', 'Registrierung fehlgeschlagen: ' + partnerError.message);
       return;
     }
+
+    // GHL Webhook — Tag "Partner" setzen + Willkommens-E-Mail auslösen
+    const affiliateLink = `https://cyprus-app-two.vercel.app?ref=${code}`;
+    fetch('https://services.leadconnectorhq.com/hooks/k6wQ1eQsdB3AUdeOkN4Q/webhook-trigger/5bffab59-2476-4e58-bfd2-6fa7c01c671e', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'partner_registered',
+        name,
+        email,
+        affiliate_code: code,
+        affiliate_link: affiliateLink,
+        partner_id: partnerData.id,
+        registered_at: new Date().toISOString(),
+        tags: ['Partner'],
+      }),
+    }).catch(() => null); // Fehler still ignorieren — Registrierung trotzdem erfolgreich
+
     setPartner(partnerData);
     setMode('dashboard');
   };
