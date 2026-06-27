@@ -91,7 +91,7 @@ export default function AdminScreen() {
   const handleLogin = async () => {
     setLoginLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error || data.user?.email !== ADMIN_EMAIL) {
+    if (error || !ADMIN_EMAILS.includes(data.user?.email ?? '')) {
       Alert.alert('Kein Zugriff', 'Ungültige Zugangsdaten oder keine Admin-Berechtigung.');
       setLoginLoading(false);
       return;
