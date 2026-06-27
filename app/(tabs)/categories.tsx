@@ -112,7 +112,7 @@ export default function CategoriesScreen() {
       {/* Sub-header */}
       <View style={s.subHeader}>
         <View style={s.subHeaderRow}>
-          <TouchableOpacity style={s.backBtn} onPress={() => router.push('/(tabs)/')}>
+          <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
             <Text style={s.backText}>← Zurück</Text>
           </TouchableOpacity>
           <Text style={s.subHeaderTitle}>Alle Einträge</Text>
