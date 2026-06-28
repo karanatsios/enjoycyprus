@@ -180,6 +180,16 @@ export default function MeinEintragScreen() {
             </View>
           )}
 
+          {/* Marketing / Push-Aktionen */}
+          <TouchableOpacity style={s.marketingBtn} onPress={() => router.push('/(tabs)/marketing' as any)}>
+            <Text style={s.marketingBtnIcon}>📣</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={s.marketingBtnTitle}>Marketing & Push-Aktionen</Text>
+              <Text style={s.marketingBtnSub}>Geo-zielgerichtete Benachrichtigungen versenden</Text>
+            </View>
+            <Text style={s.marketingBtnArrow}>›</Text>
+          </TouchableOpacity>
+
           {/* Neuen Eintrag erstellen */}
           <TouchableOpacity style={s.addBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
             <Text style={s.addBtnText}>➕ Weiteren Eintrag erstellen</Text>
@@ -392,6 +402,17 @@ const s = StyleSheet.create({
   noEntrySub: { fontSize: 13, color: '#888', textAlign: 'center' },
   noEntryBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 24, marginTop: 4 },
   noEntryBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+
+  marketingBtn: {
+    marginHorizontal: 20, marginBottom: 12, borderRadius: 16, padding: 16,
+    backgroundColor: '#fff', flexDirection: 'row', alignItems: 'center', gap: 12,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+    borderLeftWidth: 4, borderLeftColor: Colors.primary,
+  },
+  marketingBtnIcon: { fontSize: 28 },
+  marketingBtnTitle: { fontSize: 14, fontWeight: '800', color: '#1A1A2E' },
+  marketingBtnSub: { fontSize: 11, color: '#888', marginTop: 2 },
+  marketingBtnArrow: { fontSize: 22, color: '#ccc' },
 
   addBtn: {
     marginHorizontal: 20, marginBottom: 10, borderRadius: 14, paddingVertical: 14,

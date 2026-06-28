@@ -46,6 +46,7 @@ const MENU_SECTIONS = [
     items: [
       { icon: '➕', label: 'Eintrag erstellen', sub: 'Unternehmen eintragen', route: '/(tabs)/submit' },
       { icon: '👤', label: 'Mein Eintrag', sub: 'Eintrag bearbeiten / verlängern', route: '/(tabs)/mein-eintrag' },
+      { icon: '📣', label: 'Marketing', sub: 'Push-Aktionen & Geo-Notifications', route: '/(tabs)/marketing' },
     ],
   },
   {
