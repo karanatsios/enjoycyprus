@@ -35,6 +35,7 @@ const BEACHES: Beach[] = [
 
 const TODAY = new Date('2026-06-28');
 const PRICE = 10;
+const DEPOSIT = 80;
 
 function formatDate(d: Date) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -156,6 +157,13 @@ export default function BeachboxScreen() {
                   {formatDate(selectedDate)} · 10 €
                 </Text>
                 <Text style={s.successNote}>Du erhältst deinen Code per E-Mail zur Entsperrung der Box.</Text>
+                <View style={s.depositConfirm}>
+                  <Text style={s.depositConfirmIcon}>🔒</Text>
+                  <Text style={s.depositConfirmText}>
+                    <Text style={{ fontWeight: '800' }}>{DEPOSIT} € Pfand reserviert</Text>
+                    {'\n'}Wird nach schadensfreier Rückgabe automatisch freigegeben.
+                  </Text>
+                </View>
                 <TouchableOpacity style={s.doneBtn} onPress={() => setSelectedBeach(null)}>
                   <Text style={s.doneBtnText}>Fertig</Text>
                 </TouchableOpacity>
@@ -222,6 +230,17 @@ export default function BeachboxScreen() {
                     })}
                   </View>
 
+                  {/* Pfand-Hinweis */}
+                  <View style={s.depositBanner}>
+                    <Text style={s.depositIcon}>🔒</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.depositTitle}>Sicherheitspfand: {DEPOSIT} €</Text>
+                      <Text style={s.depositSub}>
+                        Wird bei Buchung reserviert (nicht abgebucht). Nach Rückgabe ohne Schäden vollständig freigegeben – in der Regel innerhalb von 3–5 Werktagen.
+                      </Text>
+                    </View>
+                  </View>
+
                   {/* Zusammenfassung */}
                   {selectedBox && (
                     <View style={s.summary}>
@@ -229,7 +248,15 @@ export default function BeachboxScreen() {
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Strand</Text><Text style={s.summaryVal}>{selectedBeach?.name}</Text></View>
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Box</Text><Text style={s.summaryVal}>#{selectedBox}</Text></View>
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Datum</Text><Text style={s.summaryVal}>{formatDate(selectedDate)}</Text></View>
-                      <View style={[s.summaryRow, { borderBottomWidth: 0 }]}><Text style={s.summaryLabel}>Preis</Text><Text style={[s.summaryVal, { color: Colors.primary, fontWeight: '800' }]}>{PRICE} €</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Tagesmiete</Text><Text style={[s.summaryVal, { color: Colors.primary, fontWeight: '800' }]}>{PRICE} €</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Pfand (reserviert)</Text><Text style={[s.summaryVal, { color: '#888' }]}>{DEPOSIT} €</Text></View>
+                      <View style={s.summaryTotal}>
+                        <Text style={s.summaryTotalLabel}>Gesamt autorisiert</Text>
+                        <Text style={s.summaryTotalVal}>{PRICE + DEPOSIT} €</Text>
+                      </View>
+                      <Text style={s.summaryPfandNote}>
+                        ✅ Nach schadensfreier Rückgabe: {DEPOSIT} € werden freigegeben. Du zahlst effektiv nur {PRICE} €.
+                      </Text>
                     </View>
                   )}
 
@@ -380,6 +407,26 @@ const s = StyleSheet.create({
   summaryLabel: { fontSize: 13, color: '#888' },
   summaryVal: { fontSize: 13, fontWeight: '700', color: '#1A1A2E' },
 
+  depositBanner: {
+    flexDirection: 'row', gap: 10, alignItems: 'flex-start',
+    backgroundColor: '#FFF8E1', borderRadius: 14, padding: 14,
+    borderLeftWidth: 3, borderLeftColor: '#F39C12', marginBottom: 14,
+  },
+  depositIcon: { fontSize: 20 },
+  depositTitle: { fontSize: 13, fontWeight: '800', color: '#B7770D', marginBottom: 3 },
+  depositSub: { fontSize: 11, color: '#7D6608', lineHeight: 17 },
+
+  summaryTotal: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    paddingTop: 10, paddingBottom: 4,
+  },
+  summaryTotalLabel: { fontSize: 14, fontWeight: '800', color: '#1A1A2E' },
+  summaryTotalVal: { fontSize: 16, fontWeight: '800', color: Colors.primary },
+  summaryPfandNote: {
+    fontSize: 11, color: '#27AE60', lineHeight: 16,
+    marginTop: 6, fontWeight: '600',
+  },
+
   confirmBtn: {
     backgroundColor: Colors.primary, borderRadius: 16,
     paddingVertical: 16, alignItems: 'center',
@@ -393,6 +440,14 @@ const s = StyleSheet.create({
   successTitle: { fontSize: 22, fontWeight: '800', color: '#1A1A2E' },
   successSub: { fontSize: 15, color: '#555', textAlign: 'center', lineHeight: 22 },
   successNote: { fontSize: 12, color: '#888', textAlign: 'center', lineHeight: 18, marginTop: 4 },
+  depositConfirm: {
+    flexDirection: 'row', gap: 8, alignItems: 'flex-start',
+    backgroundColor: '#FFF8E1', borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: '#F39C12', marginTop: 4,
+  },
+  depositConfirmIcon: { fontSize: 18 },
+  depositConfirmText: { flex: 1, fontSize: 12, color: '#7D6608', lineHeight: 18 },
+
   doneBtn: {
     backgroundColor: Colors.primary, borderRadius: 14,
     paddingHorizontal: 40, paddingVertical: 14, marginTop: 8,
