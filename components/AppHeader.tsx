@@ -49,22 +49,22 @@ const MENU_SECTIONS = [
   {
     title: 'INFORMATIONEN',
     items: [
+      { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
       { icon: '❓', label: 'Zypern FAQ', sub: '100 Fragen & Antworten zu Zypern', route: null },
       { icon: '📰', label: 'News', sub: 'Nachrichten aus Zypern', route: null },
       { icon: '💼', label: 'Jobs in Zypern', sub: 'Stellenangebote suchen & filtern', route: null },
       { icon: '🚨', label: 'Notfallnummern', sub: 'Wichtige Nummern auf Zypern', route: '/(tabs)/emergency' },
-      { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
-    ],
-  },
-  {
-    title: 'MEHR',
-    items: [
       { icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte', route: null },
       { icon: '🚌', label: 'Busverbindungen', sub: 'Route mit Bus, Umstieg & Haltestellen', route: '/(tabs)/bus' },
       { icon: '🎉', label: 'Events', sub: 'Veranstaltungen, Partys & Konzerte', route: '/(tabs)/events' },
       { icon: '📍', label: 'Sehenswürdigkeiten', sub: 'Die schönsten Orte der Insel', route: null },
       { icon: '🏖️', label: 'Blaue Flagge Strände', sub: 'Zertifizierte Strände auf Zypern', route: null },
       { icon: '🌤️', label: 'Wetter', sub: '7-Tage-Vorschau', route: '/(tabs)/weather' },
+    ],
+  },
+  {
+    title: 'MEHR',
+    items: [
       { icon: '📲', label: 'App installieren', sub: 'Android App / iPhone Startbildschirm', route: null },
       { icon: 'ℹ️', label: 'Info', sub: 'Über Inside Cyprus', route: null },
       { icon: '📄', label: 'Impressum', sub: 'Rechtliche Angaben', route: null },
