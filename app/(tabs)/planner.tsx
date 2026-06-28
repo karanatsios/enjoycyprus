@@ -116,19 +116,31 @@ export default function PlannerScreen() {
   function startVoice() {
     if (typeof window === 'undefined') return;
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
-    if (!SR) { alert('Spracheingabe wird von diesem Browser nicht unterstützt.'); return; }
+    if (!SR) { alert('Spracheingabe wird von diesem Browser nicht unterstützt. Bitte Chrome auf Android verwenden.'); return; }
     const rec = new SR();
     rec.lang = 'de-DE';
     rec.continuous = false;
-    rec.interimResults = false;
+    rec.interimResults = true;
     setListening(true);
+    let finalTranscript = '';
     rec.onresult = (e: any) => {
-      const transcript = e.results[0][0].transcript;
-      setInput(transcript);
-      setListening(false);
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) {
+          finalTranscript += e.results[i][0].transcript;
+        } else {
+          interim += e.results[i][0].transcript;
+        }
+      }
+      setInput(finalTranscript || interim);
     };
     rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
+    rec.onend = () => {
+      setListening(false);
+      if (finalTranscript.trim()) {
+        send(finalTranscript.trim());
+      }
+    };
     rec.start();
   }
 
