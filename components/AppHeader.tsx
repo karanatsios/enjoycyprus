@@ -37,6 +37,7 @@ const MENU_SECTIONS = [
       { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
       { icon: '🗺️', label: 'Karte', sub: 'Orte auf der Karte finden', route: '/(tabs)/map' },
       { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: '/(tabs)/partner' },
+      { icon: '📦', label: 'Beachbox', sub: 'Strandboxen mieten – 10 €/Tag', route: '/(tabs)/beachbox' },
     ],
   },
   {
