@@ -290,24 +290,29 @@ export default function AdminScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<View style={bs.empty}><Text style={bs.emptyText}>Keine Nutzer</Text></View>}
           renderItem={({ item }) => {
-            const effectiveRole = item.role === 'admin' ? 'admin' : item.isPartner ? 'partner' : 'user';
-            const rc = ROLE_CONFIG[effectiveRole];
+            const activeRoles: ('admin' | 'partner' | 'user')[] = [];
+            if (item.role === 'admin') activeRoles.push('admin');
+            if (item.isPartner) activeRoles.push('partner');
+            activeRoles.push('user'); // Kunde immer sichtbar
             return (
               <View style={bs.card}>
-                {/* Kopfzeile: E-Mail + Rolle */}
+                {/* Kopfzeile: E-Mail */}
                 <View style={bs.cardTop}>
                   <View style={bs.cardInfo}>
                     <Text style={bs.cardName}>{item.email}</Text>
-                    <View style={[bs.tagBadge, { backgroundColor: rc.bg, borderColor: rc.color }]}>
-                      <Text style={[bs.tagBadgeText, { color: rc.color }]}>{rc.icon} {item.tag ?? rc.label}</Text>
-                    </View>
                     <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
                   </View>
-                  {/* Rolle Badge */}
-                  <View style={[bs.roleBadge, { backgroundColor: rc.bg, borderColor: rc.color }]}>
-                    <Text style={bs.roleBadgeIcon}>{rc.icon}</Text>
-                    <Text style={[bs.roleBadgeText, { color: rc.color }]}>{rc.label}</Text>
-                  </View>
+                </View>
+                {/* Tags: alle zutreffenden Tags untereinander */}
+                <View style={bs.tagsRow}>
+                  {activeRoles.map(roleKey => {
+                    const rc = ROLE_CONFIG[roleKey];
+                    return (
+                      <View key={roleKey} style={[bs.tagBadge, { backgroundColor: rc.bg, borderColor: rc.color }]}>
+                        <Text style={[bs.tagBadgeText, { color: rc.color }]}>{rc.icon} {rc.label}</Text>
+                      </View>
+                    );
+                  })}
                 </View>
 
                 {/* Partner-Info */}
@@ -516,18 +521,12 @@ const bs = StyleSheet.create({
   bizName: { fontSize: 12, fontWeight: '700', color: '#1A1A2E' },
   bizMeta: { fontSize: 10, marginTop: 1 },
 
+  tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 8 },
   tagBadge: {
-    alignSelf: 'flex-start', borderWidth: 1.5, borderRadius: 10,
-    paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3,
+    borderWidth: 1.5, borderRadius: 10,
+    paddingHorizontal: 8, paddingVertical: 3,
   },
   tagBadgeText: { fontSize: 11, fontWeight: '800' },
-
-  roleBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    borderWidth: 1.5, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5,
-  },
-  roleBadgeIcon: { fontSize: 13 },
-  roleBadgeText: { fontSize: 12, fontWeight: '800' },
 
   permRow: { marginTop: 10, gap: 4 },
   permLabel: { fontSize: 10, fontWeight: '800', color: '#999', letterSpacing: 0.8 },
