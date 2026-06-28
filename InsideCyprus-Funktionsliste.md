@@ -218,9 +218,26 @@ Nur für autorisierte Administratoren zugänglich (`karanatsios@mailbox.org`, `v
 
 ---
 
+## 📣 Marketing / Push-Notifications (neu)
+
+- Geo-zielgerichtete Push-Aktionen für Unternehmen
+- Radius: 5 / 10 / 25 / 50 km
+- Credit-System: 1 Credit = 1 Aktion
+- Pakete: Starter 5 €, Basic 20 €, Pro 45 €, Business 99 €, Unlimited 199 €
+- Kampagnenübersicht mit Status und Empfängeranzahl
+- Service Worker (sw.js) für Push-Empfang im Browser
+- Supabase: push_subscriptions, notifications, notification_credits, credit_purchases
+
+**Offene Setup-Schritte → siehe TODO.md**
+- [ ] VAPID-Schlüssel generieren und in Vercel/Supabase eintragen
+- [ ] Supabase Edge Function `send-notifications` einrichten
+- [ ] Stripe Payment Links erstellen und in marketing.tsx eintragen
+- [ ] Stripe Webhook für automatische Credit-Vergabe
+
+---
+
 ## Geplante Features (Roadmap)
 
-- 🌐 Zypern FAQ – 100 häufige Fragen mit Antworten
 - 💼 Jobportal – Stellenangebote suchen und aufgeben
 - 🏥 Krankenhäuser & Botschaften – mit Karte und Kontaktdaten
 - 📍 Sehenswürdigkeiten – Top-Orte der Insel mit Fotos
