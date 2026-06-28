@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking, Platform,
+  TouchableOpacity, Linking,
 } from 'react-native';
 import { Colors } from '../../constants/colors';
+import AppHeader from '../../components/AppHeader';
 
 type EmergencyEntry = {
   icon: string;
@@ -67,18 +68,29 @@ const NORTH: Section[] = [
     title: 'NOTRUF',
     entries: [
       { icon: '🚑', name: 'Notruf (Alle)', sub: 'Polizei · Feuerwehr · Rettung', number: '112', urgent: true },
-      { icon: '🛡️', name: 'Polizei', sub: 'Norden', number: '155', urgent: true },
+      { icon: '🛡️', name: 'Polizei', sub: 'Norden – TMT / Polizei', number: '155', urgent: true },
       { icon: '🔥', name: 'Feuerwehr', sub: 'Norden', number: '199' },
       { icon: '🌲', name: 'Waldbrand', sub: 'Norden', number: '177' },
+      { icon: '🚑', name: 'Rettungsdienst', sub: 'Norden', number: '112' },
     ],
   },
   {
     title: 'KRANKENHÄUSER',
     entries: [
-      { icon: '🏥', name: 'Lefkoşa / Nikosia', sub: 'Dr. Burhan Nalbantoğlu Krankenhaus', number: '228 5441' },
-      { icon: '🏥', name: 'Gazimağusa / Famagusta', sub: 'Staatliches Krankenhaus', number: '366 5328' },
-      { icon: '🏥', name: 'Girne / Kyrenia', sub: 'Staatliches Krankenhaus', number: '815 2266' },
-      { icon: '🏥', name: 'Güzelyurt / Morphou', sub: 'Staatliches Krankenhaus', number: '714 2125' },
+      { icon: '🏥', name: 'Lefkoşa / Nikosia', sub: 'Dr. Burhan Nalbantoğlu Krankenhaus', number: '+90 392 228 5441' },
+      { icon: '🏥', name: 'Gazimağusa / Famagusta', sub: 'Staatliches Krankenhaus', number: '+90 392 366 5328' },
+      { icon: '🏥', name: 'Girne / Kyrenia', sub: 'Akçiçek Staatliches Krankenhaus', number: '+90 392 815 2266' },
+      { icon: '🏥', name: 'Güzelyurt / Morphou', sub: 'Staatliches Krankenhaus', number: '+90 392 714 2125' },
+      { icon: '🏥', name: 'Near East Univ. Hospital', sub: 'Lefkoşa – Privatkrankenhaus', number: '+90 392 675 1000' },
+    ],
+  },
+  {
+    title: 'NÜTZLICHE NUMMERN',
+    entries: [
+      { icon: '☠️', name: 'Vergiftungsnotruf', sub: 'Gift- und Drogen-Notfall', number: '+90 392 228 5441' },
+      { icon: '📞', name: 'Touristenpolizei', sub: 'Hilfe für Touristen (Kyrenia)', number: '+90 392 815 7444' },
+      { icon: '🛂', name: 'Zoll & Grenzschutz', sub: 'Ercan Flughafen', number: '+90 392 231 5503' },
+      { icon: '❤️', name: 'Krisenhotline', sub: 'Häusliche Gewalt / Notfall', number: '+90 392 228 3640' },
     ],
   },
 ];
@@ -115,6 +127,7 @@ export default function EmergencyScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <AppHeader />
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>🚨 Notfallnummern</Text>

@@ -60,7 +60,7 @@ type FormData = {
   description: string;
   shortDesc: string;
   // Step 4 – Zahlung
-  plan: 'free' | 'standard' | 'premium';
+  plan: 'free' | 'bronze' | 'silver' | 'gold' | 'platin';
 };
 
 const INIT: FormData = {
@@ -68,7 +68,7 @@ const INIT: FormData = {
   street: '', plz: '', city: '', mapsLink: '',
   phone: '', whatsapp: '', email: '', website: '', openingHours: '', languages: ['DE'],
   description: '', shortDesc: '',
-  plan: 'free',
+  plan: 'free' as const,
 };
 
 function FieldLabel({ text, required }: { text: string; required?: boolean }) {
@@ -353,19 +353,34 @@ function Step3({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 // ── Step 4: Zahlung ──────────────────────────────────────────────
 const PLANS = [
   {
-    id: 'free', icon: '🆓', label: 'Kostenlos', price: '0€/Monat',
-    features: ['1 Basiseintrag', 'Kategorie & Kontakt', 'Kein Foto', '30 Tage aktiv'],
-    color: '#27AE60',
+    id: 'free', icon: '🆓', label: 'Free', price: 'Kostenlos',
+    sub: '30 Tage aktiv',
+    features: ['Basiseintrag', 'Kategorie & Kontakt', 'Sichtbar in der Liste'],
+    color: '#888',
   },
   {
-    id: 'standard', icon: '⭐', label: 'Standard', price: '9,90€/Monat',
-    features: ['Erweiterter Eintrag', 'Bis zu 5 Fotos', 'Hervorgehoben in Kategorie', 'Unbegrenzt aktiv'],
-    color: Colors.primary,
+    id: 'bronze', icon: '🥉', label: 'Bronze', price: '29 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Erweiterter Eintrag', 'Höhere Sichtbarkeit', 'Sprachen-Chips'],
+    color: '#CD7F32',
   },
   {
-    id: 'premium', icon: '👑', label: 'Premium', price: '24,90€/Monat',
-    features: ['Alles aus Standard', 'Top-Platzierung', 'WhatsApp-Button', 'Statistiken & Analytics'],
-    color: '#D4891A',
+    id: 'silver', icon: '🥈', label: 'Silver', price: '59 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Alles aus Bronze', 'Hervorgehoben in Kategorie', 'WhatsApp-Button'],
+    color: '#A8A9AD',
+  },
+  {
+    id: 'gold', icon: '🥇', label: 'Gold', price: '99 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Alles aus Silver', 'Top-Platzierung in Liste', 'Kartenmarkierung'],
+    color: '#FFD700',
+  },
+  {
+    id: 'platin', icon: '💎', label: 'Platin', price: '199 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Alles aus Gold', 'Erstplatzierung', 'Partner-Feature', 'Analytics'],
+    color: '#9B59B6',
   },
 ];
 
@@ -377,13 +392,14 @@ function Step4({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 
       {PLANS.map(plan => (
         <TouchableOpacity key={plan.id}
-          style={[s.planCard, data.plan === plan.id && { borderColor: plan.color, borderWidth: 2 }]}
+          style={[s.planCard, data.plan === plan.id && { borderColor: plan.color, borderWidth: 2, backgroundColor: plan.color + '08' }]}
           onPress={() => set({ plan: plan.id as FormData['plan'] })}>
           <View style={s.planHeader}>
             <Text style={s.planIcon}>{plan.icon}</Text>
             <View style={s.planInfo}>
               <Text style={s.planLabel}>{plan.label}</Text>
               <Text style={[s.planPrice, { color: plan.color }]}>{plan.price}</Text>
+              <Text style={s.planSub}>{plan.sub}</Text>
             </View>
             <View style={[s.planRadio, data.plan === plan.id && { borderColor: plan.color }]}>
               {data.plan === plan.id && <View style={[s.planRadioDot, { backgroundColor: plan.color }]} />}
@@ -627,6 +643,7 @@ const s = StyleSheet.create({
   planInfo: { flex: 1 },
   planLabel: { fontSize: 16, fontWeight: '800', color: '#1A1A2E' },
   planPrice: { fontSize: 14, fontWeight: '700', marginTop: 2 },
+  planSub: { fontSize: 10, color: '#aaa', marginTop: 1 },
   planRadio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#ccc', justifyContent: 'center', alignItems: 'center' },
   planRadioDot: { width: 12, height: 12, borderRadius: 6 },
   planFeatures: { gap: 6 },

@@ -6,8 +6,19 @@ import {
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { Colors } from '../../constants/colors';
+import AppHeader from '../../components/AppHeader';
 
 const ADMIN_EMAIL = 'karanatsios@mailbox.org';
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: '#D4891A', approved: '#27AE60', expired: '#888', rejected: '#C0392B', inactive: '#999',
+};
+const STATUS_LABELS: Record<string, string> = {
+  pending: '⏳ Wird geprüft', approved: '✅ Aktiv', expired: '⚠️ Abgelaufen', rejected: '❌ Abgelehnt', inactive: '⏸ Inaktiv',
+};
+const PLAN_COLORS: Record<string, string> = {
+  free: '#888', bronze: '#CD7F32', silver: '#A8A9AD', gold: '#FFD700', platin: '#9B59B6',
+};
 
 type Mode = 'login' | 'register' | 'forgot';
 
@@ -20,19 +31,33 @@ export default function MeinEintragScreen() {
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [businesses, setBusinesses] = useState<any[]>([]);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
+      const u = data.session?.user ?? null;
+      setUser(u);
+      if (u) fetchBusinesses(u.id);
       setCheckingSession(false);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) fetchBusinesses(u.id);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  const fetchBusinesses = async (userId: string) => {
+    const { data } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (data) setBusinesses(data);
+  };
 
   const clearMessages = () => { setErrorMsg(''); setSuccessMsg(''); };
 
@@ -82,51 +107,84 @@ export default function MeinEintragScreen() {
   if (user) {
     return (
       <SafeAreaView style={s.safe}>
+        <AppHeader />
         <View style={s.header}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
             <Text style={s.backText}>← Zurück</Text>
           </TouchableOpacity>
           <Text style={s.headerTitle}>Mein Eintrag</Text>
-          <View style={s.headerSpacer} />
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={s.backText}>Abmelden</Text>
+          </TouchableOpacity>
         </View>
         <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
+          {/* Profil-Card */}
           <View style={s.loggedInCard}>
             <Text style={s.loggedInIcon}>👤</Text>
             <Text style={s.loggedInTitle}>Willkommen!</Text>
             <Text style={s.loggedInEmail}>{user.email}</Text>
           </View>
 
-          <View style={s.section}>
-            <Text style={s.sectionTitle}>Mein Eintrag</Text>
-            <TouchableOpacity style={s.menuItem}>
-              <Text style={s.menuItemIcon}>📋</Text>
-              <View style={s.menuItemText}>
-                <Text style={s.menuItemLabel}>Eintrag ansehen</Text>
-                <Text style={s.menuItemSub}>Ihr aktueller Unternehmenseintrag</Text>
-              </View>
-              <Text style={s.menuItemArrow}>›</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.menuItem} onPress={() => router.push('/(tabs)/submit' as any)}>
-              <Text style={s.menuItemIcon}>✏️</Text>
-              <View style={s.menuItemText}>
-                <Text style={s.menuItemLabel}>Eintrag bearbeiten</Text>
-                <Text style={s.menuItemSub}>Informationen aktualisieren</Text>
-              </View>
-              <Text style={s.menuItemArrow}>›</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.menuItem}>
-              <Text style={s.menuItemIcon}>🔄</Text>
-              <View style={s.menuItemText}>
-                <Text style={s.menuItemLabel}>Eintrag verlängern</Text>
-                <Text style={s.menuItemSub}>Laufzeit erneuern</Text>
-              </View>
-              <Text style={s.menuItemArrow}>›</Text>
-            </TouchableOpacity>
-          </View>
+          {/* Meine Einträge */}
+          {businesses.length > 0 ? (
+            <View style={s.bizSection}>
+              <Text style={s.bizSectionTitle}>MEINE EINTRÄGE ({businesses.length})</Text>
+              {businesses.map(b => {
+                const planColor = PLAN_COLORS[b.plan] ?? '#888';
+                const statusColor = STATUS_COLORS[b.status] ?? '#888';
+                const isExpired = b.expires_at && new Date(b.expires_at) < new Date();
+                return (
+                  <View key={b.id} style={s.bizCard}>
+                    <View style={s.bizCardTop}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.bizName}>{b.company_name}</Text>
+                        <Text style={s.bizMeta}>{b.city} · {b.category}</Text>
+                      </View>
+                      <View style={s.bizBadges}>
+                        <View style={[s.badge, { borderColor: planColor }]}>
+                          <Text style={[s.badgeText, { color: planColor }]}>{b.plan?.toUpperCase()}</Text>
+                        </View>
+                        <View style={[s.badge, { borderColor: statusColor, backgroundColor: statusColor + '15' }]}>
+                          <Text style={[s.badgeText, { color: statusColor }]}>{STATUS_LABELS[b.status] ?? b.status}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    {b.short_desc ? <Text style={s.bizDesc} numberOfLines={2}>{b.short_desc}</Text> : null}
+                    {b.expires_at && (
+                      <Text style={[s.bizExpiry, { color: isExpired ? '#C0392B' : '#27AE60' }]}>
+                        {isExpired ? '⚠️ Abgelaufen am ' : '✅ Aktiv bis '}{new Date(b.expires_at).toLocaleDateString('de-DE')}
+                      </Text>
+                    )}
+                    <View style={s.bizActions}>
+                      <TouchableOpacity style={s.bizActionBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
+                        <Text style={s.bizActionBtnText}>✏️ Bearbeiten</Text>
+                      </TouchableOpacity>
+                      {(b.status === 'expired' || isExpired) && (
+                        <TouchableOpacity style={[s.bizActionBtn, s.bizActionBtnPrimary]}>
+                          <Text style={[s.bizActionBtnText, { color: '#fff' }]}>🔄 Verlängern</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          ) : (
+            <View style={s.noEntryCard}>
+              <Text style={s.noEntryIcon}>📋</Text>
+              <Text style={s.noEntryTitle}>Noch kein Eintrag</Text>
+              <Text style={s.noEntrySub}>Erstellen Sie jetzt Ihren ersten Unternehmenseintrag.</Text>
+              <TouchableOpacity style={s.noEntryBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
+                <Text style={s.noEntryBtnText}>➕ Jetzt eintragen</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-          <TouchableOpacity style={s.logoutBtn} onPress={handleLogout}>
-            <Text style={s.logoutBtnText}>Abmelden</Text>
+          {/* Neuen Eintrag erstellen */}
+          <TouchableOpacity style={s.addBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
+            <Text style={s.addBtnText}>➕ Weiteren Eintrag erstellen</Text>
           </TouchableOpacity>
+
           <View style={{ height: 40 }} />
         </ScrollView>
       </SafeAreaView>
@@ -136,6 +194,7 @@ export default function MeinEintragScreen() {
   // ── Login / Register / Forgot ────────────────────────────────────
   return (
     <SafeAreaView style={s.safe}>
+      <AppHeader />
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <Text style={s.backText}>← Zurück</Text>
@@ -300,6 +359,45 @@ const s = StyleSheet.create({
   },
   submitBtnDisabled: { backgroundColor: '#aac4e8' },
   submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+
+  bizSection: { paddingHorizontal: 20, marginBottom: 8 },
+  bizSectionTitle: { fontSize: 11, fontWeight: '800', color: '#999', letterSpacing: 1, marginBottom: 10 },
+  bizCard: {
+    backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+  },
+  bizCardTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 8 },
+  bizName: { fontSize: 15, fontWeight: '800', color: '#1A1A2E' },
+  bizMeta: { fontSize: 11, color: '#888', marginTop: 2 },
+  bizBadges: { gap: 4, alignItems: 'flex-end' },
+  badge: { borderWidth: 1.5, borderRadius: 8, paddingHorizontal: 7, paddingVertical: 3 },
+  badgeText: { fontSize: 10, fontWeight: '700' },
+  bizDesc: { fontSize: 12, color: '#666', lineHeight: 18, marginBottom: 6 },
+  bizExpiry: { fontSize: 11, fontWeight: '600', marginBottom: 10 },
+  bizActions: { flexDirection: 'row', gap: 8 },
+  bizActionBtn: {
+    flex: 1, borderRadius: 10, paddingVertical: 9, alignItems: 'center',
+    borderWidth: 1.5, borderColor: '#D0D8E8', backgroundColor: '#F5F6FA',
+  },
+  bizActionBtnPrimary: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  bizActionBtnText: { fontSize: 12, fontWeight: '700', color: '#1A1A2E' },
+
+  noEntryCard: {
+    backgroundColor: '#fff', borderRadius: 16, margin: 20, padding: 28,
+    alignItems: 'center', gap: 8,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+  },
+  noEntryIcon: { fontSize: 40 },
+  noEntryTitle: { fontSize: 17, fontWeight: '800', color: '#1A1A2E' },
+  noEntrySub: { fontSize: 13, color: '#888', textAlign: 'center' },
+  noEntryBtn: { backgroundColor: Colors.primary, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 24, marginTop: 4 },
+  noEntryBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+
+  addBtn: {
+    marginHorizontal: 20, marginBottom: 10, borderRadius: 14, paddingVertical: 14,
+    alignItems: 'center', borderWidth: 1.5, borderColor: Colors.primary, borderStyle: 'dashed',
+  },
+  addBtnText: { color: Colors.primary, fontSize: 14, fontWeight: '700' },
 
   // ── Eingeloggt ──
   loggedInCard: {

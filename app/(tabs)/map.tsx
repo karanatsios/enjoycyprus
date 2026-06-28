@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import AppHeader from '../../components/AppHeader';
@@ -115,12 +115,25 @@ function buildLeafletHTML(businesses: Business[], userLat?: number, userLng?: nu
 </html>`;
 }
 
+const CAT_FILTERS = [
+  { id: '', label: 'Alle' },
+  { id: 'gastronomie', label: '🍽️ Gastro' },
+  { id: 'handwerk', label: '🔨 Handwerk' },
+  { id: 'medizin', label: '⚕️ Medizin' },
+  { id: 'immobilien', label: '🏠 Immo' },
+  { id: 'finanzen', label: '⚖️ Finanzen' },
+  { id: 'beauty', label: '💆 Beauty' },
+  { id: 'tourismus', label: '🏖️ Tourismus' },
+  { id: 'dienstleistung', label: '🛠️ Services' },
+];
+
 export default function MapScreen() {
   const router = useRouter();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [userLat, setUserLat] = useState<number | undefined>();
   const [userLng, setUserLng] = useState<number | undefined>();
   const [loading, setLoading] = useState(true);
+  const [catFilter, setCatFilter] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -142,7 +155,8 @@ export default function MapScreen() {
     }
   };
 
-  const mapHTML = buildLeafletHTML(businesses, userLat, userLng);
+  const filtered = catFilter ? businesses.filter(b => b.category === catFilter) : businesses;
+  const mapHTML = useMemo(() => buildLeafletHTML(filtered, userLat, userLng), [filtered, userLat, userLng]);
 
   return (
     <SafeAreaView style={s.safe}>
@@ -152,10 +166,19 @@ export default function MapScreen() {
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
             <Text style={s.backText}>← Zurück</Text>
           </TouchableOpacity>
-          <Text style={s.subHeaderTitle}>Karte</Text>
+          <Text style={s.subHeaderTitle}>🗺️ Karte</Text>
           <View style={{ minWidth: 70 }} />
         </View>
       </View>
+
+      {/* Kategorie-Filter */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.filterScroll} contentContainerStyle={s.filterRow}>
+        {CAT_FILTERS.map(f => (
+          <TouchableOpacity key={f.id} style={[s.filterChip, catFilter === f.id && s.filterChipActive]} onPress={() => setCatFilter(f.id)}>
+            <Text style={[s.filterChipText, catFilter === f.id && s.filterChipTextActive]}>{f.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
       {loading ? (
         <ActivityIndicator color={Colors.primary} size="large" style={{ marginTop: 40 }} />
@@ -210,4 +233,11 @@ const s = StyleSheet.create({
   legendItem: { alignItems: 'center', gap: 2 },
   legendDot: { fontSize: 16 },
   legendText: { fontSize: 9, color: '#888', fontWeight: '600' },
+
+  filterScroll: { flexGrow: 0, marginTop: 8 },
+  filterRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 4 },
+  filterChip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1.5, borderColor: '#D0D8E8', backgroundColor: '#fff' },
+  filterChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  filterChipText: { fontSize: 12, fontWeight: '700', color: '#555' },
+  filterChipTextActive: { color: '#fff' },
 });
