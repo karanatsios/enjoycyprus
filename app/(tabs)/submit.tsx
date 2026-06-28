@@ -60,7 +60,7 @@ type FormData = {
   description: string;
   shortDesc: string;
   // Step 4 – Zahlung
-  plan: 'free' | 'bronze' | 'silver' | 'gold' | 'platin';
+  plan: 'standard' | 'silver' | 'platin';
 };
 
 const INIT: FormData = {
@@ -68,7 +68,7 @@ const INIT: FormData = {
   street: '', plz: '', city: '', mapsLink: '',
   phone: '', whatsapp: '', email: '', website: '', openingHours: '', languages: ['DE'],
   description: '', shortDesc: '',
-  plan: 'free' as const,
+  plan: 'standard' as const,
 };
 
 function FieldLabel({ text, required }: { text: string; required?: boolean }) {
@@ -353,33 +353,21 @@ function Step3({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 // ── Step 4: Zahlung ──────────────────────────────────────────────
 const PLANS = [
   {
-    id: 'free', icon: '🆓', label: 'Free', price: 'Kostenlos',
-    sub: '30 Tage aktiv',
-    features: ['Basiseintrag', 'Kategorie & Kontakt', 'Sichtbar in der Liste'],
-    color: '#888',
+    id: 'standard', icon: '⭐', label: 'Standard', price: '59 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Vollständiger Eintrag', 'Kategorie & Kontakt', 'Sichtbar in der Liste', 'Sprachen-Chips'],
+    color: Colors.primary,
   },
   {
-    id: 'bronze', icon: '🥉', label: 'Bronze', price: '29 €/Jahr',
+    id: 'silver', icon: '🥈', label: 'Silver', price: '99 €/Jahr',
     sub: '365 Tage aktiv',
-    features: ['Erweiterter Eintrag', 'Höhere Sichtbarkeit', 'Sprachen-Chips'],
-    color: '#CD7F32',
-  },
-  {
-    id: 'silver', icon: '🥈', label: 'Silver', price: '59 €/Jahr',
-    sub: '365 Tage aktiv',
-    features: ['Alles aus Bronze', 'Hervorgehoben in Kategorie', 'WhatsApp-Button'],
+    features: ['Alles aus Standard', 'Hervorgehoben in Kategorie', 'WhatsApp-Button', 'Kartenmarkierung'],
     color: '#A8A9AD',
   },
   {
-    id: 'gold', icon: '🥇', label: 'Gold', price: '99 €/Jahr',
+    id: 'platin', icon: '💎', label: 'Platin', price: '159 €/Jahr',
     sub: '365 Tage aktiv',
-    features: ['Alles aus Silver', 'Top-Platzierung in Liste', 'Kartenmarkierung'],
-    color: '#FFD700',
-  },
-  {
-    id: 'platin', icon: '💎', label: 'Platin', price: '199 €/Jahr',
-    sub: '365 Tage aktiv',
-    features: ['Alles aus Gold', 'Erstplatzierung', 'Partner-Feature', 'Analytics'],
+    features: ['Alles aus Silver', 'Erstplatzierung in Liste', 'Partner-Feature', 'Analytics & Statistiken'],
     color: '#9B59B6',
   },
 ];
