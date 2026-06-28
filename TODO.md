@@ -8,35 +8,25 @@ Stand: 28. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x
 
 Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer ankommen:
 
-- [ ] **VAPID-Schlüssel generieren**
-  - Terminal: `npx web-push generate-vapid-keys`
-  - Public Key → Vercel Environment Variable: `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
-  - Private Key → Supabase Secret: `VAPID_PRIVATE_KEY`
-  - Anleitung: https://www.npmjs.com/package/web-push
+- [x] **VAPID-Schlüssel generiert** ✅
+  - Public Key: `BAMdRkE7TM8jYPbJ7ONbGWgKsqH74u3y8fAplr7GKK6Qz26wVykoAX-Cg8IEhNO61aHVB0a-PmrGWqHGF_r03JM`
+  - Private Key: `G2fY6cq5Q6WVC1kz1Sy-HQJDIrfF_fU0l0eJ3k_h3zQ` ⚠️ Geheim halten!
+  - Public Key bereits in `.env` eingetragen
+  - [ ] **Noch offen:** Public Key in **Vercel** eintragen → Settings → Environment Variables → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
+  - [ ] **Noch offen:** Private Key in **Supabase** eintragen → Settings → Edge Functions → Secrets → `VAPID_PRIVATE_KEY`
 
-- [ ] **Supabase Edge Function einrichten** (`send-notifications`)
-  - Aufgabe: Alle `notifications` mit `status = 'scheduled'` und `starts_at <= NOW()` abrufen
-  - Für jede Notification: `get_subscriptions_in_radius()` aufrufen → Web Push senden
-  - Status danach auf `sent` setzen + `recipients_count` speichern
-  - Supabase Dashboard → Edge Functions → New Function
-  - Cron-Trigger einrichten: alle 5 Minuten (`*/5 * * * *`)
-  - Docs: https://supabase.com/docs/guides/functions
+- [x] **Supabase Edge Function Code erstellt** ✅
+  - Datei: `supabase/functions/send-notifications/index.ts`
+  - [ ] **Noch offen:** Im Supabase Dashboard deployen:
+    1. Supabase Dashboard → Edge Functions → Deploy new function
+    2. Name: `send-notifications`
+    3. Code aus `supabase/functions/send-notifications/index.ts` einfügen
+    4. Cron-Trigger: alle 5 Minuten → `*/5 * * * *`
+    5. Docs: https://supabase.com/docs/guides/functions/schedule-functions
 
 - [ ] **Supabase DB Function `deduct_notification_credit` anlegen**
-  - Im SQL Editor ausführen:
-  ```sql
-  CREATE OR REPLACE FUNCTION deduct_notification_credit(p_user_id UUID)
-  RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER AS $$
-  BEGIN
-    UPDATE notification_credits
-    SET credits = credits - 1, updated_at = NOW()
-    WHERE user_id = p_user_id AND credits > 0;
-    IF NOT FOUND THEN
-      RAISE EXCEPTION 'Nicht genug Credits';
-    END IF;
-  END;
-  $$;
-  ```
+  - SQL-Datei: `supabase/migrations/20260628_deduct_credit_function.sql`
+  - Im Supabase SQL Editor ausführen (Inhalt der Datei kopieren → Run)
 
 ---
 
