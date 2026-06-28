@@ -34,8 +34,18 @@ const BEACHES: Beach[] = [
 ];
 
 const TODAY = new Date('2026-06-28');
+const MAX_DAYS = 60;
 const PRICE = 10;
 const DEPOSIT = 80;
+
+function addDays(d: Date, n: number) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+function daysBetween(a: Date, b: Date) {
+  return Math.round((b.getTime() - a.getTime()) / 86400000) + 1;
+}
 
 function formatDate(d: Date) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -46,8 +56,13 @@ export default function BeachboxScreen() {
   const [regionFilter, setRegionFilter] = useState<'Alle' | 'Süden' | 'Norden'>('Alle');
   const [selectedBeach, setSelectedBeach] = useState<Beach | null>(null);
   const [selectedBox, setSelectedBox] = useState<number | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date>(TODAY);
+  const [dateFrom, setDateFrom] = useState<Date>(TODAY);
+  const [dateTo, setDateTo] = useState<Date>(TODAY);
+  const [pickingEnd, setPickingEnd] = useState(false);
   const [bookingDone, setBookingDone] = useState(false);
+
+  const nights = daysBetween(dateFrom, dateTo);
+  const totalRent = nights * PRICE;
 
   const filtered = regionFilter === 'Alle' ? BEACHES : BEACHES.filter(b => b.region === regionFilter);
 
@@ -56,7 +71,31 @@ export default function BeachboxScreen() {
   function openBeach(beach: Beach) {
     setSelectedBeach(beach);
     setSelectedBox(null);
+    setDateFrom(TODAY);
+    setDateTo(TODAY);
+    setPickingEnd(false);
     setBookingDone(false);
+  }
+
+  function handleDateChip(d: Date) {
+    if (!pickingEnd) {
+      setDateFrom(d);
+      setDateTo(d);
+      setPickingEnd(true);
+    } else {
+      if (d < dateFrom) {
+        setDateFrom(d);
+        setDateTo(d);
+      } else {
+        const clamped = addDays(dateFrom, MAX_DAYS - 1);
+        setDateTo(d > clamped ? clamped : d);
+        setPickingEnd(false);
+      }
+    }
+  }
+
+  function isInRange(d: Date) {
+    return d >= dateFrom && d <= dateTo;
   }
 
   function handleBook() {
@@ -153,8 +192,9 @@ export default function BeachboxScreen() {
                 <Text style={s.successIcon}>✅</Text>
                 <Text style={s.successTitle}>Buchung bestätigt!</Text>
                 <Text style={s.successSub}>
-                  Box #{selectedBox} am {selectedBeach?.name}{'\n'}
-                  {formatDate(selectedDate)} · 10 €
+                  Box #{selectedBox} · {selectedBeach?.name}{'\n'}
+                  {formatDate(dateFrom)} – {formatDate(dateTo)}{'\n'}
+                  {nights} {nights === 1 ? 'Tag' : 'Tage'} · {totalRent} €
                 </Text>
                 <Text style={s.successNote}>Du erhältst deinen Code per E-Mail zur Entsperrung der Box.</Text>
                 <View style={s.depositConfirm}>
@@ -181,23 +221,40 @@ export default function BeachboxScreen() {
                 </View>
 
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  {/* Datum */}
-                  <Text style={s.sectionLabel}>DATUM</Text>
+                  {/* Zeitraum */}
+                  <Text style={s.sectionLabel}>
+                    {pickingEnd ? 'ENDDATUM WÄHLEN' : 'STARTDATUM WÄHLEN'} (max. {MAX_DAYS} Tage)
+                  </Text>
+                  <View style={s.rangeHeader}>
+                    <TouchableOpacity style={[s.rangeBtn, !pickingEnd && s.rangeBtnActive]} onPress={() => setPickingEnd(false)}>
+                      <Text style={s.rangeBtnLabel}>Von</Text>
+                      <Text style={[s.rangeBtnDate, !pickingEnd && s.rangeBtnDateActive]}>{formatDate(dateFrom)}</Text>
+                    </TouchableOpacity>
+                    <Text style={s.rangeArrow}>→</Text>
+                    <TouchableOpacity style={[s.rangeBtn, pickingEnd && s.rangeBtnActive]} onPress={() => setPickingEnd(true)}>
+                      <Text style={s.rangeBtnLabel}>Bis</Text>
+                      <Text style={[s.rangeBtnDate, pickingEnd && s.rangeBtnDateActive]}>{formatDate(dateTo)}</Text>
+                    </TouchableOpacity>
+                    <View style={s.nightsBadge}>
+                      <Text style={s.nightsBadgeText}>{nights}T</Text>
+                    </View>
+                  </View>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.dateScroll}>
-                    {Array.from({ length: 14 }, (_, i) => {
-                      const d = new Date(TODAY);
-                      d.setDate(TODAY.getDate() + i);
-                      const isSelected = d.toDateString() === selectedDate.toDateString();
+                    {Array.from({ length: MAX_DAYS }, (_, i) => {
+                      const d = addDays(TODAY, i);
+                      const inRange = isInRange(d);
+                      const isStart = d.toDateString() === dateFrom.toDateString();
+                      const isEnd = d.toDateString() === dateTo.toDateString();
                       return (
                         <TouchableOpacity
                           key={i}
-                          style={[s.dateChip, isSelected && s.dateChipActive]}
-                          onPress={() => setSelectedDate(new Date(d))}
+                          style={[s.dateChip, inRange && s.dateChipInRange, (isStart || isEnd) && s.dateChipActive]}
+                          onPress={() => handleDateChip(d)}
                         >
-                          <Text style={[s.dateChipDay, isSelected && s.dateChipTextActive]}>
+                          <Text style={[s.dateChipDay, (isStart || isEnd) && s.dateChipTextActive, inRange && !isStart && !isEnd && s.dateChipTextRange]}>
                             {d.toLocaleDateString('de-DE', { weekday: 'short' })}
                           </Text>
-                          <Text style={[s.dateChipNum, isSelected && s.dateChipTextActive]}>
+                          <Text style={[s.dateChipNum, (isStart || isEnd) && s.dateChipTextActive, inRange && !isStart && !isEnd && s.dateChipTextRange]}>
                             {d.getDate()}.{d.getMonth() + 1}.
                           </Text>
                         </TouchableOpacity>
@@ -247,15 +304,17 @@ export default function BeachboxScreen() {
                       <Text style={s.summaryTitle}>Zusammenfassung</Text>
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Strand</Text><Text style={s.summaryVal}>{selectedBeach?.name}</Text></View>
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Box</Text><Text style={s.summaryVal}>#{selectedBox}</Text></View>
-                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Datum</Text><Text style={s.summaryVal}>{formatDate(selectedDate)}</Text></View>
-                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Tagesmiete</Text><Text style={[s.summaryVal, { color: Colors.primary, fontWeight: '800' }]}>{PRICE} €</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Von</Text><Text style={s.summaryVal}>{formatDate(dateFrom)}</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Bis</Text><Text style={s.summaryVal}>{formatDate(dateTo)}</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Dauer</Text><Text style={s.summaryVal}>{nights} {nights === 1 ? 'Tag' : 'Tage'}</Text></View>
+                      <View style={s.summaryRow}><Text style={s.summaryLabel}>Miete ({nights} × {PRICE} €)</Text><Text style={[s.summaryVal, { color: Colors.primary, fontWeight: '800' }]}>{totalRent} €</Text></View>
                       <View style={s.summaryRow}><Text style={s.summaryLabel}>Pfand (reserviert)</Text><Text style={[s.summaryVal, { color: '#888' }]}>{DEPOSIT} €</Text></View>
                       <View style={s.summaryTotal}>
                         <Text style={s.summaryTotalLabel}>Gesamt autorisiert</Text>
-                        <Text style={s.summaryTotalVal}>{PRICE + DEPOSIT} €</Text>
+                        <Text style={s.summaryTotalVal}>{totalRent + DEPOSIT} €</Text>
                       </View>
                       <Text style={s.summaryPfandNote}>
-                        ✅ Nach schadensfreier Rückgabe: {DEPOSIT} € werden freigegeben. Du zahlst effektiv nur {PRICE} €.
+                        ✅ Nach schadensfreier Rückgabe: {DEPOSIT} € Pfand freigegeben. Du zahlst effektiv {totalRent} €.
                       </Text>
                     </View>
                   )}
@@ -267,7 +326,7 @@ export default function BeachboxScreen() {
                     disabled={!selectedBox}
                   >
                     <Text style={s.confirmBtnText}>
-                      {selectedBox ? `Box #${selectedBox} buchen · ${PRICE} €` : 'Box auswählen'}
+                      {selectedBox ? `Box #${selectedBox} buchen · ${totalRent} € (${nights}T)` : 'Box auswählen'}
                     </Text>
                   </TouchableOpacity>
                   <View style={{ height: 30 }} />
@@ -369,16 +428,36 @@ const s = StyleSheet.create({
     marginBottom: 10, marginTop: 8,
   },
 
+  rangeHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10,
+  },
+  rangeBtn: {
+    flex: 1, backgroundColor: '#F0F4FA', borderRadius: 12,
+    padding: 10, borderWidth: 1.5, borderColor: '#D0D8E8',
+  },
+  rangeBtnActive: { borderColor: Colors.primary, backgroundColor: Colors.primary + '10' },
+  rangeBtnLabel: { fontSize: 10, fontWeight: '700', color: '#888', marginBottom: 2 },
+  rangeBtnDate: { fontSize: 13, fontWeight: '800', color: '#1A1A2E' },
+  rangeBtnDateActive: { color: Colors.primary },
+  rangeArrow: { fontSize: 16, color: '#aaa' },
+  nightsBadge: {
+    backgroundColor: Colors.primary, borderRadius: 10,
+    paddingHorizontal: 8, paddingVertical: 5,
+  },
+  nightsBadgeText: { color: '#fff', fontSize: 12, fontWeight: '800' },
+
   dateScroll: { marginBottom: 8 },
   dateChip: {
-    alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10,
-    borderRadius: 14, borderWidth: 1.5, borderColor: '#D0D8E8',
-    backgroundColor: '#fff', marginRight: 8,
+    alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8,
+    borderRadius: 12, borderWidth: 1.5, borderColor: '#D0D8E8',
+    backgroundColor: '#fff', marginRight: 6,
   },
+  dateChipInRange: { backgroundColor: Colors.primary + '15', borderColor: Colors.primary + '40' },
   dateChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   dateChipDay: { fontSize: 10, fontWeight: '700', color: '#888' },
-  dateChipNum: { fontSize: 14, fontWeight: '800', color: '#1A1A2E', marginTop: 2 },
+  dateChipNum: { fontSize: 13, fontWeight: '800', color: '#1A1A2E', marginTop: 2 },
   dateChipTextActive: { color: '#fff' },
+  dateChipTextRange: { color: Colors.primary },
 
   boxGrid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16,
