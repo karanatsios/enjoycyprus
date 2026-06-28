@@ -1,6 +1,6 @@
 # Inside Cyprus – Funktionsliste & Arbeitsweise
 
-Stand: Juni 2026
+Stand: 28. Juni 2026 — zuletzt automatisch aktualisiert
 
 ---
 
@@ -44,7 +44,7 @@ Vierstufige Struktur mit allen weiteren Screens:
 **INFORMATIONEN**
 - 👥 Community – Inside Cyprus Community
 - ❓ Zypern FAQ – 100 Fragen & Antworten (geplant)
-- 📰 News – Nachrichten aus Zypern (geplant)
+- 📰 News – Nachrichten aus Zypern ✅
 - 💼 Jobs in Zypern – Stellenangebote (geplant)
 - 🚨 Notfallnummern – Wichtige Nummern auf Zypern
 - 🏥 Krankenhäuser & Botschaften – Adressen und Karte (geplant)
@@ -86,6 +86,12 @@ Vierstufige Struktur mit allen weiteren Screens:
 ### 🚌 Bus
 - Busverbindungen auf Zypern suchen
 - Anzeige von Umstieg und Haltestellen
+
+### 📰 News (news)
+- Aktuelle Nachrichtenquellen aus Zypern (Süden & Norden)
+- Filter: Alle / Süden / Norden
+- 7 Quellen: Cyprus Mail, Kathimerini, Financial Mirror, Cyprus Today Online, Cyprus Scene + je ein deutschsprachiger Inside-Cyprus-Überblick
+- Alle Links öffnen direkt im Browser (externer Link)
 
 ### 🌤️ Wetter (weather)
 - 7-Tage-Wettervorschau für Zypern
@@ -215,7 +221,6 @@ Nur für autorisierte Administratoren zugänglich (`karanatsios@mailbox.org`, `v
 ## Geplante Features (Roadmap)
 
 - 🌐 Zypern FAQ – 100 häufige Fragen mit Antworten
-- 📰 News-Feed – aktuelle Nachrichten aus Zypern
 - 💼 Jobportal – Stellenangebote suchen und aufgeben
 - 🏥 Krankenhäuser & Botschaften – mit Karte und Kontaktdaten
 - 📍 Sehenswürdigkeiten – Top-Orte der Insel mit Fotos
