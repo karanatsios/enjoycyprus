@@ -11,9 +11,10 @@ import { supabase } from '../../lib/supabase';
 const ADMIN_EMAILS = ['karanatsios@mailbox.org', 'vitali.vs@gmx.de'];
 
 const PLANS = [
-  { id: 'standard', label: 'Standard', score: 33,  price: '59 €/Jahr',  color: Colors.primary, days: 365 },
-  { id: 'silver',   label: 'Silver',   score: 66,  price: '99 €/Jahr',  color: '#A8A9AD',      days: 365 },
-  { id: 'platin',   label: 'Platin',   score: 100, price: '159 €/Jahr', color: '#9B59B6',      days: 365 },
+  { id: 'standard', label: 'Standard', score: 25,  price: '59 €/Jahr',  color: '#CD7F32', days: 365 },
+  { id: 'silver',   label: 'Silver',   score: 50,  price: '79 €/Jahr',  color: '#A8A9AD', days: 365 },
+  { id: 'gold',     label: 'Gold',     score: 75,  price: '99 €/Jahr',  color: '#FFD700', days: 365 },
+  { id: 'platin',   label: 'Platin',   score: 100, price: '159 €/Jahr', color: '#9B59B6', days: 365 },
 ];
 
 const STATUS_COLORS: Record<string, string> = {

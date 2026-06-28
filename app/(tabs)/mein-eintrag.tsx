@@ -17,7 +17,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending: '⏳ Wird geprüft', approved: '✅ Aktiv', expired: '⚠️ Abgelaufen', rejected: '❌ Abgelehnt', inactive: '⏸ Inaktiv',
 };
 const PLAN_COLORS: Record<string, string> = {
-  standard: '#1565C0', silver: '#A8A9AD', platin: '#9B59B6',
+  standard: '#CD7F32', silver: '#A8A9AD', gold: '#FFD700', platin: '#9B59B6',
 };
 
 type Mode = 'login' | 'register' | 'forgot';

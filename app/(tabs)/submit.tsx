@@ -60,7 +60,7 @@ type FormData = {
   description: string;
   shortDesc: string;
   // Step 4 – Zahlung
-  plan: 'standard' | 'silver' | 'platin';
+  plan: 'standard' | 'silver' | 'gold' | 'platin';
 };
 
 const INIT: FormData = {
@@ -356,18 +356,24 @@ const PLANS = [
     id: 'standard', icon: '⭐', label: 'Standard', price: '59 €/Jahr',
     sub: '365 Tage aktiv',
     features: ['Vollständiger Eintrag', 'Kategorie & Kontakt', 'Sichtbar in der Liste', 'Sprachen-Chips'],
-    color: Colors.primary,
+    color: '#CD7F32',
   },
   {
-    id: 'silver', icon: '🥈', label: 'Silver', price: '99 €/Jahr',
+    id: 'silver', icon: '🥈', label: 'Silver', price: '79 €/Jahr',
     sub: '365 Tage aktiv',
     features: ['Alles aus Standard', 'Hervorgehoben in Kategorie', 'WhatsApp-Button', 'Kartenmarkierung'],
     color: '#A8A9AD',
   },
   {
+    id: 'gold', icon: '🥇', label: 'Gold', price: '99 €/Jahr',
+    sub: '365 Tage aktiv',
+    features: ['Alles aus Silver', 'Top-Platzierung in Liste', 'Erweiterte Sichtbarkeit', 'Priorität bei Suche'],
+    color: '#FFD700',
+  },
+  {
     id: 'platin', icon: '💎', label: 'Platin', price: '159 €/Jahr',
     sub: '365 Tage aktiv',
-    features: ['Alles aus Silver', 'Erstplatzierung in Liste', 'Partner-Feature', 'Analytics & Statistiken'],
+    features: ['Alles aus Gold', 'Erstplatzierung', 'Partner-Feature', 'Analytics & Statistiken'],
     color: '#9B59B6',
   },
 ];
