@@ -40,7 +40,7 @@ type UserBusiness = {
 };
 
 type UserProfile = {
-  id: string; email: string; role: string; created_at: string;
+  id: string; email: string; role: string; tag?: string; created_at: string;
   isPartner?: boolean; partnerCode?: string;
   partnerBalance?: number; partnerProvisions?: number;
   userBusinesses?: UserBusiness[];
@@ -113,21 +113,34 @@ export default function AdminScreen() {
         if (!bizMap.has(b.user_id)) bizMap.set(b.user_id, []);
         bizMap.get(b.user_id)!.push(b);
       });
-      setUsers(profiles.map(p => ({
-        ...p,
-        isPartner: partnerMap.has(p.id),
-        partnerCode: partnerMap.get(p.id)?.affiliate_code,
-        partnerBalance: partnerMap.get(p.id)?.balance ?? 0,
-        partnerProvisions: partnerMap.get(p.id)?.provisions ?? 0,
-        userBusinesses: bizMap.get(p.id) ?? [],
-      })));
+      const enriched = profiles.map(p => {
+        const isPartner = partnerMap.has(p.id);
+        const tag = p.role === 'admin' ? 'Admin' : isPartner ? 'Affiliate-Partner' : 'Kunde';
+        return {
+          ...p,
+          tag,
+          isPartner,
+          partnerCode: partnerMap.get(p.id)?.affiliate_code,
+          partnerBalance: partnerMap.get(p.id)?.balance ?? 0,
+          partnerProvisions: partnerMap.get(p.id)?.provisions ?? 0,
+          userBusinesses: bizMap.get(p.id) ?? [],
+        };
+      });
+      setUsers(enriched);
+      // Tags in DB synchronisieren (ohne await um UI nicht zu blockieren)
+      enriched.forEach(u => {
+        supabase.from('profiles').update({ tag: u.tag }).eq('id', u.id).then(() => {});
+      });
     }
   };
 
   const toggleAdmin = async (userId: string, currentRole: string) => {
     const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
-    // Echtzeit-Abo aktualisiert automatisch — kein manuelles fetchUsers() nötig
+    const isPartnerUser = users.find(u => u.id === userId)?.isPartner;
+    const tag = newRole === 'admin' ? 'Admin' : isPartnerUser ? 'Affiliate-Partner' : 'Kunde';
+    await supabase.from('profiles').update({ role: newRole, tag }).eq('id', userId);
+    // Sofort lokal aktualisieren – nicht auf Realtime warten
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
   };
 
   const handleLogin = async () => {
@@ -285,6 +298,9 @@ export default function AdminScreen() {
                 <View style={bs.cardTop}>
                   <View style={bs.cardInfo}>
                     <Text style={bs.cardName}>{item.email}</Text>
+                    <View style={[bs.tagBadge, { backgroundColor: rc.bg, borderColor: rc.color }]}>
+                      <Text style={[bs.tagBadgeText, { color: rc.color }]}>{rc.icon} {item.tag ?? rc.label}</Text>
+                    </View>
                     <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
                   </View>
                   {/* Rolle Badge */}
@@ -499,6 +515,12 @@ const bs = StyleSheet.create({
   bizRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   bizName: { fontSize: 12, fontWeight: '700', color: '#1A1A2E' },
   bizMeta: { fontSize: 10, marginTop: 1 },
+
+  tagBadge: {
+    alignSelf: 'flex-start', borderWidth: 1.5, borderRadius: 10,
+    paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3,
+  },
+  tagBadgeText: { fontSize: 11, fontWeight: '800' },
 
   roleBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 5,

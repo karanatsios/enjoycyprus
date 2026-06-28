@@ -85,6 +85,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="mein-eintrag" options={{ href: null }} />
       <Tabs.Screen name="partner" options={{ href: null }} />
       <Tabs.Screen name="admin" options={{ href: null }} />
+      <Tabs.Screen name="planner" options={{ href: null }} />
+      <Tabs.Screen name="beachbox" options={{ href: null }} />
     </Tabs>
   );
 }
