@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Linking,
+  TouchableOpacity, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
+
+function openLink(url: string) {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } else {
+    import('react-native').then(({ Linking }) => Linking.openURL(url));
+  }
+}
 
 type NewsSource = {
   flag: string;
@@ -148,7 +156,7 @@ function NewsCard({ item }: { item: NewsSource }) {
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.75}
-      onPress={() => Linking.openURL(item.url)}
+      onPress={() => openLink(item.url)}
     >
       <Text style={styles.flag}>{item.flag}</Text>
       <View style={styles.cardText}>
