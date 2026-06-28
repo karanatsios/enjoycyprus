@@ -29,6 +29,12 @@ type Business = {
 
 type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'users';
 
+const ROLE_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
+  admin:   { label: 'Admin',   color: '#9B59B6', bg: '#F5EEF8', icon: '🔐' },
+  partner: { label: 'Partner', color: '#D4891A', bg: '#FEF9E7', icon: '⭐' },
+  user:    { label: 'Kunde',   color: '#27AE60', bg: '#EAFAF1', icon: '👤' },
+};
+
 type UserBusiness = {
   company_name: string; plan: string; plan_score: number; status: string; expires_at: string | null;
 };
@@ -270,58 +276,83 @@ export default function AdminScreen() {
           contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 30, paddingTop: 8 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<View style={bs.empty}><Text style={bs.emptyText}>Keine Nutzer</Text></View>}
-          renderItem={({ item }) => (
-            <View style={bs.card}>
-              <View style={bs.cardTop}>
-                <View style={bs.cardInfo}>
-                  <Text style={bs.cardName}>{item.email}</Text>
-                  <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
-                  {item.isPartner && (
-                    <View style={bs.partnerBlock}>
-                      <Text style={bs.partnerLabel}>⭐ Partner · {item.partnerCode}</Text>
-                      <Text style={bs.partnerMeta}>💰 Guthaben: {item.partnerBalance?.toFixed(2)} € · 📦 Provisionen: {item.partnerProvisions}</Text>
+          renderItem={({ item }) => {
+            const effectiveRole = item.role === 'admin' ? 'admin' : item.isPartner ? 'partner' : 'user';
+            const rc = ROLE_CONFIG[effectiveRole];
+            return (
+              <View style={bs.card}>
+                {/* Kopfzeile: E-Mail + Rolle */}
+                <View style={bs.cardTop}>
+                  <View style={bs.cardInfo}>
+                    <Text style={bs.cardName}>{item.email}</Text>
+                    <Text style={bs.cardMeta}>Registriert: {new Date(item.created_at).toLocaleDateString('de-DE')}</Text>
+                  </View>
+                  {/* Rolle Badge */}
+                  <View style={[bs.roleBadge, { backgroundColor: rc.bg, borderColor: rc.color }]}>
+                    <Text style={bs.roleBadgeIcon}>{rc.icon}</Text>
+                    <Text style={[bs.roleBadgeText, { color: rc.color }]}>{rc.label}</Text>
+                  </View>
+                </View>
+
+                {/* Partner-Info */}
+                {item.isPartner && (
+                  <View style={bs.partnerBlock}>
+                    <Text style={bs.partnerLabel}>⭐ Partner-Code: {item.partnerCode}</Text>
+                    <Text style={bs.partnerMeta}>💰 Guthaben: {item.partnerBalance?.toFixed(2)} € · 📦 Provisionen: {item.partnerProvisions}</Text>
+                  </View>
+                )}
+
+                {/* Berechtigungs-Umschalter */}
+                <View style={bs.permRow}>
+                  <Text style={bs.permLabel}>Berechtigung:</Text>
+                  <TouchableOpacity
+                    style={[bs.permBtn, item.role === 'admin' ? bs.permBtnActive : bs.permBtnInactive]}
+                    onPress={() => toggleAdmin(item.id, item.role)}
+                  >
+                    <Text style={bs.permBtnIcon}>{item.role === 'admin' ? '🔐' : '👤'}</Text>
+                    <Text style={[bs.permBtnText, { color: item.role === 'admin' ? '#9B59B6' : '#888' }]}>
+                      {item.role === 'admin' ? 'Admin – Tippen zum Entfernen' : 'Kein Admin – Tippen zum Ernennen'}
+                    </Text>
+                    <View style={[bs.permSwitch, item.role === 'admin' && bs.permSwitchOn]}>
+                      <View style={[bs.permSwitchDot, item.role === 'admin' && bs.permSwitchDotOn]} />
                     </View>
-                  )}
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  style={[bs.roleToggle, item.role === 'admin' && bs.roleToggleActive]}
-                  onPress={() => toggleAdmin(item.id, item.role)}
-                >
-                  <View style={[bs.roleToggleDot, item.role === 'admin' && bs.roleToggleDotActive]} />
-                  <Text style={[bs.roleToggleText, item.role === 'admin' && { color: '#fff' }]}>
-                    {item.role === 'admin' ? '🔐 Admin' : 'User'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {(item.userBusinesses ?? []).length > 0 && (
-                <View style={bs.bizSection}>
-                  <Text style={bs.bizSectionTitle}>🏢 Einträge</Text>
-                  {(item.userBusinesses ?? []).map((b, i) => {
-                    const p = PLANS.find(x => x.id === b.plan) ?? PLANS[0];
-                    const expired = b.expires_at ? new Date(b.expires_at) < new Date() : false;
-                    return (
-                      <View key={i} style={bs.bizRow}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={bs.bizName}>{b.company_name}</Text>
-                          {b.expires_at && (
+
+                {/* Einträge */}
+                {(item.userBusinesses ?? []).length > 0 && (
+                  <View style={bs.bizSection}>
+                    <Text style={bs.bizSectionTitle}>🏢 EINTRÄGE ({item.userBusinesses?.length})</Text>
+                    {(item.userBusinesses ?? []).map((b, i) => {
+                      const p = PLANS.find(x => x.id === b.plan) ?? PLANS[0];
+                      const expired = b.expires_at ? new Date(b.expires_at) < new Date() : false;
+                      return (
+                        <View key={i} style={bs.bizRow}>
+                          <View style={{ flex: 1 }}>
+                            <Text style={bs.bizName}>{b.company_name}</Text>
                             <Text style={[bs.bizMeta, { color: expired ? '#C0392B' : '#27AE60' }]}>
-                              {expired ? '⚠️ Abgelaufen' : '✓ Aktiv'} bis {new Date(b.expires_at).toLocaleDateString('de-DE')}
+                              {b.expires_at
+                                ? `${expired ? '⚠️ Abgelaufen' : '✓ Aktiv'} bis ${new Date(b.expires_at).toLocaleDateString('de-DE')}`
+                                : '⏳ Kein Ablaufdatum'}
                             </Text>
-                          )}
+                          </View>
+                          <View style={[bs.planBadge, { borderColor: p.color }]}>
+                            <Text style={[bs.planBadgeText, { color: p.color }]}>{p.label}</Text>
+                          </View>
+                          <View style={[bs.statusBadge, { borderColor: STATUS_COLORS[b.status] ?? '#888', backgroundColor: (STATUS_COLORS[b.status] ?? '#888') + '20' }]}>
+                            <Text style={[bs.statusText, { color: STATUS_COLORS[b.status] ?? '#888' }]}>{b.status}</Text>
+                          </View>
                         </View>
-                        <View style={[bs.planBadge, { borderColor: p.color }]}>
-                          <Text style={[bs.planBadgeText, { color: p.color }]}>{p.label}</Text>
-                        </View>
-                        <View style={[bs.statusBadge, { borderColor: STATUS_COLORS[b.status] ?? '#888', backgroundColor: (STATUS_COLORS[b.status] ?? '#888') + '20' }]}>
-                          <Text style={[bs.statusText, { color: STATUS_COLORS[b.status] ?? '#888' }]}>{b.status}</Text>
-                        </View>
-                      </View>
-                    );
-                  })}
-                </View>
-              )}
-            </View>
-          )}
+                      );
+                    })}
+                  </View>
+                )}
+                {(item.userBusinesses ?? []).length === 0 && (
+                  <Text style={bs.noBiz}>Noch keine Einträge</Text>
+                )}
+              </View>
+            );
+          }}
         />
       ) : loading ? (
         <ActivityIndicator color={Colors.primary} size="large" style={{ marginTop: 30 }} />
@@ -469,13 +500,33 @@ const bs = StyleSheet.create({
   bizName: { fontSize: 12, fontWeight: '700', color: '#1A1A2E' },
   bizMeta: { fontSize: 10, marginTop: 1 },
 
-  roleToggle: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1.5, borderColor: '#D0D8E8', borderRadius: 20,
-    paddingHorizontal: 12, paddingVertical: 7, backgroundColor: '#F5F6FA',
+  roleBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    borderWidth: 1.5, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5,
   },
-  roleToggleActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  roleToggleDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#ccc' },
-  roleToggleDotActive: { backgroundColor: '#fff' },
-  roleToggleText: { fontSize: 12, fontWeight: '700', color: '#888' },
+  roleBadgeIcon: { fontSize: 13 },
+  roleBadgeText: { fontSize: 12, fontWeight: '800' },
+
+  permRow: { marginTop: 10, gap: 4 },
+  permLabel: { fontSize: 10, fontWeight: '800', color: '#999', letterSpacing: 0.8 },
+  permBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    borderWidth: 1.5, borderRadius: 12, padding: 10,
+  },
+  permBtnActive: { borderColor: '#9B59B6', backgroundColor: '#F5EEF8' },
+  permBtnInactive: { borderColor: '#E0E0E8', backgroundColor: '#F8F9FA' },
+  permBtnIcon: { fontSize: 16 },
+  permBtnText: { flex: 1, fontSize: 12, fontWeight: '700' },
+  permSwitch: {
+    width: 36, height: 20, borderRadius: 10, backgroundColor: '#E0E0E8',
+    justifyContent: 'center', paddingHorizontal: 2,
+  },
+  permSwitchOn: { backgroundColor: '#9B59B6' },
+  permSwitchDot: {
+    width: 16, height: 16, borderRadius: 8, backgroundColor: '#fff',
+    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 2, elevation: 2,
+  },
+  permSwitchDotOn: { alignSelf: 'flex-end' },
+
+  noBiz: { fontSize: 11, color: '#bbb', marginTop: 8, fontStyle: 'italic' },
 });

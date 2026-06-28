@@ -421,14 +421,24 @@ function Step4({ data, set }: { data: FormData; set: (d: Partial<FormData>) => v
 }
 
 // ── Main Screen ──────────────────────────────────────────────────
+const ADMIN_EMAILS = ['karanatsios@mailbox.org', 'vitali.vs@gmx.de'];
+
 export default function SubmitScreen() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(INIT);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [testMode, setTestMode] = useState(false);
 
   const set = (d: Partial<FormData>) => setData(prev => ({ ...prev, ...d }));
+
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: s }) => {
+      if (ADMIN_EMAILS.includes(s.session?.user?.email ?? '')) setIsAdmin(true);
+    });
+  }, []);
 
   const canNext = () => {
     if (step === 0) return data.companyName.trim() && data.category && data.regionGroup && data.region;
@@ -469,7 +479,8 @@ export default function SubmitScreen() {
       short_desc: data.shortDesc,
       description: data.description,
       plan: data.plan,
-      status: 'pending',
+      plan_score: testMode ? 100 : undefined,
+      status: testMode ? 'approved' : 'pending',
     });
     setSaving(false);
 
@@ -517,6 +528,19 @@ export default function SubmitScreen() {
         {step === 2 && <Step3 data={data} set={set} />}
         {step === 3 && <Step4 data={data} set={set} />}
       </View>
+
+      {/* Admin Testdaten-Toggle */}
+      {isAdmin && step === 3 && (
+        <TouchableOpacity style={s.testModeRow} onPress={() => setTestMode(t => !t)}>
+          <View style={[s.testModeCheckbox, testMode && s.testModeCheckboxOn]}>
+            {testMode && <Text style={s.testModeCheckmark}>✓</Text>}
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.testModeLabel}>🧪 Testdaten (Admin)</Text>
+            <Text style={s.testModeSub}>Eintrag wird sofort freigeschaltet – ohne Zahlung, mit Platin-Score</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
       {/* Footer button */}
       <View style={s.footer}>
@@ -653,6 +677,22 @@ const s = StyleSheet.create({
   nextBtn: { backgroundColor: Colors.primary, borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
   nextBtnDisabled: { backgroundColor: '#C0C0C0' },
   nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+
+  testModeRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginHorizontal: 16, marginBottom: 8,
+    backgroundColor: '#FFF8E1', borderRadius: 14, padding: 12,
+    borderWidth: 1.5, borderColor: '#F39C12',
+  },
+  testModeCheckbox: {
+    width: 24, height: 24, borderRadius: 6, borderWidth: 2,
+    borderColor: '#F39C12', backgroundColor: '#fff',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  testModeCheckboxOn: { backgroundColor: '#F39C12', borderColor: '#D4891A' },
+  testModeCheckmark: { color: '#fff', fontSize: 14, fontWeight: '800' },
+  testModeLabel: { fontSize: 13, fontWeight: '800', color: '#B7770D' },
+  testModeSub: { fontSize: 11, color: '#7D6608', marginTop: 2 },
 
   successWrap: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30, gap: 16 },
   successIcon: { fontSize: 64 },
