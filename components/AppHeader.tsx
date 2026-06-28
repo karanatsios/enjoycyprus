@@ -52,7 +52,7 @@ const MENU_SECTIONS = [
     title: 'INFORMATIONEN',
     items: [
       { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
-      { icon: '❓', label: 'Zypern FAQ', sub: '100 Fragen & Antworten zu Zypern', route: null },
+      { icon: '❓', label: 'Zypern FAQ', sub: '100 Fragen & Antworten zu Zypern', route: '/(tabs)/faq' },
       { icon: '📰', label: 'News', sub: 'Nachrichten aus Zypern', route: '/(tabs)/news' },
       { icon: '💼', label: 'Jobs in Zypern', sub: 'Stellenangebote suchen & filtern', route: null },
       { icon: '🚨', label: 'Notfallnummern', sub: 'Wichtige Nummern auf Zypern', route: '/(tabs)/emergency' },
