@@ -33,6 +33,7 @@ const MENU_SECTIONS = [
   {
     title: 'NAVIGATION',
     items: [
+      { icon: '🌴', label: 'Urlaubsplaner', sub: 'KI-Reiseplaner für Zypern', route: '/(tabs)/planner' },
       { icon: '🏠', label: 'Start', sub: 'Kategorien und Suche', route: '/(tabs)/' },
       { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
       { icon: '🗺️', label: 'Karte', sub: 'Orte auf der Karte finden', route: '/(tabs)/map' },
