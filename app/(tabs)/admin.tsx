@@ -472,15 +472,19 @@ const bs = StyleSheet.create({
     flex: 1, backgroundColor: '#fff', borderRadius: 12, padding: 10, alignItems: 'center',
     shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
   },
-  statNum: { fontSize: 22, fontWeight: '800' },
-  statLabel: { fontSize: 9, color: '#888', fontWeight: '600', marginTop: 2 },
+  statNum: { fontSize: 22, fontWeight: '800', textAlign: 'center' },
+  statLabel: { fontSize: 9, color: '#888', fontWeight: '600', marginTop: 2, textAlign: 'center' },
 
   tabScroll: { flexGrow: 0 },
-  tabRow: { paddingHorizontal: 14, gap: 8, paddingBottom: 8 },
-  tabChip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1.5, borderColor: '#D0D8E8', backgroundColor: '#fff' },
+  tabRow: { paddingHorizontal: 14, gap: 8, paddingBottom: 8, alignItems: 'center' },
+  tabChip: {
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
+    borderWidth: 1.5, borderColor: '#D0D8E8', backgroundColor: '#fff',
+    alignItems: 'center', justifyContent: 'center',
+  },
   tabChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  tabChipText: { fontSize: 12, fontWeight: '700', color: '#666' },
-  tabChipTextActive: { color: '#fff' },
+  tabChipText: { fontSize: 12, fontWeight: '700', color: '#666', textAlign: 'center' },
+  tabChipTextActive: { color: '#fff', textAlign: 'center' },
 
   card: {
     backgroundColor: '#fff', borderRadius: 16, padding: 14, marginBottom: 10,
