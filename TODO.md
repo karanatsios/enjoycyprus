@@ -15,14 +15,13 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
   - [ ] **Noch offen:** Public Key in **Vercel** eintragen → Settings → Environment Variables → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
   - [ ] **Noch offen:** Private Key in **Supabase** eintragen → Settings → Edge Functions → Secrets → `VAPID_PRIVATE_KEY`
 
-- [x] **Supabase Edge Function Code erstellt** ✅
-  - Datei: `supabase/functions/send-notifications/index.ts`
-  - [ ] **Noch offen:** Im Supabase Dashboard deployen:
-    1. Supabase Dashboard → Edge Functions → Deploy new function
-    2. Name: `send-notifications`
-    3. Code aus `supabase/functions/send-notifications/index.ts` einfügen
-    4. Cron-Trigger: alle 5 Minuten → `*/5 * * * *`
-    5. Docs: https://supabase.com/docs/guides/functions/schedule-functions
+- [x] **Supabase Edge Function deployed** ✅
+  - Name: `send-notifications`
+  - URL: `https://jewactcyhvzrceoiajau.supabase.co/functions/v1/send-notifications`
+  - [ ] **Cron-Trigger noch offen** (benötigt Supabase Pro Plan oder externes Tool)
+    - Option A: Supabase Pro ($25/Monat) → dann direkt in Dashboard unter „Cron Jobs"
+    - Option B: cron-job.org (kostenlos) → URL oben alle 5 Minuten aufrufen lassen
+    - **→ Nach App-Launch und Upgrade erledigen**
 
 - [ ] **Supabase DB Function `deduct_notification_credit` anlegen**
   - SQL-Datei: `supabase/migrations/20260628_deduct_credit_function.sql`
