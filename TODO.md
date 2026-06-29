@@ -21,19 +21,14 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 - [x] **Cron-Job eingerichtet** ✅ (pg_cron auf Supabase Pro, alle 5 Minuten)
 
-- [ ] **Supabase DB Function `deduct_notification_credit` anlegen**
-  - SQL-Datei: `supabase/migrations/20260628_deduct_credit_function.sql`
-  - Im Supabase SQL Editor ausführen (Inhalt kopieren → Run)
+- [x] **Supabase DB Function `deduct_notification_credit` angelegt** ✅
 
 ---
 
 ## 🔴 Kritisch – Karte (Supabase-Tabellen anlegen)
 
-- [ ] **`places` + `place_reviews` Tabellen anlegen + Seed-Daten einspielen**
-  - SQL-Datei: `supabase/migrations/20260628_places_reviews.sql`
-  - Im Supabase SQL Editor ausführen
-  - Enthält: 15 Sehenswürdigkeiten, 8 Strände, 5 Krankenhäuser, 5 Tourist-Infos
-  - ⚠️ Bis dahin werden statische Fallback-Daten angezeigt (funktioniert bereits!)
+- [x] **`places` + `place_reviews` Tabellen anlegen + Seed-Daten einspielen** ✅
+  - 15 Sehenswürdigkeiten, 8 Strände, 6 Krankenhäuser, 5 Tourist-Infos in Supabase
 
 ---
 
@@ -113,8 +108,8 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 ## 📋 Morgen als nächstes
 
-1. **Supabase SQL ausführen:** `supabase/migrations/20260628_places_reviews.sql` → Karte lädt dann aus echter DB
-2. **Supabase SQL ausführen:** `supabase/migrations/20260628_deduct_credit_function.sql` → Credit-Abzug bei Push-Aktionen
+1. ~~Supabase SQL: places + place_reviews~~ ✅
+2. ~~Supabase SQL: deduct_notification_credit~~ ✅
 3. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
 4. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
 5. **Impressum / AGB** – rechtliche Pflichtseiten anlegen
