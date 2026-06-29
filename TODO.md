@@ -13,19 +13,27 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
   - Private Key: `G2fY6cq5Q6WVC1kz1Sy-HQJDIrfF_fU0l0eJ3k_h3zQ` ⚠️ Geheim halten!
   - Public Key bereits in `.env` eingetragen
   - [ ] **Noch offen:** Public Key in **Vercel** eintragen → Settings → Environment Variables → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
-  - [ ] **Noch offen:** Private Key in **Supabase** eintragen → Settings → Edge Functions → Secrets → `VAPID_PRIVATE_KEY`
+  - [ ] **Noch offen:** Private Key in **Supabase** → Edge Functions → Secrets → `VAPID_PRIVATE_KEY`
 
 - [x] **Supabase Edge Function deployed** ✅
   - Name: `send-notifications`
   - URL: `https://jewactcyhvzrceoiajau.supabase.co/functions/v1/send-notifications`
-  - [ ] **Cron-Trigger noch offen** (benötigt Supabase Pro Plan oder externes Tool)
-    - Option A: Supabase Pro ($25/Monat) → dann direkt in Dashboard unter „Cron Jobs"
-    - Option B: cron-job.org (kostenlos) → URL oben alle 5 Minuten aufrufen lassen
-    - **→ Nach App-Launch und Upgrade erledigen**
+
+- [x] **Cron-Job eingerichtet** ✅ (pg_cron auf Supabase Pro, alle 5 Minuten)
 
 - [ ] **Supabase DB Function `deduct_notification_credit` anlegen**
   - SQL-Datei: `supabase/migrations/20260628_deduct_credit_function.sql`
-  - Im Supabase SQL Editor ausführen (Inhalt der Datei kopieren → Run)
+  - Im Supabase SQL Editor ausführen (Inhalt kopieren → Run)
+
+---
+
+## 🔴 Kritisch – Karte (Supabase-Tabellen anlegen)
+
+- [ ] **`places` + `place_reviews` Tabellen anlegen + Seed-Daten einspielen**
+  - SQL-Datei: `supabase/migrations/20260628_places_reviews.sql`
+  - Im Supabase SQL Editor ausführen
+  - Enthält: 15 Sehenswürdigkeiten, 8 Strände, 5 Krankenhäuser, 5 Tourist-Infos
+  - ⚠️ Bis dahin werden statische Fallback-Daten angezeigt (funktioniert bereits!)
 
 ---
 
@@ -37,7 +45,7 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 - [ ] **5 Payment Links erstellen** (ein Link pro Paket)
   - Stripe Dashboard → Payment Links → Create
-  - Starter: 1 Credit – 5 € → Link in `marketing.tsx` Zeile ~115 bei `starter` eintragen
+  - Starter: 1 Credit – 5 € → Link in `marketing.tsx` bei `starter` eintragen
   - Basic: 5 Credits – 20 € → Link bei `basic` eintragen
   - Pro: 15 Credits – 45 € → Link bei `pro` eintragen
   - Business: 40 Credits – 99 € → Link bei `business` eintragen
@@ -48,7 +56,6 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
   - Stripe Dashboard → Webhooks → Add Endpoint
   - Event: `checkout.session.completed`
   - Supabase Edge Function als Webhook-Empfänger
-  - Nach erfolgreicher Zahlung: Credits automatisch auf Nutzerkonto buchen
 
 ---
 
@@ -56,14 +63,14 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 - [ ] **Zypern FAQ erweitern** – weitere Fragen aus PDFs ergänzen (aktuell ~35 Einträge)
 - [ ] **Jobportal** – Stellenangebote suchen und aufgeben
-- [ ] **Krankenhäuser & Botschaften** – Adressen, Telefonnummern, Karte
-- [ ] **Sehenswürdigkeiten** – Top-Orte der Insel mit Fotos
 - [ ] **Blaue Flagge Strände** – Liste und Karte zertifizierter Strände
 - [ ] **PWA-Installation** – Anleitung für Android und iPhone (Add to Homescreen)
 - [ ] **Info / Impressum / AGB** – rechtliche Pflichtseiten
 - [ ] **Einstellungen** – Sprache, Benachrichtigungen, Dark Mode
 - [ ] **Beachbox Zahlungsintegration** – Stripe für Strandbox-Buchungen (10 €/Tag)
 - [ ] **Mein Eintrag – Verlängern** – Button funktioniert, aber noch kein Zahlungsfluss
+- [ ] **Karte – Fotos** bei Sehenswürdigkeiten und Stränden ergänzen (image_url Spalte bereits vorhanden)
+- [ ] **Bewertungen sichtbar machen** – Durchschnitt nach Nutzer-Reviews live aktualisieren (Trigger in Supabase)
 
 ---
 
@@ -76,7 +83,6 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 - [x] Busverbindungen
 - [x] News – Süden/Norden Filter, externe Links im neuen Tab
 - [x] Wetter – 7-Tage-Vorschau
-- [x] Karte
 - [x] Alle Einträge
 - [x] Eintrag erstellen (Submit)
 - [x] Mein Eintrag – Login, Eintrag anzeigen
@@ -89,7 +95,29 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 - [x] Marketing – Push-Aktion erstellen, Credits, Kampagnenübersicht
 - [x] Supabase Tabellen: push_subscriptions, notifications, notification_credits, credit_purchases
 - [x] Service Worker (sw.js) für Push-Empfang
-- [x] InsideCyprus-Funktionsliste.md
+- [x] VAPID-Schlüssel generiert + in .env eingetragen
+- [x] Supabase Edge Function `send-notifications` deployed
+- [x] pg_cron Cron-Job eingerichtet (alle 5 Minuten)
+- [x] **Karte – Layer-System** ✅
+  - Sehenswürdigkeiten 📍 (orange), Strände 🏖️ (blau), Krankenhäuser 🏥 (rot), Tourist Info ℹ️ (lila)
+  - Große farbige Marker (40px) sofort sichtbar
+  - Filter-Chips zum An-/Ausschalten
+  - Popup mit Beschreibung + 🔊 Vorlesen (Web Speech API) + 🗺️ Route + ⭐ Bewerten
+  - Bewertungs-Modal (1–5 Sterne + Kommentar → Supabase)
+  - Horizontal scrollbare Ortsliste unter der Karte
+  - Detail-Panel mit Sprachausgabe und Route
+  - 34 Orte statisch eingebaut (Fallback, auch ohne Supabase-Tabelle)
+  - SQL-Migration: `supabase/migrations/20260628_places_reviews.sql`
+
+---
+
+## 📋 Morgen als nächstes
+
+1. **Supabase SQL ausführen:** `supabase/migrations/20260628_places_reviews.sql` → Karte lädt dann aus echter DB
+2. **Supabase SQL ausführen:** `supabase/migrations/20260628_deduct_credit_function.sql` → Credit-Abzug bei Push-Aktionen
+3. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
+4. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
+5. **Impressum / AGB** – rechtliche Pflichtseiten anlegen
 
 ---
 
