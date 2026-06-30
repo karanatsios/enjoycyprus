@@ -56,8 +56,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('l9',  'Limassol Marina',          'Limassol',    'Limassol',  34.6728, 33.0356, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Limassol%20Marina.jpg'),
   -- LARNACA
   ('lr1', 'Mackenzie Beach',          'Larnaca',     'Larnaca',   34.8689, 33.6336, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/330px-Larnaca_01-2017_img27_Finikoudes.jpg'),
-  ('lr2', 'Finikoudes Beach',         'Larnaca',     'Larnaca',   34.9153, 33.6425, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/330px-Larnaca_01-2017_img27_Finikoudes.jpg'),
-  ('lr6', 'Soft Beach',               'Larnaca',     'Larnaca',   34.9183, 33.6469, 'https://picsum.photos/seed/soft-beach-larnaca/800/534')
+  ('lr2', 'Finikoudes Beach',         'Larnaca',     'Larnaca',   34.9153, 33.6425, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/330px-Larnaca_01-2017_img27_Finikoudes.jpg')
 on conflict (id) do update set
   name      = excluded.name,
   location  = excluded.location,
