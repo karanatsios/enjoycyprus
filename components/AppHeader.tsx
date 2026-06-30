@@ -55,7 +55,7 @@ const MENU_SECTIONS = [
       { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
       { icon: '❓', label: 'Zypern FAQ', sub: '100 Fragen & Antworten zu Zypern', route: '/(tabs)/faq' },
       { icon: '📰', label: 'News', sub: 'Nachrichten aus Zypern', route: '/(tabs)/news' },
-      { icon: '💼', label: 'Jobs in Zypern', sub: 'Stellenangebote suchen & filtern', route: null },
+      { icon: '💼', label: 'Jobs in Zypern', sub: 'Stellenangebote suchen & filtern', route: '/(tabs)/jobs' },
       { icon: '🚨', label: 'Notfallnummern', sub: 'Wichtige Nummern auf Zypern', route: '/(tabs)/emergency' },
       { icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte', route: null },
       { icon: '🚌', label: 'Busverbindungen', sub: 'Route mit Bus, Umstieg & Haltestellen', route: '/(tabs)/bus' },
