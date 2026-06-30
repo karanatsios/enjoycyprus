@@ -134,24 +134,31 @@ export default function JobsScreen() {
     catch { return ''; }
   };
 
+  const summarize = (html: string) => {
+    const text = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return text.length > 160 ? text.slice(0, 157) + '…' : text;
+  };
+
   return (
     <SafeAreaView style={s.safe}>
       <AppHeader />
 
       {/* Sub-Header */}
       <View style={s.header}>
-        <View style={s.headerRow}>
-          <TouchableOpacity onPress={() => router.back()}><Text style={s.back}>← Zurück</Text></TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => router.back()} style={s.backBtn}>
+          <Text style={s.back}>← Zurück</Text>
+        </TouchableOpacity>
         <Text style={s.title}>💼 Jobs in Zypern</Text>
         <Text style={s.subtitle}>Stellenangebote aus mehreren Quellen, täglich aktualisiert.</Text>
         <View style={s.headerActions}>
           <View style={s.countBadge}>
             <Text style={s.countIcon}>📋</Text>
-            <Text style={s.countTxt}>{noApiKey ? '–' : total > 0 ? total.toLocaleString('de') : '...'} Stellen</Text>
+            <Text style={s.countTxt}>
+              {noApiKey ? '–' : loading ? '…' : total > 0 ? total.toLocaleString('de') : '0'} Stellen
+            </Text>
           </View>
           <TouchableOpacity style={[s.sitesBtn, showSites && s.sitesBtnActive]} onPress={() => setShowSites(v => !v)}>
-            <Text style={s.sitesBtnTxt}>{showSites ? '▲' : '▼'} Job Webseiten</Text>
+            <Text style={s.sitesBtnTxt}>{showSites ? '▲' : '▼'} Job-Webseiten</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -183,7 +190,6 @@ export default function JobsScreen() {
         />
         {search ? <TouchableOpacity onPress={() => setSearch('')}><Text style={{ color: '#aaa', fontSize: 18, paddingRight: 8 }}>✕</Text></TouchableOpacity> : null}
       </View>
-      {!noApiKey && <Text style={s.searchHint}>Durchsucht Titel, Firma, Beschreibung und Kategorie.</Text>}
 
       {/* Ortsfilter */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.locScroll} contentContainerStyle={s.locRow}>
@@ -198,23 +204,16 @@ export default function JobsScreen() {
         ))}
       </ScrollView>
 
-      {/* Kein API-Key: Info + Sites */}
+      {/* Kein API-Key */}
       {noApiKey ? (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={s.listContent}>
           <View style={s.noKeyBox}>
             <Text style={s.noKeyTitle}>🔑 Adzuna API-Key benötigt</Text>
-            <Text style={s.noKeyText}>
-              Für echte Stellenangebote aus Zypern bitte einen kostenlosen Adzuna-Account erstellen:
-            </Text>
+            <Text style={s.noKeyText}>Für echte Stellenangebote aus Zypern bitte einen kostenlosen Adzuna-Account erstellen:</Text>
             <TouchableOpacity style={s.noKeyBtn} onPress={() => openUrl('https://developer.adzuna.com/')}>
               <Text style={s.noKeyBtnTxt}>→ developer.adzuna.com (kostenlos)</Text>
             </TouchableOpacity>
-            <Text style={s.noKeyText}>
-              Danach in Vercel eintragen:{'\n'}
-              <Text style={{ fontFamily: 'monospace', fontSize: 11 }}>EXPO_PUBLIC_ADZUNA_APP_ID{'\n'}EXPO_PUBLIC_ADZUNA_APP_KEY</Text>
-            </Text>
           </View>
-
           <Text style={s.sectionTitle}>🌐 Job-Webseiten direkt besuchen</Text>
           {JOB_SITES.map(site => (
             <TouchableOpacity key={site.name} style={s.siteCard} onPress={() => openUrl(site.url)}>
@@ -227,14 +226,17 @@ export default function JobsScreen() {
           ))}
         </ScrollView>
       ) : loading ? (
-        <ActivityIndicator color={Colors.primary} size="large" style={{ marginTop: 40 }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator color={Colors.primary} size="large" />
+          <Text style={{ color: '#aaa', marginTop: 12, fontSize: 13 }}>Stellenangebote werden geladen…</Text>
+        </View>
       ) : (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 32 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={s.listContent}>
           {filtered.length === 0 ? (
             <View>
               {apiError ? (
                 <View style={s.noKeyBox}>
-                  <Text style={s.noKeyTitle}>⚠️ API-Fehler</Text>
+                  <Text style={s.noKeyTitle}>⚠️ Fehler beim Laden</Text>
                   <Text style={s.noKeyText}>{apiError}</Text>
                   <TouchableOpacity style={s.noKeyBtn} onPress={() => loadJobs(search, location)}>
                     <Text style={s.noKeyBtnTxt}>↻ Erneut versuchen</Text>
@@ -243,8 +245,8 @@ export default function JobsScreen() {
               ) : (
                 <View style={{ alignItems: 'center', marginTop: 32, marginBottom: 24 }}>
                   <Text style={{ fontSize: 36 }}>🔍</Text>
-                  <Text style={{ fontSize: 15, color: '#888', marginTop: 10 }}>Keine Jobs über Adzuna gefunden</Text>
-                  <Text style={{ fontSize: 12, color: '#aaa', marginTop: 4, textAlign: 'center', paddingHorizontal: 24 }}>Direkt auf den Job-Webseiten suchen:</Text>
+                  <Text style={{ fontSize: 15, color: '#888', marginTop: 10 }}>Keine Stellen gefunden</Text>
+                  <Text style={{ fontSize: 12, color: '#aaa', marginTop: 4, textAlign: 'center' }}>Direkt auf den Job-Webseiten suchen:</Text>
                 </View>
               )}
               <Text style={s.sectionTitle}>🌐 Job-Webseiten direkt besuchen</Text>
@@ -261,21 +263,41 @@ export default function JobsScreen() {
           ) : (
             filtered.map(job => (
               <View key={job.id} style={s.jobCard}>
-                <Text style={s.jobSource}>{job.source.toUpperCase()}</Text>
-                <Text style={s.jobTitle}>{job.title}</Text>
-                {job.location ? (
-                  <View style={s.jobLocRow}>
-                    <Text style={s.jobLocIcon}>📍</Text>
-                    <Text style={s.jobLoc}>{job.location}</Text>
+                {/* Quelle / Plattform-Badge */}
+                <View style={s.jobSourceRow}>
+                  <View style={s.jobSourceBadge}>
+                    <Text style={s.jobSourceTxt}>📢 {job.source.toUpperCase()}</Text>
                   </View>
+                  {job.created ? <Text style={s.jobDate}>{formatDate(job.created)}</Text> : null}
+                </View>
+
+                {/* Titel */}
+                <Text style={s.jobTitle}>{job.title}</Text>
+
+                {/* Firma + Ort */}
+                <View style={s.jobMeta}>
+                  {job.company !== 'Unbekannt' && (
+                    <View style={s.jobMetaItem}>
+                      <Text style={s.jobMetaIcon}>🏢</Text>
+                      <Text style={s.jobMetaTxt}>{job.company}</Text>
+                    </View>
+                  )}
+                  {job.location ? (
+                    <View style={s.jobMetaItem}>
+                      <Text style={s.jobMetaIcon}>📍</Text>
+                      <Text style={s.jobMetaTxt}>{job.location}</Text>
+                    </View>
+                  ) : null}
+                </View>
+
+                {/* Zusammenfassung der Stelle */}
+                {job.description ? (
+                  <Text style={s.jobDesc}>{summarize(job.description)}</Text>
                 ) : null}
-                <Text style={s.jobCompany}>🏢 {job.company}</Text>
-                <Text style={s.jobDesc} numberOfLines={3}>
-                  {job.description.replace(/<[^>]*>/g, '').trim()}
-                </Text>
-                {job.created ? <Text style={s.jobDate}>{formatDate(job.created)}</Text> : null}
+
+                {/* Button */}
                 <TouchableOpacity style={s.jobBtn} onPress={() => openUrl(job.url)}>
-                  <Text style={s.jobBtnTxt}>Zur Anzeige ↗</Text>
+                  <Text style={s.jobBtnTxt}>Anzeige ansehen</Text>
                 </TouchableOpacity>
               </View>
             ))
@@ -289,12 +311,12 @@ export default function JobsScreen() {
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#F0F4FA' },
 
-  header: { backgroundColor: Colors.primary, paddingHorizontal: 16, paddingBottom: 16, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  header: { backgroundColor: Colors.primary, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16 },
+  backBtn: { marginBottom: 4 },
   back: { color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '600' },
-  title: { color: '#fff', fontSize: 26, fontWeight: '900', marginBottom: 4 },
-  subtitle: { color: 'rgba(255,255,255,0.8)', fontSize: 13, marginBottom: 12 },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  title: { color: '#fff', fontSize: 24, fontWeight: '900', marginBottom: 2 },
+  subtitle: { color: 'rgba(255,255,255,0.75)', fontSize: 12, marginBottom: 12 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
   countBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7 },
   countIcon: { fontSize: 14 },
   countTxt: { color: '#fff', fontWeight: '800', fontSize: 14 },
@@ -302,44 +324,48 @@ const s = StyleSheet.create({
   sitesBtnActive: { backgroundColor: 'rgba(255,255,255,0.2)' },
   sitesBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
 
-  sitesPanel: { backgroundColor: Colors.primary, marginHorizontal: 0, paddingHorizontal: 16, paddingBottom: 12 },
+  sitesPanel: { backgroundColor: Colors.primary, paddingHorizontal: 16, paddingBottom: 12 },
   siteRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.15)' },
   siteName: { color: '#fff', fontWeight: '700', fontSize: 14 },
   siteDesc: { color: 'rgba(255,255,255,0.7)', fontSize: 12, marginTop: 1 },
   siteArrow: { color: '#fff', fontSize: 18, marginLeft: 10 },
 
-  searchWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', margin: 12, marginBottom: 4, borderRadius: 14, borderWidth: 1.5, borderColor: '#E0E8F0', paddingHorizontal: 12 },
+  searchWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', marginHorizontal: 12, marginTop: 10, marginBottom: 4, borderRadius: 14, borderWidth: 1.5, borderColor: '#E0E8F0', paddingHorizontal: 12 },
   searchIcon: { fontSize: 16, marginRight: 8 },
-  searchInput: { flex: 1, height: 46, fontSize: 14, color: '#1A1A2E' },
-  searchHint: { fontSize: 11, color: '#aaa', marginHorizontal: 16, marginBottom: 4 },
+  searchInput: { flex: 1, height: 44, fontSize: 14, color: '#1A1A2E' },
 
-  locScroll: { flexGrow: 0, marginBottom: 4 },
-  locRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 8 },
-  locChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#D0D8E8' },
+  locScroll: { flexGrow: 0 },
+  locRow: { paddingHorizontal: 12, gap: 8, paddingVertical: 8 },
+  locChip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#D0D8E8' },
   locChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   locTxt: { fontSize: 13, fontWeight: '700', color: '#555' },
   locTxtActive: { color: '#fff' },
 
-  jobCard: { backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  jobSource: { fontSize: 10, fontWeight: '800', color: Colors.primary, letterSpacing: 1, marginBottom: 6 },
-  jobTitle: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 6, lineHeight: 20 },
-  jobLocRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 },
-  jobLocIcon: { fontSize: 12 },
-  jobLoc: { fontSize: 12, color: '#666' },
-  jobCompany: { fontSize: 12, color: '#555', marginBottom: 6 },
-  jobDesc: { fontSize: 12, color: '#777', lineHeight: 18, marginBottom: 8 },
-  jobDate: { fontSize: 11, color: '#bbb', marginBottom: 8 },
-  jobBtn: { alignSelf: 'flex-end', backgroundColor: Colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  listContent: { padding: 12, paddingBottom: 40 },
+
+  /* Job-Karte */
+  jobCard: { backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 10, elevation: 3 },
+  jobSourceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  jobSourceBadge: { backgroundColor: Colors.primary + '18', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
+  jobSourceTxt: { fontSize: 10, fontWeight: '800', color: Colors.primary, letterSpacing: 0.5 },
+  jobDate: { fontSize: 11, color: '#bbb' },
+  jobTitle: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 8, lineHeight: 21 },
+  jobMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 10 },
+  jobMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  jobMetaIcon: { fontSize: 12 },
+  jobMetaTxt: { fontSize: 12, color: '#555', fontWeight: '600' },
+  jobDesc: { fontSize: 12, color: '#777', lineHeight: 18, marginBottom: 12 },
+  jobBtn: { alignSelf: 'flex-start', backgroundColor: Colors.primary, paddingHorizontal: 18, paddingVertical: 9, borderRadius: 10 },
   jobBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
 
-  noKeyBox: { backgroundColor: '#fff', borderRadius: 16, padding: 20, marginBottom: 20, borderLeftWidth: 4, borderLeftColor: Colors.primary },
+  noKeyBox: { backgroundColor: '#fff', borderRadius: 16, padding: 20, marginBottom: 16, borderLeftWidth: 4, borderLeftColor: Colors.primary },
   noKeyTitle: { fontSize: 16, fontWeight: '800', color: '#1A1A2E', marginBottom: 8 },
   noKeyText: { fontSize: 13, color: '#555', lineHeight: 20, marginBottom: 12 },
-  noKeyBtn: { backgroundColor: Colors.primary, borderRadius: 10, padding: 12, marginBottom: 12 },
+  noKeyBtn: { backgroundColor: Colors.primary, borderRadius: 10, padding: 12, marginBottom: 4 },
   noKeyBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 14, textAlign: 'center' },
 
-  sectionTitle: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 12 },
-  siteCard: { backgroundColor: '#fff', borderRadius: 14, padding: 16, marginBottom: 10, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
+  sectionTitle: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 10, marginTop: 8 },
+  siteCard: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 10, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
   siteCardName: { fontSize: 14, fontWeight: '800', color: '#1A1A2E', marginBottom: 2 },
   siteCardDesc: { fontSize: 12, color: '#888' },
 });
