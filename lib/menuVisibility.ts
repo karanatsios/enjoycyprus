@@ -1,31 +1,33 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const KEY = 'menu_visibility_v1';
+import { supabase } from './supabase';
 
 export async function getHiddenMenuItems(): Promise<Set<string>> {
   try {
-    const raw = await AsyncStorage.getItem(KEY);
-    if (!raw) return new Set();
-    const obj = JSON.parse(raw) as Record<string, boolean>;
-    return new Set(Object.entries(obj).filter(([, v]) => v === false).map(([k]) => k));
+    const { data } = await supabase
+      .from('menu_config')
+      .select('id')
+      .eq('visible', false);
+    return new Set((data ?? []).map((r: { id: string }) => r.id));
   } catch {
     return new Set();
   }
 }
 
 export async function setMenuItemVisible(id: string, visible: boolean): Promise<void> {
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    const obj = raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
-    obj[id] = visible;
-    await AsyncStorage.setItem(KEY, JSON.stringify(obj));
-  } catch {}
+  await supabase
+    .from('menu_config')
+    .upsert({ id, visible, updated_at: new Date().toISOString() }, { onConflict: 'id' });
 }
 
 export async function getAllMenuVisibility(): Promise<Record<string, boolean>> {
   try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+    const { data } = await supabase
+      .from('menu_config')
+      .select('id, visible');
+    const result: Record<string, boolean> = {};
+    (data ?? []).forEach((r: { id: string; visible: boolean }) => {
+      result[r.id] = r.visible;
+    });
+    return result;
   } catch {
     return {};
   }

@@ -1,0 +1,243 @@
+import React, { useState } from 'react';
+import {
+  View, Text, StyleSheet, SafeAreaView, ScrollView,
+  TouchableOpacity, Image, Linking, FlatList,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme } from '../../context/ThemeContext';
+
+type Beach = {
+  id: string;
+  name: string;
+  location: string;
+  region: 'Famagusta' | 'Paphos' | 'Limassol' | 'Larnaca';
+  lat: number;
+  lng: number;
+  image: string;
+};
+
+// Wikimedia Commons – verified thumbnail URLs
+const W = 'https://upload.wikimedia.org/wikipedia/commons';
+const IMG = {
+  nissi:      `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
+  nissi2:     `${W}/thumb/1/1c/2022_03_Nissi_beach_1.jpg/800px-2022_03_Nissi_beach_1.jpg`,
+  nissi3:     `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
+  figtree:    `${W}/thumb/b/b9/25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG/800px-25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG`,
+  protaras:   `${W}/thumb/c/c4/Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
+  coral:      `${W}/thumb/e/ec/Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg/800px-Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg`,
+  paphos:     `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
+  paphos2:    `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
+  pissouri:   `${W}/thumb/4/45/Pissouri_Beach.jpg/800px-Pissouri_Beach.jpg`,
+  pissouri2:  `${W}/thumb/b/b0/Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg/800px-Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg`,
+  governors:  `${W}/thumb/5/5c/Governor%27s_Beach.JPG/800px-Governor%27s_Beach.JPG`,
+  finikoudes: `${W}/thumb/a/aa/Finikoudes_Beach%2C_Larnaca.jpg/800px-Finikoudes_Beach%2C_Larnaca.jpg`,
+  larnaca:    `${W}/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/800px-Larnaca_01-2017_img27_Finikoudes.jpg`,
+};
+
+const BEACHES: Beach[] = [
+  /* ── FAMAGUSTA / AYIA NAPA ── */
+  { id: 'f1',  name: 'Nissi Beach',              location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9889, lng: 34.0019, image: IMG.nissi },
+  { id: 'f2',  name: 'Fig Tree Bay',             location: 'Protaras',   region: 'Famagusta', lat: 35.0125, lng: 34.0572, image: IMG.figtree },
+  { id: 'f3',  name: 'Sandy Bay',                location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9944, lng: 34.0197, image: IMG.nissi2 },
+  { id: 'f4',  name: 'Makronissos Beach',        location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9803, lng: 33.9878, image: IMG.nissi3 },
+  { id: 'f5',  name: 'Pantachou Beach',          location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9844, lng: 34.0022, image: IMG.nissi2 },
+  { id: 'f6',  name: 'Louma Beach',              location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9900, lng: 34.0100, image: IMG.nissi3 },
+  { id: 'f7',  name: 'Protaras Beach',           location: 'Protaras',   region: 'Famagusta', lat: 35.0094, lng: 34.0547, image: IMG.protaras },
+  { id: 'f8',  name: 'Sunrise Beach',            location: 'Protaras',   region: 'Famagusta', lat: 35.0178, lng: 34.0594, image: IMG.figtree },
+  { id: 'f9',  name: 'Konnos Bay',               location: 'Cape Greco', region: 'Famagusta', lat: 34.9736, lng: 34.0722, image: IMG.nissi2 },
+
+  /* ── PAPHOS ── */
+  { id: 'p1',  name: 'Coral Bay',                location: 'Peyia',      region: 'Paphos', lat: 34.8356, lng: 32.3700, image: IMG.coral },
+  { id: 'p2',  name: 'Kaphizis Beach',           location: 'Peyia',      region: 'Paphos', lat: 34.8411, lng: 32.3644, image: IMG.coral },
+  { id: 'p3',  name: 'Laourou Beach',            location: 'Peyia',      region: 'Paphos', lat: 34.8389, lng: 32.3622, image: IMG.paphos2 },
+  { id: 'p4',  name: 'Kotsias Beach',            location: 'Lemba',      region: 'Paphos', lat: 34.8133, lng: 32.3931, image: IMG.paphos },
+  { id: 'p5',  name: 'Venus Beach',              location: 'Paphos',     region: 'Paphos', lat: 34.7681, lng: 32.4069, image: IMG.paphos2 },
+  { id: 'p6',  name: 'Faros Beach',              location: 'Paphos',     region: 'Paphos', lat: 34.7469, lng: 32.4222, image: IMG.paphos },
+  { id: 'p7',  name: 'Municipal Baths Beach',    location: 'Paphos',     region: 'Paphos', lat: 34.7592, lng: 32.4083, image: IMG.paphos2 },
+  { id: 'p8',  name: 'Alykes Beach',             location: 'Paphos',     region: 'Paphos', lat: 34.7756, lng: 32.4044, image: IMG.paphos },
+  { id: 'p9',  name: 'Vrysoudia A Beach',        location: 'Paphos',     region: 'Paphos', lat: 34.7839, lng: 32.4011, image: IMG.paphos2 },
+  { id: 'p10', name: 'Vrysoudia B Beach',        location: 'Geroskipou', region: 'Paphos', lat: 34.7906, lng: 32.4094, image: IMG.paphos },
+  { id: 'p11', name: 'Pachyammos Beach',         location: 'Paphos',     region: 'Paphos', lat: 34.8028, lng: 32.3961, image: IMG.paphos2 },
+  { id: 'p12', name: 'Pachyammos 2 Beach',       location: 'Geroskipou', region: 'Paphos', lat: 34.7944, lng: 32.4047, image: IMG.coral },
+  { id: 'p13', name: 'Geroskipou Municipal Beach', location: 'Geroskipou', region: 'Paphos', lat: 34.7978, lng: 32.4069, image: IMG.paphos },
+  { id: 'p14', name: 'Polis Chrysochous Municipal Beach', location: 'Polis', region: 'Paphos', lat: 35.0358, lng: 32.4250, image: IMG.paphos2 },
+
+  /* ── LIMASSOL ── */
+  { id: 'l1',  name: 'Pissouri Beach',           location: 'Pissouri',   region: 'Limassol', lat: 34.6681, lng: 32.7064, image: IMG.pissouri },
+  { id: 'l2',  name: "Governor's Beach",         location: 'Pentakomo',  region: 'Limassol', lat: 34.7186, lng: 33.2683, image: IMG.governors },
+  { id: 'l3',  name: 'Kourion Beach',            location: 'Episkopi',   region: 'Limassol', lat: 34.6519, lng: 32.8744, image: IMG.pissouri2 },
+  { id: 'l4',  name: "Lady's Mile Beach",        location: 'Limassol',   region: 'Limassol', lat: 34.6456, lng: 33.0017, image: IMG.pissouri },
+  { id: 'l5',  name: 'Limassol Old Port Beach',  location: 'Limassol',   region: 'Limassol', lat: 34.6736, lng: 33.0444, image: IMG.governors },
+  { id: 'l6',  name: 'Amathus Beach',            location: 'Limassol',   region: 'Limassol', lat: 34.6997, lng: 33.1239, image: IMG.pissouri2 },
+  { id: 'l7',  name: 'Dasoudi Beach',            location: 'Limassol',   region: 'Limassol', lat: 34.7058, lng: 33.1433, image: IMG.pissouri },
+
+  /* ── LARNACA ── */
+  { id: 'lr1', name: 'Mackenzie Beach',          location: 'Larnaca',    region: 'Larnaca', lat: 34.8689, lng: 33.6336, image: IMG.larnaca },
+  { id: 'lr2', name: 'Finikoudes Beach',         location: 'Larnaca',    region: 'Larnaca', lat: 34.9153, lng: 33.6425, image: IMG.finikoudes },
+  { id: 'lr3', name: 'Dhekelia Beach',           location: 'Dhekelia',   region: 'Larnaca', lat: 34.9806, lng: 33.7450, image: IMG.larnaca },
+  { id: 'lr4', name: 'Pyla Beach',               location: 'Pyla',       region: 'Larnaca', lat: 34.9811, lng: 33.7222, image: IMG.finikoudes },
+  { id: 'lr5', name: 'Pervolia Beach',           location: 'Pervolia',   region: 'Larnaca', lat: 34.8347, lng: 33.5789, image: IMG.larnaca },
+  { id: 'lr6', name: 'Soft Beach',               location: 'Larnaca',    region: 'Larnaca', lat: 34.9183, lng: 33.6469, image: IMG.finikoudes },
+];
+
+const REGIONS = ['Alle', 'Famagusta', 'Paphos', 'Limassol', 'Larnaca'] as const;
+
+const REGION_COLORS: Record<string, string> = {
+  Famagusta: '#0077B6',
+  Paphos:    '#1A936F',
+  Limassol:  '#E76F51',
+  Larnaca:   '#8338EC',
+};
+
+function BeachImage({ uri, name, region }: { uri: string; name: string; region: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <View style={[styles.cardImg, { backgroundColor: REGION_COLORS[region] ?? '#0077B6', justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ fontSize: 36 }}>🏖️</Text>
+        <Text style={{ color: '#fff', fontWeight: '800', fontSize: 14, marginTop: 6, textAlign: 'center', paddingHorizontal: 12 }}>{name}</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, marginTop: 2 }}>Blaue Flagge 2026</Text>
+      </View>
+    );
+  }
+  return (
+    <Image
+      source={{ uri }}
+      style={styles.cardImg}
+      resizeMode="cover"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+export default function BeachesScreen() {
+  const router = useRouter();
+  const { colors } = useTheme();
+  const [activeRegion, setActiveRegion] = useState<string>('Alle');
+
+  const filtered = activeRegion === 'Alle'
+    ? BEACHES
+    : BEACHES.filter(b => b.region === activeRegion);
+
+  const openMaps = (beach: Beach) => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${beach.lat},${beach.lng}`;
+    Linking.openURL(url);
+  };
+
+  return (
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backArrow}>←</Text>
+          <Text style={styles.backText}>Zurück</Text>
+        </TouchableOpacity>
+        <View style={styles.headerBody}>
+          <Text style={styles.headerTitle}>🏖️ Blaue Flagge Strände</Text>
+          <Text style={styles.headerSub}>{BEACHES.length} zertifizierte Strände auf Zypern 2026</Text>
+        </View>
+      </View>
+
+      {/* Region filter */}
+      <View style={styles.filterWrap}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+          {REGIONS.map(r => (
+            <TouchableOpacity
+              key={r}
+              style={[styles.chip, activeRegion === r && styles.chipActive]}
+              onPress={() => setActiveRegion(r)}
+            >
+              <Text style={[styles.chipText, activeRegion === r && styles.chipTextActive]}>{r}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Beach list */}
+      <FlatList
+        data={filtered}
+        keyExtractor={b => b.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.border }]}>
+            <BeachImage uri={item.image} name={item.name} region={item.region} />
+            <View style={styles.cardBody}>
+              <View style={styles.cardTopRow}>
+                <Text style={[styles.cardName, { color: colors.text }]} numberOfLines={1}>{item.name}</Text>
+                <View style={styles.regionBadge}>
+                  <Text style={styles.regionBadgeText}>{item.region}</Text>
+                </View>
+              </View>
+              <View style={styles.cardMeta}>
+                <Text style={[styles.metaText, { color: colors.textMuted }]}>📍 {item.location}</Text>
+                <Text style={styles.metaDot}>·</Text>
+                <Text style={styles.blueFlag}>🏖️ Blaue Flagge 2026</Text>
+              </View>
+              <TouchableOpacity style={styles.mapsBtn} onPress={() => openMaps(item)}>
+                <Text style={styles.mapsBtnIcon}>🗺️</Text>
+                <Text style={styles.mapsBtnText}>Auf Maps öffnen</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1 },
+
+  header: {
+    backgroundColor: '#0077B6',
+    paddingTop: 16, paddingBottom: 20, paddingHorizontal: 16,
+    borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
+  },
+  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  backArrow: { color: 'rgba(255,255,255,0.85)', fontSize: 18 },
+  backText: { color: 'rgba(255,255,255,0.85)', fontSize: 15, fontWeight: '600' },
+  headerBody: {},
+  headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
+  headerSub: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 2 },
+
+  filterWrap: { paddingTop: 14 },
+  filterRow: { paddingHorizontal: 16, gap: 8 },
+  chip: {
+    paddingHorizontal: 16, paddingVertical: 8,
+    borderRadius: 20, backgroundColor: '#E8EEF5',
+  },
+  chipActive: { backgroundColor: '#0077B6' },
+  chipText: { fontSize: 13, fontWeight: '600', color: '#555' },
+  chipTextActive: { color: '#fff' },
+
+  list: { padding: 16, gap: 16 },
+
+  card: {
+    borderRadius: 18, overflow: 'hidden',
+    borderWidth: 1,
+    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
+  },
+  cardImg: { width: '100%', height: 200, backgroundColor: '#E0EAF4' },
+  cardBody: { padding: 14, gap: 6 },
+  cardTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  cardName: { fontSize: 17, fontWeight: '700', flex: 1, marginRight: 8 },
+  regionBadge: {
+    backgroundColor: '#EBF5FB',
+    paddingHorizontal: 10, paddingVertical: 3,
+    borderRadius: 10,
+  },
+  regionBadgeText: { fontSize: 11, fontWeight: '700', color: '#0077B6' },
+  cardMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  metaText: { fontSize: 12 },
+  metaDot: { color: '#ccc' },
+  blueFlag: { fontSize: 12, color: '#0077B6', fontWeight: '600' },
+  mapsBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: '#EBF5FB', borderRadius: 10,
+    paddingHorizontal: 14, paddingVertical: 9,
+    alignSelf: 'flex-start', marginTop: 4,
+  },
+  mapsBtnIcon: { fontSize: 14 },
+  mapsBtnText: { fontSize: 13, fontWeight: '700', color: '#0077B6' },
+});

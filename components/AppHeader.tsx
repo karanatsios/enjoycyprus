@@ -5,6 +5,7 @@ import { Colors } from '../constants/colors';
 import { useRouter } from 'expo-router';
 import { getHiddenMenuItems } from '../lib/menuVisibility';
 import { useTheme } from '../context/ThemeContext';
+import { supabase } from '../lib/supabase';
 
 type Weather = { temp: number; wind: number; humidity: number; icon: string };
 
@@ -63,7 +64,7 @@ export const ALL_MENU_SECTIONS = [
       { id: 'bus',          icon: '🚌', label: 'Busverbindungen',            sub: 'Route mit Bus, Umstieg & Haltestellen',  route: '/(tabs)/bus' },
       { id: 'events',       icon: '🎉', label: 'Events',                     sub: 'Veranstaltungen, Partys & Konzerte',     route: '/(tabs)/events' },
       { id: 'sights',       icon: '📍', label: 'Sehenswürdigkeiten',         sub: 'Die schönsten Orte der Insel',           route: null },
-      { id: 'beaches',      icon: '🏖️', label: 'Blaue Flagge Strände',      sub: 'Zertifizierte Strände auf Zypern',       route: null },
+      { id: 'beaches',      icon: '🏖️', label: 'Blaue Flagge Strände',      sub: 'Zertifizierte Strände auf Zypern',       route: '/(tabs)/beaches' },
       { id: 'weather',      icon: '🌤️', label: 'Wetter',                    sub: '7-Tage-Vorschau',                        route: '/(tabs)/weather' },
     ],
   },
@@ -105,6 +106,16 @@ export default function AppHeader({ title }: Props) {
   useEffect(() => {
     fetchWeather().then(setWeather).catch(() => null);
     getHiddenMenuItems().then(setHiddenItems);
+
+    // Live updates when admin changes menu visibility
+    const channel = supabase
+      .channel('menu-config-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_config' }, () => {
+        getHiddenMenuItems().then(setHiddenItems);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const openMenu = async () => {
