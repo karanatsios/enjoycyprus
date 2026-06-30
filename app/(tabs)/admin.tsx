@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, FlatList,
-  TouchableOpacity, ActivityIndicator, Alert, ScrollView, TextInput,
+  TouchableOpacity, ActivityIndicator, ScrollView, TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -150,7 +150,9 @@ export default function AdminScreen() {
     setLoginLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !ADMIN_EMAILS.includes(data.user?.email ?? '')) {
-      Alert.alert('Kein Zugriff', 'Ungültige Zugangsdaten oder keine Admin-Berechtigung.');
+      if (typeof window !== 'undefined') {
+        window.alert('Ungültige Zugangsdaten oder keine Admin-Berechtigung.');
+      }
       setLoginLoading(false);
       return;
     }
@@ -192,13 +194,12 @@ export default function AdminScreen() {
   };
 
   const deleteBusiness = async (id: string, name: string) => {
-    Alert.alert('Löschen', `"${name}" wirklich löschen?`, [
-      { text: 'Abbrechen', style: 'cancel' },
-      { text: 'Löschen', style: 'destructive', onPress: async () => {
-        await supabase.from('businesses').delete().eq('id', id);
-        fetchAll();
-      }},
-    ]);
+    const confirmed = typeof window !== 'undefined'
+      ? window.confirm(`"${name}" wirklich löschen?`)
+      : true;
+    if (!confirmed) return;
+    await supabase.from('businesses').delete().eq('id', id);
+    fetchAll();
   };
 
   const toggleMenuItem = async (id: string) => {
