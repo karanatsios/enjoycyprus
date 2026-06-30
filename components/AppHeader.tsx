@@ -58,7 +58,7 @@ export const ALL_MENU_SECTIONS = [
       { id: 'news',         icon: '📰', label: 'News',                       sub: 'Nachrichten aus Zypern',                 route: '/(tabs)/news' },
       { id: 'jobs',         icon: '💼', label: 'Jobs in Zypern',             sub: 'Stellenangebote suchen & filtern',        route: '/(tabs)/jobs' },
       { id: 'emergency',    icon: '🚨', label: 'Notfallnummern',             sub: 'Wichtige Nummern auf Zypern',            route: '/(tabs)/emergency' },
-      { id: 'hospitals',    icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte',       route: null },
+      { id: 'hospitals',    icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte',       route: '/(tabs)/hospitals' },
       { id: 'bus',          icon: '🚌', label: 'Busverbindungen',            sub: 'Route mit Bus, Umstieg & Haltestellen',  route: '/(tabs)/bus' },
       { id: 'events',       icon: '🎉', label: 'Events',                     sub: 'Veranstaltungen, Partys & Konzerte',     route: '/(tabs)/events' },
       { id: 'sights',       icon: '📍', label: 'Sehenswürdigkeiten',         sub: 'Die schönsten Orte der Insel',           route: null },
