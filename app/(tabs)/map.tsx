@@ -38,6 +38,16 @@ const STATIC_PLACES = [
   { id: 'k3', name: 'Larnaka General Hospital', type: 'krankenhaus', description: 'Staatliches Krankenhaus Larnaka mit Notaufnahme.', lat: 34.9050, lng: 33.6439, address: 'Grigori Afxentiou, Larnaka', phone: '+357 24 800500', rating_avg: 0, rating_count: 0 },
   { id: 'k4', name: 'Paphos General Hospital', type: 'krankenhaus', description: 'Staatliches Krankenhaus Paphos. Notaufnahme 24h.', lat: 34.7744, lng: 32.4197, address: 'Neofytou Nikolaidi, Paphos', phone: '+357 26 803100', rating_avg: 0, rating_count: 0 },
   { id: 'k5', name: 'Near East University Hospital', type: 'krankenhaus', description: 'Universitätskrankenhaus Nordzypern. Notaufnahme 24/7.', lat: 35.2028, lng: 33.3678, phone: '+90 392 675 1000', rating_avg: 0, rating_count: 0 },
+  { id: 'g1', name: 'Gesundheitszentrum Nicosia (GESY)', type: 'gesundheitszentrum', description: 'Staatliches Gesundheitszentrum im Rahmen des zyprischen GESY-Systems.', lat: 35.1725, lng: 33.3617, address: 'Nikis Avenue 11, Nicosia', phone: '+357 22 605 000', rating_avg: 0, rating_count: 0 },
+  { id: 'g2', name: 'Gesundheitszentrum Limassol (GESY)', type: 'gesundheitszentrum', description: 'Staatliches Gesundheitszentrum Limassol.', lat: 34.6769, lng: 33.0444, address: 'Gladstonos Street, Limassol', phone: '+357 25 803 100', rating_avg: 0, rating_count: 0 },
+  { id: 'g3', name: 'Gesundheitszentrum Larnaca (GESY)', type: 'gesundheitszentrum', description: 'Staatliches Gesundheitszentrum Larnaca.', lat: 34.9189, lng: 33.6331, address: 'Ermou Street 22, Larnaca', phone: '+357 24 801 500', rating_avg: 0, rating_count: 0 },
+  { id: 'g4', name: 'Gesundheitszentrum Paphos (GESY)', type: 'gesundheitszentrum', description: 'Staatliches Gesundheitszentrum Paphos.', lat: 34.7756, lng: 32.4236, phone: '+357 26 806 100', rating_avg: 0, rating_count: 0 },
+  { id: 'b1m', name: 'Deutsche Botschaft Nicosia', type: 'botschaft', description: 'Konsularische Sprechzeiten: Mo–Fr 08:00–12:00. Termine online buchen.', lat: 35.1647, lng: 33.3611, address: 'Nikitaras 10, 1080 Nicosia', phone: '+357 22 451 145', rating_avg: 0, rating_count: 0 },
+  { id: 'b2m', name: 'Österreichische Botschaft Nicosia', type: 'botschaft', description: 'Konsularische Angelegenheiten für österreichische Staatsbürger.', lat: 35.1694, lng: 33.3547, address: 'Glafkos Klerides, Nicosia', phone: '+357 22 471 711', rating_avg: 0, rating_count: 0 },
+  { id: 'b3m', name: 'Schweizer Botschaft Nicosia', type: 'botschaft', description: 'Schweizer Vertretung auf Zypern.', lat: 35.1681, lng: 33.3528, address: 'Metochiou & Falirou, 2408 Engomi, Nicosia', phone: '+357 22 464 664', rating_avg: 0, rating_count: 0 },
+  { id: 'b4m', name: 'British High Commission Nicosia', type: 'botschaft', description: 'Britische Vertretung für alle britischen Staatsbürger auf der Insel.', lat: 35.1736, lng: 33.3703, address: 'Alexander Pallis Street, 1587 Nicosia', phone: '+357 22 861 100', rating_avg: 0, rating_count: 0 },
+  { id: 'b5m', name: 'US-Botschaft Nicosia', type: 'botschaft', description: 'American Citizen Services, Visa, Reisepässe.', lat: 35.1667, lng: 33.3500, address: 'Metochiou & Ploutarchou, 2407 Engomi, Nicosia', phone: '+357 22 393 939', rating_avg: 0, rating_count: 0 },
+  { id: 'b6m', name: 'Russische Botschaft Nicosia', type: 'botschaft', description: 'Russische Vertretung auf Zypern.', lat: 35.1722, lng: 33.3611, address: 'Agiou Prokopiou 2, Engomi, Nicosia', phone: '+357 22 774 622', rating_avg: 0, rating_count: 0 },
   { id: 't1', name: 'Tourist Info – Larnaka Flughafen', type: 'tourist_info', description: 'Touristeninformation im Ankunftsbereich des Flughafens.', lat: 34.8753, lng: 33.6253, phone: '+357 24 643576', rating_avg: 0, rating_count: 0 },
   { id: 't2', name: 'Tourist Info – Paphos', type: 'tourist_info', description: 'Zentrale Touristeninformation Paphos.', lat: 34.7731, lng: 32.4242, phone: '+357 26 932841', rating_avg: 0, rating_count: 0 },
   { id: 't3', name: 'Tourist Info – Limassol', type: 'tourist_info', description: 'Touristeninformation im Stadtzentrum Limassol.', lat: 34.6769, lng: 33.0444, phone: '+357 25 362756', rating_avg: 0, rating_count: 0 },
@@ -58,10 +68,12 @@ type Business = {
 
 /* ─── Alle Filter-Chips in einer Reihe ─── */
 const PLACE_FILTERS = [
-  { id: 'sehenswuerdigkeit', label: 'Sehensw.',    icon: '📍', color: '#E67E22' },
-  { id: 'strand',            label: 'Strände',      icon: '🏖️', color: '#0077B6' },
-  { id: 'krankenhaus',       label: 'Krankenh.',    icon: '🏥', color: '#E74C3C' },
-  { id: 'tourist_info',      label: 'Tourist Info', icon: 'ℹ️', color: '#8E44AD' },
+  { id: 'sehenswuerdigkeit',  label: 'Sehensw.',    icon: '📍', color: '#E67E22' },
+  { id: 'strand',             label: 'Strände',      icon: '🏖️', color: '#0077B6' },
+  { id: 'krankenhaus',        label: 'Krankenh.',    icon: '🏥', color: '#E74C3C' },
+  { id: 'gesundheitszentrum', label: 'Gesundh.',     icon: '⚕️', color: '#00897B' },
+  { id: 'botschaft',          label: 'Botschaften',  icon: '🏛️', color: '#5C6BC0' },
+  { id: 'tourist_info',       label: 'Tourist Info', icon: 'ℹ️', color: '#8E44AD' },
 ];
 
 const BIZ_FILTERS = [
@@ -101,14 +113,17 @@ function buildLeafletHTML(
 ): string {
   const placeColor: Record<string, string> = {
     sehenswuerdigkeit: '#E67E22', strand: '#0077B6',
-    krankenhaus: '#E74C3C', tourist_info: '#8E44AD',
+    krankenhaus: '#E74C3C', gesundheitszentrum: '#00897B',
+    botschaft: '#5C6BC0', tourist_info: '#8E44AD',
   };
   const placeIcon: Record<string, string> = {
-    sehenswuerdigkeit: '📍', strand: '🏖️', krankenhaus: '🏥', tourist_info: 'ℹ️',
+    sehenswuerdigkeit: '📍', strand: '🏖️', krankenhaus: '🏥',
+    gesundheitszentrum: '⚕️', botschaft: '🏛️', tourist_info: 'ℹ️',
   };
   const typeLabel: Record<string, string> = {
     sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand',
-    krankenhaus: 'Krankenhaus', tourist_info: 'Tourist Info',
+    krankenhaus: 'Krankenhaus', gesundheitszentrum: 'Gesundheitszentrum',
+    botschaft: 'Botschaft', tourist_info: 'Tourist Info',
   };
 
   const placeMarkersJS = places
@@ -202,7 +217,7 @@ export default function MapScreen() {
   const [userLat, setUserLat]       = useState<number | undefined>();
   const [userLng, setUserLng]       = useState<number | undefined>();
   const [loading, setLoading]       = useState(true);
-  const [activePlaceLayers, setActivePlaceLayers]   = useState<string[]>(['sehenswuerdigkeit', 'strand', 'krankenhaus', 'tourist_info']);
+  const [activePlaceLayers, setActivePlaceLayers]   = useState<string[]>(['sehenswuerdigkeit', 'strand', 'krankenhaus', 'gesundheitszentrum', 'botschaft', 'tourist_info']);
   const [activeBizCategories, setActiveBizCategories] = useState<string[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [selectedBiz, setSelectedBiz]     = useState<Business | null>(null);
@@ -257,7 +272,8 @@ export default function MapScreen() {
 
   const PLACE_TYPE_LABEL: Record<string, string> = {
     sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand',
-    krankenhaus: 'Krankenhaus', tourist_info: 'Tourist Info',
+    krankenhaus: 'Krankenhaus', gesundheitszentrum: 'Gesundheitszentrum',
+    botschaft: 'Botschaft', tourist_info: 'Tourist Info',
   };
 
   const totalVisible = visiblePlaces.length + visibleBiz.length;
