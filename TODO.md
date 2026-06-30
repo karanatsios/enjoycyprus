@@ -1,6 +1,6 @@
 # Inside Cyprus – Offene To-dos
 
-Stand: 29. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
+Stand: 30. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
 
 > 👋 **Beim nächsten Start:** Diese Datei zuerst lesen und offene [ ]-Punkte mit dem Nutzer besprechen.
 
@@ -8,107 +8,57 @@ Stand: 29. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x
 
 ## 🔴 Kritisch – Marketing / Push-Notifications
 
-Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer ankommen:
-
 - [x] **VAPID-Schlüssel generiert** ✅
   - Public Key: `BAMdRkE7TM8jYPbJ7ONbGWgKsqH74u3y8fAplr7GKK6Qz26wVykoAX-Cg8IEhNO61aHVB0a-PmrGWqHGF_r03JM`
   - Private Key: `G2fY6cq5Q6WVC1kz1Sy-HQJDIrfF_fU0l0eJ3k_h3zQ` ⚠️ Geheim halten!
   - Public Key bereits in `.env` eingetragen
-  - [ ] **Noch offen:** Public Key in **Vercel** eintragen → Settings → Environment Variables → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
+  - [ ] **Noch offen:** Public Key in **Vercel** → Settings → Environment Variables → `EXPO_PUBLIC_VAPID_PUBLIC_KEY`
   - [ ] **Noch offen:** Private Key in **Supabase** → Edge Functions → Secrets → `VAPID_PRIVATE_KEY`
 
-- [x] **Supabase Edge Function deployed** ✅
-  - Name: `send-notifications`
-  - URL: `https://jewactcyhvzrceoiajau.supabase.co/functions/v1/send-notifications`
-
-- [x] **Cron-Job eingerichtet** ✅ (pg_cron auf Supabase Pro, alle 5 Minuten)
-
+- [x] **Supabase Edge Function deployed** ✅ (`send-notifications`)
+- [x] **Cron-Job eingerichtet** ✅ (pg_cron, alle 5 Minuten)
 - [x] **Supabase DB Function `deduct_notification_credit` angelegt** ✅
-
----
-
-## 🔴 Kritisch – Karte (Supabase-Tabellen anlegen)
-
-- [x] **`places` + `place_reviews` Tabellen anlegen + Seed-Daten einspielen** ✅
-  - 15 Sehenswürdigkeiten, 8 Strände, 6 Krankenhäuser, 5 Tourist-Infos in Supabase
 
 ---
 
 ## 🟠 Wichtig – Stripe (Bezahlung)
 
-- [ ] **Stripe-Konto erstellen**
-  - https://dashboard.stripe.com/register
-  - Land: Zypern oder Deutschland
-
-- [ ] **5 Payment Links erstellen** (ein Link pro Paket)
-  - Stripe Dashboard → Payment Links → Create
-  - Starter: 1 Credit – 5 € → Link in `marketing.tsx` bei `starter` eintragen
-  - Basic: 5 Credits – 20 € → Link bei `basic` eintragen
-  - Pro: 15 Credits – 45 € → Link bei `pro` eintragen
-  - Business: 40 Credits – 99 € → Link bei `business` eintragen
-  - Unlimited: ∞ Credits – 199 € → Link bei `unlimited` eintragen
-  - Datei: `/app/(tabs)/marketing.tsx` → Funktion `openStripe()` → `links`-Objekt
-
-- [ ] **Stripe Webhook einrichten** (automatische Credit-Vergabe nach Zahlung)
-  - Stripe Dashboard → Webhooks → Add Endpoint
-  - Event: `checkout.session.completed`
-  - Supabase Edge Function als Webhook-Empfänger
+- [ ] **Stripe-Konto erstellen** → https://dashboard.stripe.com/register
+- [ ] **5 Payment Links erstellen** (je Paket einen)
+  - Starter 1 Credit – 5 € · Basic 5 Credits – 20 € · Pro 15 Credits – 45 €
+  - Business 40 Credits – 99 € · Unlimited ∞ – 199 €
+  - Datei: `/app/(tabs)/marketing.tsx` → `openStripe()` → `links`-Objekt
+- [ ] **Stripe Webhook** → `checkout.session.completed` → Supabase Edge Function
 
 ---
 
 ## 🟠 Wichtig – Domain & SSL
 
-- [x] **Eigene Domain gekauft** ✅ (.de-Domain vorhanden)
-
-- [ ] **Domain in Vercel verknüpfen**
-  - Vercel Dashboard → Projekt `enjoycyprus` → Settings → Domains → Add Domain
-  - .de-Domain eingeben → DNS-Einträge beim Registrar setzen (A-Record oder CNAME auf Vercel)
-  - Vercel stellt automatisch ein **SSL-Zertifikat (Let's Encrypt)** aus
-
-- [ ] **Google Safe Browsing bereinigen** (nach Domain-Wechsel)
-  - Neue Domain bei [search.google.com/search-console](https://search.google.com/search-console) verifizieren
-  - Security Issues prüfen → falls nötig, Überprüfung beantragen
-  - Das "Schädlich"-Banner verschwindet automatisch mit der neuen Domain
+- [x] **Eigene Domain gekauft** ✅
+- [ ] **Domain in Vercel verknüpfen** → Settings → Domains → DNS setzen
+- [ ] **Google Safe Browsing bereinigen** nach Domain-Wechsel
 
 ---
 
 ## 🟠 Wichtig – Rechtliche Pflichtseiten
 
-- [ ] **Impressum** anlegen (`/app/(tabs)/impressum.tsx`)
-  - Pflicht in Deutschland/Österreich bei gewerblichen Webseiten
-  - Inhalt: Name, Adresse, E-Mail, ggf. Handelsregisternummer
-
-- [ ] **Datenschutzerklärung** anlegen (`/app/(tabs)/datenschutz.tsx`)
-  - DSGVO-konform: welche Daten werden gespeichert? (Supabase, Push-Notifications, Adzuna)
-  - Hinweis auf Supabase (EU-Server), keine Weitergabe an Dritte
-
-- [ ] **AGB** anlegen (`/app/(tabs)/agb.tsx`)
-  - Allgemeine Geschäftsbedingungen für Unternehmenseinträge & Marketing-Pakete
-  - Zahlungsbedingungen, Laufzeiten, Widerrufsrecht
-
-- [ ] **Alle drei Seiten im Hamburger-Menü verlinken**
-  - `components/AppHeader.tsx` → MEHR-Sektion → Impressum, Datenschutz, AGB → routes eintragen
+- [ ] **Impressum** (`/app/(tabs)/impressum.tsx`)
+- [ ] **Datenschutzerklärung** (`/app/(tabs)/datenschutz.tsx`)
+- [ ] **AGB** (`/app/(tabs)/agb.tsx`)
+- [ ] **Alle drei im Hamburger-Menü verlinken** (`components/AppHeader.tsx`)
 
 ---
 
 ## 🟡 Geplante Features (Roadmap)
 
-- [ ] **Zypern FAQ erweitern** – weitere Fragen aus PDFs ergänzen (aktuell ~35 Einträge)
+- [ ] **Zypern FAQ erweitern** – weitere Fragen ergänzen (aktuell ~35 Einträge)
 - [ ] **Jobportal** – Stellenangebote suchen und aufgeben
-- [ ] **Jobs – Automatische Datenbank-Befüllung** (zyklisch, z.B. täglich/wöchentlich)
-  - Optionen prüfen: Supabase Edge Function als Cron-Job (pg_cron) oder externer Scraper
-  - Alpha.jobs / ergodotisi.com / cyprusjobs.com auf Scraping-Möglichkeit prüfen (API, RSS, Playwright)
-  - Neue Jobs automatisch in `public.jobs` eintragen, alte/inaktive deaktivieren (`active = false`)
-  - Duplikate vermeiden (z.B. via `url`-Unique-Constraint oder Hash-Check)
-  - Ziel: Jobs-Seite immer aktuell ohne manuellen Aufwand
-- [ ] **Blaue Flagge Strände** – Liste und Karte zertifizierter Strände
-- [ ] **PWA-Installation** – Anleitung für Android und iPhone (Add to Homescreen)
-- [ ] **Info / Impressum / AGB** – rechtliche Pflichtseiten
+- [ ] **Jobs – Automatische DB-Befüllung** (pg_cron oder externer Scraper)
+- [ ] **PWA-Installation** – Anleitung Android/iPhone (Add to Homescreen)
 - [ ] **Einstellungen** – Sprache, Benachrichtigungen, Dark Mode
-- [ ] **Beachbox Zahlungsintegration** – Stripe für Strandbox-Buchungen (10 €/Tag)
-- [ ] **Mein Eintrag – Verlängern** – Button funktioniert, aber noch kein Zahlungsfluss
-- [ ] **Karte – Fotos** bei Sehenswürdigkeiten und Stränden ergänzen (image_url Spalte bereits vorhanden)
-- [ ] **Bewertungen sichtbar machen** – Durchschnitt nach Nutzer-Reviews live aktualisieren (Trigger in Supabase)
+- [ ] **Bewertungen** – Durchschnitt live per Supabase-Trigger aktualisieren
+- [ ] **Karte – Fotos** bei Sehenswürdigkeiten ergänzen (`image_url` vorhanden)
+- [ ] **Blaue Flagge Strände** – restliche Bilder für Famagusta-Strände hochladen (Sandy Bay, Pantachou, Sunrise, Konnos Bay)
 
 ---
 
@@ -116,46 +66,39 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 - [x] Start / Index – Kategorien & Suche
 - [x] Events – Veranstaltungen aus Supabase
-- [x] Community
-- [x] Notfallnummern
-- [x] Busverbindungen
-- [x] News – Süden/Norden Filter, externe Links im neuen Tab
+- [x] Community, Notfallnummern, Busverbindungen
+- [x] News – Süden/Norden Filter
 - [x] Wetter – 7-Tage-Vorschau
-- [x] Alle Einträge
-- [x] Eintrag erstellen (Submit)
-- [x] Mein Eintrag – Login, Eintrag anzeigen
-- [x] Partner werden
-- [x] Profil
+- [x] Alle Einträge, Eintrag erstellen, Mein Eintrag
+- [x] Partner werden, Profil
 - [x] KI-Urlaubsplaner (Claude API)
 - [x] Beachbox – Buchungsflow komplett
 - [x] Admin-Bereich – Nutzerverwaltung, Multi-Tags, Toggle
 - [x] FAQ – Accordion, 35+ Fragen, 7 Kategorien
-- [x] Marketing – Push-Aktion erstellen, Credits, Kampagnenübersicht
-- [x] Supabase Tabellen: push_subscriptions, notifications, notification_credits, credit_purchases
+- [x] Marketing – Push-Aktion, Credits, Kampagnenübersicht
 - [x] Service Worker (sw.js) für Push-Empfang
-- [x] VAPID-Schlüssel generiert + in .env eingetragen
-- [x] Supabase Edge Function `send-notifications` deployed
-- [x] pg_cron Cron-Job eingerichtet (alle 5 Minuten)
-- [x] **Karte – Layer-System** ✅
-  - Sehenswürdigkeiten 📍 (orange), Strände 🏖️ (blau), Krankenhäuser 🏥 (rot), Tourist Info ℹ️ (lila)
-  - Große farbige Marker (40px) sofort sichtbar
-  - Filter-Chips zum An-/Ausschalten
-  - Popup mit Beschreibung + 🔊 Vorlesen (Web Speech API) + 🗺️ Route + ⭐ Bewerten
-  - Bewertungs-Modal (1–5 Sterne + Kommentar → Supabase)
-  - Horizontal scrollbare Ortsliste unter der Karte
-  - Detail-Panel mit Sprachausgabe und Route
-  - 34 Orte statisch eingebaut (Fallback, auch ohne Supabase-Tabelle)
-  - SQL-Migration: `supabase/migrations/20260628_places_reviews.sql`
+- [x] Supabase Edge Function `send-notifications` + pg_cron
+- [x] **Karte – Layer-System** ✅ (Sehenswürdigkeiten, Strände, Krankenhäuser, Tourist Info, Bewertungen)
+- [x] **Blaue Flagge Strände** ✅
+  - Supabase `beaches`-Tabelle mit allen Feldern (name, location, region, lat, lng, image_url)
+  - Strände ohne Code-Deploy hinzufügbar (nur SQL/Supabase Dashboard)
+  - Suchleiste zum Filtern nach Name/Ort
+  - Regionfilter-Chips (Alle / Famagusta / Paphos / Limassol / Larnaca)
+  - Bilder aus Supabase Storage (mit picsum-Fallback)
+  - Button **„Auf Karte anzeigen"** → In-App Leaflet-Karte zentriert auf Strand
+  - Button **„Route planen"** → Google Maps Routenplaner (Standort → Strand)
+  - Vercel-Build-Fix: `build`-Script + `buildCommand` in `vercel.json` ergänzt
+  - Aktuell ~35 Strände aktiv (Famagusta, Paphos, Limassol, Larnaca)
 
 ---
 
-## 📋 Morgen als nächstes
+## 📋 Als nächstes
 
-1. ~~Supabase SQL: places + place_reviews~~ ✅
-2. ~~Supabase SQL: deduct_notification_credit~~ ✅
-3. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
-4. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
-5. **Impressum / AGB** – rechtliche Pflichtseiten anlegen
+1. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
+2. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
+3. **Impressum / Datenschutz / AGB** anlegen
+4. **Domain** in Vercel verknüpfen
+5. Restliche Strand-Bilder hochladen (Sandy Bay, Pantachou, Sunrise Beach, Konnos Bay)
 
 ---
 
