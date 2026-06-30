@@ -95,6 +95,12 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 - [ ] **Zypern FAQ erweitern** – weitere Fragen aus PDFs ergänzen (aktuell ~35 Einträge)
 - [ ] **Jobportal** – Stellenangebote suchen und aufgeben
+- [ ] **Jobs – Automatische Datenbank-Befüllung** (zyklisch, z.B. täglich/wöchentlich)
+  - Optionen prüfen: Supabase Edge Function als Cron-Job (pg_cron) oder externer Scraper
+  - Alpha.jobs / ergodotisi.com / cyprusjobs.com auf Scraping-Möglichkeit prüfen (API, RSS, Playwright)
+  - Neue Jobs automatisch in `public.jobs` eintragen, alte/inaktive deaktivieren (`active = false`)
+  - Duplikate vermeiden (z.B. via `url`-Unique-Constraint oder Hash-Check)
+  - Ziel: Jobs-Seite immer aktuell ohne manuellen Aufwand
 - [ ] **Blaue Flagge Strände** – Liste und Karte zertifizierter Strände
 - [ ] **PWA-Installation** – Anleitung für Android und iPhone (Add to Homescreen)
 - [ ] **Info / Impressum / AGB** – rechtliche Pflichtseiten
