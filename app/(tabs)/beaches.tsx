@@ -16,22 +16,20 @@ type Beach = {
   image: string;
 };
 
-/* 100% verified Wikimedia Commons URLs – each hash confirmed via file page */
+// Wikimedia Commons – verified thumbnail URLs
 const W = 'https://upload.wikimedia.org/wikipedia/commons';
 const IMG = {
-  // Famagusta / Ayia Napa – confirmed hash /f/f6/, /1/1c/, /b/b9/, /c/c4/
   nissi:      `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
   nissi2:     `${W}/thumb/1/1c/2022_03_Nissi_beach_1.jpg/800px-2022_03_Nissi_beach_1.jpg`,
+  nissi3:     `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
   figtree:    `${W}/thumb/b/b9/25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG/800px-25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG`,
   protaras:   `${W}/thumb/c/c4/Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
-  // Paphos – confirmed hash /e/ec/, /2/2f/
   coral:      `${W}/thumb/e/ec/Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg/800px-Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg`,
   paphos:     `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
-  // Limassol – confirmed hash /4/45/, /b/b0/, /5/5c/
+  paphos2:    `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
   pissouri:   `${W}/thumb/4/45/Pissouri_Beach.jpg/800px-Pissouri_Beach.jpg`,
   pissouri2:  `${W}/thumb/b/b0/Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg/800px-Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg`,
   governors:  `${W}/thumb/5/5c/Governor%27s_Beach.JPG/800px-Governor%27s_Beach.JPG`,
-  // Larnaca – confirmed hash /a/aa/, /9/97/
   finikoudes: `${W}/thumb/a/aa/Finikoudes_Beach%2C_Larnaca.jpg/800px-Finikoudes_Beach%2C_Larnaca.jpg`,
   larnaca:    `${W}/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/800px-Larnaca_01-2017_img27_Finikoudes.jpg`,
 };
@@ -84,6 +82,34 @@ const BEACHES: Beach[] = [
 
 const REGIONS = ['Alle', 'Famagusta', 'Paphos', 'Limassol', 'Larnaca'] as const;
 
+const REGION_COLORS: Record<string, string> = {
+  Famagusta: '#0077B6',
+  Paphos:    '#1A936F',
+  Limassol:  '#E76F51',
+  Larnaca:   '#8338EC',
+};
+
+function BeachImage({ uri, name, region }: { uri: string; name: string; region: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <View style={[styles.cardImg, { backgroundColor: REGION_COLORS[region] ?? '#0077B6', justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ fontSize: 36 }}>🏖️</Text>
+        <Text style={{ color: '#fff', fontWeight: '800', fontSize: 14, marginTop: 6, textAlign: 'center', paddingHorizontal: 12 }}>{name}</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, marginTop: 2 }}>Blaue Flagge 2026</Text>
+      </View>
+    );
+  }
+  return (
+    <Image
+      source={{ uri }}
+      style={styles.cardImg}
+      resizeMode="cover"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function BeachesScreen() {
   const router = useRouter();
   const { colors } = useTheme();
@@ -135,11 +161,7 @@ export default function BeachesScreen() {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.border }]}>
-            <Image
-              source={{ uri: item.image }}
-              style={styles.cardImg}
-              resizeMode="cover"
-            />
+            <BeachImage uri={item.image} name={item.name} region={item.region} />
             <View style={styles.cardBody}>
               <View style={styles.cardTopRow}>
                 <Text style={[styles.cardName, { color: colors.text }]} numberOfLines={1}>{item.name}</Text>
