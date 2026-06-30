@@ -74,7 +74,7 @@ export default function BeachesScreen() {
 
   const openOnMap = (beach: Beach) => {
     router.push({
-      pathname: '/map',
+      pathname: '/(tabs)/map',
       params: { focusLat: beach.lat, focusLng: beach.lng, focusName: beach.name },
     });
   };

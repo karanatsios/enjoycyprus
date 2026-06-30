@@ -156,7 +156,7 @@ export default function MeinEintragScreen() {
                       </Text>
                     )}
                     <View style={s.bizActions}>
-                      <TouchableOpacity style={s.bizActionBtn} onPress={() => router.push('/submit' as any)}>
+                      <TouchableOpacity style={s.bizActionBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
                         <Text style={s.bizActionBtnText}>✏️ Bearbeiten</Text>
                       </TouchableOpacity>
                       {(b.status === 'expired' || isExpired) && (
@@ -174,14 +174,14 @@ export default function MeinEintragScreen() {
               <Text style={s.noEntryIcon}>📋</Text>
               <Text style={s.noEntryTitle}>Noch kein Eintrag</Text>
               <Text style={s.noEntrySub}>Erstellen Sie jetzt Ihren ersten Unternehmenseintrag.</Text>
-              <TouchableOpacity style={s.noEntryBtn} onPress={() => router.push('/submit' as any)}>
+              <TouchableOpacity style={s.noEntryBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
                 <Text style={s.noEntryBtnText}>➕ Jetzt eintragen</Text>
               </TouchableOpacity>
             </View>
           )}
 
           {/* Marketing / Push-Aktionen */}
-          <TouchableOpacity style={s.marketingBtn} onPress={() => router.push('/marketing' as any)}>
+          <TouchableOpacity style={s.marketingBtn} onPress={() => router.push('/(tabs)/marketing' as any)}>
             <Text style={s.marketingBtnIcon}>📣</Text>
             <View style={{ flex: 1 }}>
               <Text style={s.marketingBtnTitle}>Marketing & Push-Aktionen</Text>
@@ -191,7 +191,7 @@ export default function MeinEintragScreen() {
           </TouchableOpacity>
 
           {/* Neuen Eintrag erstellen */}
-          <TouchableOpacity style={s.addBtn} onPress={() => router.push('/submit' as any)}>
+          <TouchableOpacity style={s.addBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
             <Text style={s.addBtnText}>➕ Weiteren Eintrag erstellen</Text>
           </TouchableOpacity>
 
