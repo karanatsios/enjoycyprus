@@ -30,6 +30,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f8',  'Sunrise Beach',            'Protaras',    'Famagusta', 35.0178, 34.0594, 'https://picsum.photos/seed/sunrise-protaras/800/534'),
   ('f9',  'Konnos Bay',               'Cape Greco',  'Famagusta', 34.9736, 34.0722, 'https://picsum.photos/seed/konnos-bay-cy/800/534'),
   ('f10', 'Agia Thekla Beach',        'Ayia Napa',   'Famagusta', 34.9833, 33.9667, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Agia%20Thekla%20Beach.jpg'),
+  ('f11', 'Ziatzi Beach',             'Ayia Napa',   'Famagusta', 34.9872, 34.0056, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Ziatzi%20Beach.webp'),
   -- PAPHOS
   ('p1',  'Coral Bay',                'Peyia',       'Paphos',    34.8356, 32.3700, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/coral-bay-beach-cyprus.webp'),
   ('p2',  'Kaphizis Beach',           'Peyia',       'Paphos',    34.8411, 32.3644, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Kaphizis%20Beach.jpg'),
