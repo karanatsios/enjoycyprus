@@ -96,6 +96,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="jobs" options={{ href: null }} />
       <Tabs.Screen name="hospitals" options={{ href: null }} />
       <Tabs.Screen name="settings" options={{ href: null }} />
+      <Tabs.Screen name="beaches" options={{ href: null }} />
     </Tabs>
   );
 }

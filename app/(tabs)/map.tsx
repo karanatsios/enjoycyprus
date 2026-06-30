@@ -48,6 +48,23 @@ const STATIC_PLACES = [
   { id: 'b4m', name: 'British High Commission Nicosia', type: 'botschaft', description: 'Britische Vertretung für alle britischen Staatsbürger auf der Insel.', lat: 35.1736, lng: 33.3703, address: 'Alexander Pallis Street, 1587 Nicosia', phone: '+357 22 861 100', rating_avg: 0, rating_count: 0 },
   { id: 'b5m', name: 'US-Botschaft Nicosia', type: 'botschaft', description: 'American Citizen Services, Visa, Reisepässe.', lat: 35.1667, lng: 33.3500, address: 'Metochiou & Ploutarchou, 2407 Engomi, Nicosia', phone: '+357 22 393 939', rating_avg: 0, rating_count: 0 },
   { id: 'b6m', name: 'Russische Botschaft Nicosia', type: 'botschaft', description: 'Russische Vertretung auf Zypern.', lat: 35.1722, lng: 33.3611, address: 'Agiou Prokopiou 2, Engomi, Nicosia', phone: '+357 22 774 622', rating_avg: 0, rating_count: 0 },
+  /* ── Blaue Flagge Strände ── */
+  { id: 'bf1',  name: 'Nissi Beach',               type: 'blauflagge', description: 'Beliebtester Strand Zyperns – weißer Sand, türkisblaues Wasser. Blaue Flagge 2026.', lat: 34.9889, lng: 34.0019, rating_avg: 0, rating_count: 0 },
+  { id: 'bf2',  name: 'Fig Tree Bay',              type: 'blauflagge', description: 'Ruhiges, kristallklares Wasser in Protaras. Ideal für Familien. Blaue Flagge 2026.', lat: 35.0125, lng: 34.0572, rating_avg: 0, rating_count: 0 },
+  { id: 'bf3',  name: 'Coral Bay',                 type: 'blauflagge', description: 'Beliebter Sandstrand nördlich von Paphos. Blaue Flagge 2026.', lat: 34.8356, lng: 32.3700, rating_avg: 0, rating_count: 0 },
+  { id: 'bf4',  name: 'Konnos Bay',                type: 'blauflagge', description: 'Versteckter Sandstrand am Cape Greco. Blaue Flagge 2026.', lat: 34.9736, lng: 34.0722, rating_avg: 0, rating_count: 0 },
+  { id: 'bf5',  name: 'Mackenzie Beach',           type: 'blauflagge', description: 'Städtischer Strand in Larnaka mit vielen Bars. Blaue Flagge 2026.', lat: 34.8689, lng: 33.6336, rating_avg: 0, rating_count: 0 },
+  { id: 'bf6',  name: 'Pissouri Beach',            type: 'blauflagge', description: 'Malerische Bucht zwischen Paphos und Limassol. Blaue Flagge 2026.', lat: 34.6681, lng: 32.7064, rating_avg: 0, rating_count: 0 },
+  { id: 'bf7',  name: "Governor's Beach",          type: 'blauflagge', description: 'Weiße Klippen, schwarzer Kieselstrand. Blaue Flagge 2026.', lat: 34.7186, lng: 33.2683, rating_avg: 0, rating_count: 0 },
+  { id: 'bf8',  name: 'Makronissos Beach',         type: 'blauflagge', description: 'Mehrere kleine Buchten bei Ayia Napa. Blaue Flagge 2026.', lat: 34.9803, lng: 33.9878, rating_avg: 0, rating_count: 0 },
+  { id: 'bf9',  name: 'Venus Beach',               type: 'blauflagge', description: 'Gepflegter Sandstrand in Paphos. Blaue Flagge 2026.', lat: 34.7681, lng: 32.4069, rating_avg: 0, rating_count: 0 },
+  { id: 'bf10', name: 'Polis Chrysochous Beach',   type: 'blauflagge', description: 'Ruhiger Naturstrand im Norden. Blaue Flagge 2026.', lat: 35.0358, lng: 32.4250, rating_avg: 0, rating_count: 0 },
+  { id: 'bf11', name: 'Dasoudi Beach',             type: 'blauflagge', description: 'Gepflegter Stadtstand in Limassol. Blaue Flagge 2026.', lat: 34.7058, lng: 33.1433, rating_avg: 0, rating_count: 0 },
+  { id: 'bf12', name: 'Amathus Beach',             type: 'blauflagge', description: 'Langer Sandstrand östlich von Limassol. Blaue Flagge 2026.', lat: 34.6997, lng: 33.1239, rating_avg: 0, rating_count: 0 },
+  { id: 'bf13', name: 'Finikoudes Beach',          type: 'blauflagge', description: 'Stadtpromenade und Strand von Larnaka. Blaue Flagge 2026.', lat: 34.9153, lng: 33.6425, rating_avg: 0, rating_count: 0 },
+  { id: 'bf14', name: 'Kourion Beach',             type: 'blauflagge', description: 'Wilder Kiesstrand unter dem antiken Kourion. Blaue Flagge 2026.', lat: 34.6519, lng: 32.8744, rating_avg: 0, rating_count: 0 },
+  { id: 'bf15', name: 'Protaras Beach',            type: 'blauflagge', description: 'Ruhige Bucht in Protaras. Blaue Flagge 2026.', lat: 35.0094, lng: 34.0547, rating_avg: 0, rating_count: 0 },
+
   { id: 't1', name: 'Tourist Info – Larnaka Flughafen', type: 'tourist_info', description: 'Touristeninformation im Ankunftsbereich des Flughafens.', lat: 34.8753, lng: 33.6253, phone: '+357 24 643576', rating_avg: 0, rating_count: 0 },
   { id: 't2', name: 'Tourist Info – Paphos', type: 'tourist_info', description: 'Zentrale Touristeninformation Paphos.', lat: 34.7731, lng: 32.4242, phone: '+357 26 932841', rating_avg: 0, rating_count: 0 },
   { id: 't3', name: 'Tourist Info – Limassol', type: 'tourist_info', description: 'Touristeninformation im Stadtzentrum Limassol.', lat: 34.6769, lng: 33.0444, phone: '+357 25 362756', rating_avg: 0, rating_count: 0 },
@@ -70,6 +87,7 @@ type Business = {
 const PLACE_FILTERS = [
   { id: 'sehenswuerdigkeit',  label: 'Sehensw.',    icon: '📍', color: '#E67E22' },
   { id: 'strand',             label: 'Strände',      icon: '🏖️', color: '#0077B6' },
+  { id: 'blauflagge',         label: 'Blaue Flagge', icon: '🚩', color: '#1565C0' },
   { id: 'krankenhaus',        label: 'Krankenh.',    icon: '🏥', color: '#E74C3C' },
   { id: 'gesundheitszentrum', label: 'Gesundh.',     icon: '⚕️', color: '#00897B' },
   { id: 'botschaft',          label: 'Botschaften',  icon: '🏛️', color: '#5C6BC0' },
@@ -112,16 +130,16 @@ function buildLeafletHTML(
   userLng?: number,
 ): string {
   const placeColor: Record<string, string> = {
-    sehenswuerdigkeit: '#E67E22', strand: '#0077B6',
+    sehenswuerdigkeit: '#E67E22', strand: '#0077B6', blauflagge: '#1565C0',
     krankenhaus: '#E74C3C', gesundheitszentrum: '#00897B',
     botschaft: '#5C6BC0', tourist_info: '#8E44AD',
   };
   const placeIcon: Record<string, string> = {
-    sehenswuerdigkeit: '📍', strand: '🏖️', krankenhaus: '🏥',
-    gesundheitszentrum: '⚕️', botschaft: '🏛️', tourist_info: 'ℹ️',
+    sehenswuerdigkeit: '📍', strand: '🏖️', blauflagge: '🚩',
+    krankenhaus: '🏥', gesundheitszentrum: '⚕️', botschaft: '🏛️', tourist_info: 'ℹ️',
   };
   const typeLabel: Record<string, string> = {
-    sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand',
+    sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand', blauflagge: 'Blaue Flagge Strand',
     krankenhaus: 'Krankenhaus', gesundheitszentrum: 'Gesundheitszentrum',
     botschaft: 'Botschaft', tourist_info: 'Tourist Info',
   };
@@ -217,7 +235,7 @@ export default function MapScreen() {
   const [userLat, setUserLat]       = useState<number | undefined>();
   const [userLng, setUserLng]       = useState<number | undefined>();
   const [loading, setLoading]       = useState(true);
-  const [activePlaceLayers, setActivePlaceLayers]   = useState<string[]>(['sehenswuerdigkeit', 'strand', 'krankenhaus', 'gesundheitszentrum', 'botschaft', 'tourist_info']);
+  const [activePlaceLayers, setActivePlaceLayers]   = useState<string[]>(['sehenswuerdigkeit', 'strand', 'blauflagge', 'krankenhaus', 'gesundheitszentrum', 'botschaft', 'tourist_info']);
   const [activeBizCategories, setActiveBizCategories] = useState<string[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [selectedBiz, setSelectedBiz]     = useState<Business | null>(null);
@@ -291,7 +309,7 @@ export default function MapScreen() {
   };
 
   const PLACE_TYPE_LABEL: Record<string, string> = {
-    sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand',
+    sehenswuerdigkeit: 'Sehenswürdigkeit', strand: 'Strand', blauflagge: 'Blaue Flagge Strand',
     krankenhaus: 'Krankenhaus', gesundheitszentrum: 'Gesundheitszentrum',
     botschaft: 'Botschaft', tourist_info: 'Tourist Info',
   };
