@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
   ActivityIndicator, Platform, ScrollView,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import AppHeader from '../../components/AppHeader';
 import { supabase } from '../../lib/supabase';
@@ -128,6 +128,9 @@ function buildLeafletHTML(
   activeBizCategories: string[],
   userLat?: number,
   userLng?: number,
+  focusLat?: number,
+  focusLng?: number,
+  focusName?: string,
 ): string {
   const placeColor: Record<string, string> = {
     sehenswuerdigkeit: '#E67E22', strand: '#0077B6', blauflagge: '#1565C0',
@@ -206,7 +209,8 @@ function buildLeafletHTML(
   </div>
 </div>
 <script>
-  var map=L.map('map',{zoomControl:true}).setView([${userLat ?? 34.9},${userLng ?? 33.1}],${userLat ? 11 : 9});
+  var map=L.map('map',{zoomControl:true}).setView([${focusLat ?? userLat ?? 34.9},${focusLng ?? userLng ?? 33.1}],${focusLat ? 14 : userLat ? 11 : 9});
+  ${focusLat && focusLng ? `L.marker([${focusLat},${focusLng}],{icon:L.divIcon({className:'',html:'<div style="background:#0077B6;color:#fff;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 12px rgba(0,0,0,0.4);border:3px solid #fff;">🏖️</div>',iconSize:[44,44],iconAnchor:[22,22],popupAnchor:[0,-24]})}).addTo(map).bindPopup('<div style="font-family:sans-serif;font-weight:800;font-size:14px;color:#0077B6">🏖️ ${(focusName ?? '').replace(/'/g, "\\'")}\\n<br><span style=\\"font-size:11px;color:#555;font-weight:400\\">🚩 Blaue Flagge 2026</span></div>',{maxWidth:220}).openPopup();` : ''}
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
   function speakText(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='de-DE';u.rate=0.9;window.speechSynthesis.speak(u);}
   var cpid='',cstar=0;
@@ -230,6 +234,11 @@ function buildLeafletHTML(
 /* ─── Hauptkomponente ─── */
 export default function MapScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ focusLat?: string; focusLng?: string; focusName?: string }>();
+  const focusLat  = params.focusLat  ? parseFloat(params.focusLat)  : undefined;
+  const focusLng  = params.focusLng  ? parseFloat(params.focusLng)  : undefined;
+  const focusName = params.focusName ?? undefined;
+
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [places, setPlaces]         = useState<Place[]>(STATIC_PLACES as Place[]);
   const [userLat, setUserLat]       = useState<number | undefined>();
@@ -292,8 +301,8 @@ export default function MapScreen() {
   };
 
   const mapHTML = useMemo(
-    () => buildLeafletHTML(businesses, places, activePlaceLayers, activeBizCategories, userLat, userLng),
-    [businesses, places, activePlaceLayers, activeBizCategories, userLat, userLng],
+    () => buildLeafletHTML(businesses, places, activePlaceLayers, activeBizCategories, userLat, userLng, focusLat, focusLng, focusName),
+    [businesses, places, activePlaceLayers, activeBizCategories, userLat, userLng, focusLat, focusLng, focusName],
   );
 
   const visiblePlaces = places.filter(p => activePlaceLayers.includes(p.type));

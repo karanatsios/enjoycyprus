@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Image, Linking, FlatList,
+  TouchableOpacity, Image, FlatList, TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
@@ -63,20 +63,12 @@ const BEACHES_STATIC: Omit<Beach, 'image'>[] = [
 
 const REGIONS = ['Alle', 'Famagusta', 'Paphos', 'Limassol', 'Larnaca'] as const;
 
-const REGION_COLORS: Record<string, string> = {
-  Famagusta: '#0077B6',
-  Paphos:    '#1A936F',
-  Limassol:  '#E76F51',
-  Larnaca:   '#8338EC',
-};
-
-function BeachImage({ uri, name, region }: { uri: string; name: string; region: string }) {
+function BeachImage({ uri, name }: { uri: string; name: string }) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // If image hasn't loaded within 6s, switch to fallback
     timerRef.current = setTimeout(() => {
       if (!loaded) setFailed(true);
     }, 6000);
@@ -86,13 +78,7 @@ function BeachImage({ uri, name, region }: { uri: string; name: string; region: 
   const fallbackUri = `https://picsum.photos/seed/${encodeURIComponent(name)}/800/534`;
 
   if (failed) {
-    return (
-      <Image
-        source={{ uri: fallbackUri }}
-        style={styles.cardImg}
-        resizeMode="cover"
-      />
-    );
+    return <Image source={{ uri: fallbackUri }} style={styles.cardImg} resizeMode="cover" />;
   }
   return (
     <Image
@@ -110,6 +96,7 @@ export default function BeachesScreen() {
   const { colors } = useTheme();
   const [activeRegion, setActiveRegion] = useState<string>('Alle');
   const [beaches, setBeaches] = useState<Beach[]>([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     supabase
@@ -129,13 +116,19 @@ export default function BeachesScreen() {
       });
   }, []);
 
-  const filtered = activeRegion === 'Alle'
-    ? beaches
-    : beaches.filter(b => b.region === activeRegion);
+  const filtered = beaches.filter(b => {
+    const matchRegion = activeRegion === 'Alle' || b.region === activeRegion;
+    const matchSearch = search.trim() === '' ||
+      b.name.toLowerCase().includes(search.toLowerCase()) ||
+      b.location.toLowerCase().includes(search.toLowerCase());
+    return matchRegion && matchSearch;
+  });
 
-  const openMaps = (beach: Beach) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${beach.lat},${beach.lng}`;
-    Linking.openURL(url);
+  const openOnMap = (beach: Beach) => {
+    router.push({
+      pathname: '/(tabs)/map',
+      params: { focusLat: beach.lat, focusLng: beach.lng, focusName: beach.name },
+    });
   };
 
   return (
@@ -150,6 +143,24 @@ export default function BeachesScreen() {
           <Text style={styles.headerTitle}>🏖️ Blaue Flagge Strände</Text>
           <Text style={styles.headerSub}>{BEACHES_STATIC.length} zertifizierte Strände auf Zypern 2026</Text>
         </View>
+      </View>
+
+      {/* Search */}
+      <View style={styles.searchWrap}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Strand suchen…"
+          placeholderTextColor="#999"
+          value={search}
+          onChangeText={setSearch}
+          clearButtonMode="while-editing"
+        />
+        {search.length > 0 && (
+          <TouchableOpacity onPress={() => setSearch('')} style={styles.searchClear}>
+            <Text style={styles.searchClearTxt}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Region filter */}
@@ -173,9 +184,12 @@ export default function BeachesScreen() {
         keyExtractor={b => b.id}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Kein Strand gefunden für „{search}"</Text>
+        }
         renderItem={({ item }) => (
           <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.border }]}>
-            <BeachImage uri={item.image} name={item.name} region={item.region} />
+            <BeachImage uri={item.image} name={item.name} />
             <View style={styles.cardBody}>
               <View style={styles.cardTopRow}>
                 <Text style={[styles.cardName, { color: colors.text }]} numberOfLines={1}>{item.name}</Text>
@@ -186,11 +200,11 @@ export default function BeachesScreen() {
               <View style={styles.cardMeta}>
                 <Text style={[styles.metaText, { color: colors.textMuted }]}>📍 {item.location}</Text>
                 <Text style={styles.metaDot}>·</Text>
-                <Text style={styles.blueFlag}>🏖️ Blaue Flagge 2026</Text>
+                <Text style={styles.blueFlag}>🚩 Blaue Flagge 2026</Text>
               </View>
-              <TouchableOpacity style={styles.mapsBtn} onPress={() => openMaps(item)}>
+              <TouchableOpacity style={styles.mapsBtn} onPress={() => openOnMap(item)}>
                 <Text style={styles.mapsBtnIcon}>🗺️</Text>
-                <Text style={styles.mapsBtnText}>Auf Maps öffnen</Text>
+                <Text style={styles.mapsBtnText}>Auf Karte anzeigen</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -215,7 +229,19 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
   headerSub: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 2 },
 
-  filterWrap: { paddingTop: 14 },
+  searchWrap: {
+    flexDirection: 'row', alignItems: 'center',
+    marginHorizontal: 16, marginTop: 14, marginBottom: 4,
+    backgroundColor: '#fff', borderRadius: 14, paddingHorizontal: 12,
+    borderWidth: 1.5, borderColor: '#D0D8E8',
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+  },
+  searchIcon: { fontSize: 16, marginRight: 8 },
+  searchInput: { flex: 1, height: 44, fontSize: 15, color: '#1A1A2E' },
+  searchClear: { padding: 4 },
+  searchClearTxt: { fontSize: 14, color: '#999', fontWeight: '700' },
+
+  filterWrap: { paddingTop: 10 },
   filterRow: { paddingHorizontal: 16, gap: 8 },
   chip: {
     paddingHorizontal: 16, paddingVertical: 8,
@@ -226,6 +252,8 @@ const styles = StyleSheet.create({
   chipTextActive: { color: '#fff' },
 
   list: { padding: 16, gap: 16 },
+
+  emptyText: { textAlign: 'center', color: '#999', fontSize: 14, marginTop: 40 },
 
   card: {
     borderRadius: 18, overflow: 'hidden',
