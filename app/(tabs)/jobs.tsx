@@ -7,9 +7,7 @@ import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import AppHeader from '../../components/AppHeader';
 
-/* ─── Adzuna API (kostenlos, 250 Req/Tag) ─── */
-const ADZUNA_APP_ID  = process.env.EXPO_PUBLIC_ADZUNA_APP_ID  ?? '';
-const ADZUNA_APP_KEY = process.env.EXPO_PUBLIC_ADZUNA_APP_KEY ?? '';
+/* Jobs werden über /api/jobs (Vercel Serverless Proxy) geladen – kein direkter Browser-Aufruf */
 
 /* ─── Job-Webseiten ─── */
 const JOB_SITES = [
@@ -37,52 +35,15 @@ type Job = {
 };
 
 async function fetchAdzunaJobs(query: string, location: string, page = 1): Promise<{ jobs: Job[]; total: number; error?: string }> {
-  if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) return { jobs: [], total: 0 };
   try {
-    // Adzuna: cy = Cyprus; wenn keine Ergebnisse, Fallback auf gb+cyprus
-    const buildParams = (what: string, where: string) => {
-      const p = new URLSearchParams({
-        app_id: ADZUNA_APP_ID,
-        app_key: ADZUNA_APP_KEY,
-        results_per_page: '50',
-        sort_by: 'date',
-      });
-      if (what)  p.set('what', what);
-      if (where) p.set('where', where);
-      return p;
-    };
-
-    const whereParam = location && location !== 'Alle Orte' ? location : '';
-    const whatParam  = query || '';
-
-    // Erst Cyprus-Endpoint probieren
-    let res = await fetch(
-      `https://api.adzuna.com/v1/api/jobs/cy/search/${page}?${buildParams(whatParam, whereParam)}`
-    );
-    let data = res.ok ? await res.json() : null;
-
-    // Falls keine Ergebnisse: GB-Endpoint mit "cyprus" als Where
-    if (!data || (data.count === 0 && !query && location === 'Alle Orte')) {
-      const fallbackWhere = whereParam ? `${whereParam} Cyprus` : 'Cyprus';
-      res = await fetch(
-        `https://api.adzuna.com/v1/api/jobs/gb/search/${page}?${buildParams(whatParam, fallbackWhere)}`
-      );
-      if (res.ok) data = await res.json();
-    }
-
-    if (!data) return { jobs: [], total: 0, error: `HTTP ${res.status}` };
-
-    const jobs: Job[] = (data.results ?? []).map((r: any) => ({
-      id:          r.id,
-      title:       r.title,
-      company:     r.company?.display_name ?? 'Unbekannt',
-      location:    r.location?.display_name ?? '',
-      description: r.description ?? '',
-      url:         r.redirect_url,
-      source:      'Adzuna',
-      created:     r.created ?? '',
-    }));
-    return { jobs, total: data.count ?? 0 };
+    const params = new URLSearchParams({ page: String(page) });
+    if (query)    params.set('what', query);
+    if (location) params.set('where', location);
+    const res = await fetch(`/api/jobs?${params}`);
+    if (!res.ok) return { jobs: [], total: 0, error: `HTTP ${res.status}` };
+    const data = await res.json();
+    if (data.error && !data.jobs?.length) return { jobs: [], total: 0, error: data.error };
+    return { jobs: data.jobs ?? [], total: data.total ?? 0 };
   } catch (e: any) {
     return { jobs: [], total: 0, error: e?.message ?? 'Netzwerkfehler' };
   }
@@ -97,10 +58,8 @@ export default function JobsScreen() {
   const [location, setLocation]     = useState('Alle Orte');
   const [showSites, setShowSites]   = useState(false);
   const [apiError, setApiError]     = useState('');
-  const [noApiKey]                  = useState(!ADZUNA_APP_ID);
 
   const loadJobs = async (q: string, loc: string) => {
-    if (noApiKey) return;
     setLoading(true);
     setApiError('');
     const { jobs: j, total: t, error } = await fetchAdzunaJobs(q, loc);
@@ -154,7 +113,7 @@ export default function JobsScreen() {
           <View style={s.countBadge}>
             <Text style={s.countIcon}>📋</Text>
             <Text style={s.countTxt}>
-              {noApiKey ? '–' : loading ? '…' : total > 0 ? total.toLocaleString('de') : '0'} Stellen
+              {loading ? '…' : total > 0 ? total.toLocaleString('de') : '0'} Stellen
             </Text>
           </View>
           <TouchableOpacity style={[s.sitesBtn, showSites && s.sitesBtnActive]} onPress={() => setShowSites(v => !v)}>
@@ -204,28 +163,7 @@ export default function JobsScreen() {
         ))}
       </ScrollView>
 
-      {/* Kein API-Key */}
-      {noApiKey ? (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={s.listContent}>
-          <View style={s.noKeyBox}>
-            <Text style={s.noKeyTitle}>🔑 Adzuna API-Key benötigt</Text>
-            <Text style={s.noKeyText}>Für echte Stellenangebote aus Zypern bitte einen kostenlosen Adzuna-Account erstellen:</Text>
-            <TouchableOpacity style={s.noKeyBtn} onPress={() => openUrl('https://developer.adzuna.com/')}>
-              <Text style={s.noKeyBtnTxt}>→ developer.adzuna.com (kostenlos)</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={s.sectionTitle}>🌐 Job-Webseiten direkt besuchen</Text>
-          {JOB_SITES.map(site => (
-            <TouchableOpacity key={site.name} style={s.siteCard} onPress={() => openUrl(site.url)}>
-              <View style={{ flex: 1 }}>
-                <Text style={s.siteCardName}>{site.name}</Text>
-                <Text style={s.siteCardDesc}>{site.desc}</Text>
-              </View>
-              <Text style={{ fontSize: 20 }}>↗</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      ) : loading ? (
+      {loading ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={Colors.primary} size="large" />
           <Text style={{ color: '#aaa', marginTop: 12, fontSize: 13 }}>Stellenangebote werden geladen…</Text>
