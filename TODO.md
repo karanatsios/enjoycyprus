@@ -1,6 +1,6 @@
 # Inside Cyprus – Offene To-dos
 
-Stand: 30. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
+Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
 
 > 👋 **Beim nächsten Start:** Diese Datei zuerst lesen und offene [ ]-Punkte mit dem Nutzer besprechen.
 
@@ -73,7 +73,7 @@ Stand: 30. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x
 - [x] Partner werden, Profil
 - [x] KI-Urlaubsplaner (Claude API)
 - [x] Beachbox – Buchungsflow komplett
-- [x] Admin-Bereich – Nutzerverwaltung, Multi-Tags, Toggle
+- [x] Admin-Bereich – Nutzerverwaltung, Multi-Tags, Toggle (Seite selbst OK, Menülink-Bug offen)
 - [x] FAQ – Accordion, 35+ Fragen, 7 Kategorien
 - [x] Marketing – Push-Aktion, Credits, Kampagnenübersicht
 - [x] Service Worker (sw.js) für Push-Empfang
@@ -92,13 +92,26 @@ Stand: 30. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x
 
 ---
 
+## 🔴 MORGEN ZUERST – Admin-Bereich Navigation (offenes Problem)
+
+- [ ] **Admin-Menülink funktioniert nicht via Hamburger-Menü**
+  - Manuell `/admin` eintippen → funktioniert ✅
+  - Klick im Menü → zeigt leere Seite ✗
+  - Ursache noch unklar: `router.push('/(tabs)/admin')` vs. URL `/admin` im Browser
+  - **Zuerst testen:** Ob nach dem Realtime-Fix (Commit `af0b986`) das Menü wieder geht
+  - Wenn nicht: Routing-Strategie für Expo Router Web sorgfältig prüfen (Docs lesen!)
+  - **Kein Schnellschuss mehr** – erst verstehen, dann ändern
+
+---
+
 ## 📋 Als nächstes
 
-1. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
-2. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
-3. **Impressum / Datenschutz / AGB** anlegen
-4. **Domain** in Vercel verknüpfen
-5. Restliche Strand-Bilder hochladen (Sandy Bay, Pantachou, Sunrise Beach, Konnos Bay)
+1. **Admin-Bereich** – Menünavigation fixen (siehe oben)
+2. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
+3. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
+4. **Impressum / Datenschutz / AGB** anlegen
+5. **Domain** in Vercel verknüpfen
+6. Restliche Strand-Bilder hochladen (Sandy Bay, Pantachou, Sunrise Beach, Konnos Bay)
 
 ---
 
