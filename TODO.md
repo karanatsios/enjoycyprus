@@ -102,4 +102,19 @@ Stand: 30. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x
 
 ---
 
+## 🔖 Morgen einrichten – Git-Versionierung (Feature-Tags)
+
+**Idee:** Vor jeder neuen Implementierung einen Git-Tag setzen, nach Abnahme ebenfalls. So kann jederzeit auf einen funktionierenden Stand zurückgegriffen werden.
+
+**Workflow:**
+1. Vor Änderung: `git tag v-DATUM-FEATURE-before` (z.B. `v-20260701-stripe-before`)
+2. Änderung implementieren & testen
+3. Nach Abnahme: `git tag v-DATUM-FEATURE-stable` (z.B. `v-20260701-stripe-stable`)
+4. Tags pushen: `git push origin --tags`
+5. Zurückrollen bei Bedarf: `git checkout v-DATUM-FEATURE-stable`
+
+**Nächste Session:** Script oder Alias anlegen, der das automatisch macht.
+
+---
+
 *Inside Cyprus © 2026 – To-do-Liste für Entwicklung und Setup*
