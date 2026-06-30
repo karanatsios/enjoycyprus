@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, FlatList, TextInput, ActivityIndicator,
+  TouchableOpacity, FlatList, TextInput, ActivityIndicator, Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
@@ -79,6 +79,11 @@ export default function BeachesScreen() {
     });
   };
 
+  const openRoute = (beach: Beach) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${beach.lat},${beach.lng}&travelmode=driving`;
+    Linking.openURL(url);
+  };
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       {/* Header */}
@@ -154,10 +159,16 @@ export default function BeachesScreen() {
                   <Text style={styles.metaDot}>·</Text>
                   <Text style={styles.blueFlag}>🚩 Blaue Flagge 2026</Text>
                 </View>
-                <TouchableOpacity style={styles.mapsBtn} onPress={() => openOnMap(item)}>
-                  <Text style={styles.mapsBtnIcon}>🗺️</Text>
-                  <Text style={styles.mapsBtnText}>Auf Karte anzeigen</Text>
-                </TouchableOpacity>
+                <View style={styles.btnRow}>
+                  <TouchableOpacity style={styles.mapsBtn} onPress={() => openOnMap(item)}>
+                    <Text style={styles.mapsBtnIcon}>🗺️</Text>
+                    <Text style={styles.mapsBtnText}>Auf Karte</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.routeBtn} onPress={() => openRoute(item)}>
+                    <Text style={styles.mapsBtnIcon}>🧭</Text>
+                    <Text style={styles.routeBtnText}>Route planen</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           )}
@@ -221,12 +232,18 @@ const styles = StyleSheet.create({
   metaText: { fontSize: 12 },
   metaDot: { color: '#ccc' },
   blueFlag: { fontSize: 12, color: '#0077B6', fontWeight: '600' },
+  btnRow: { flexDirection: 'row', gap: 8, marginTop: 4 },
   mapsBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     backgroundColor: '#EBF5FB', borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 9,
-    alignSelf: 'flex-start', marginTop: 4,
+  },
+  routeBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: '#FFF3E0', borderRadius: 10,
+    paddingHorizontal: 14, paddingVertical: 9,
   },
   mapsBtnIcon: { fontSize: 14 },
   mapsBtnText: { fontSize: 13, fontWeight: '700', color: '#0077B6' },
+  routeBtnText: { fontSize: 13, fontWeight: '700', color: '#E65100' },
 });
