@@ -159,7 +159,7 @@ export default function MarketingScreen() {
           <Text style={s.loginIcon}>🔐</Text>
           <Text style={s.loginTitle}>Login erforderlich</Text>
           <Text style={s.loginSub}>Bitte melden Sie sich in „Mein Eintrag" an, um Push-Aktionen zu erstellen.</Text>
-          <TouchableOpacity style={s.loginBtn} onPress={() => router.push('/(tabs)/mein-eintrag' as any)}>
+          <TouchableOpacity style={s.loginBtn} onPress={() => router.push('/mein-eintrag' as any)}>
             <Text style={s.loginBtnText}>→ Zum Login</Text>
           </TouchableOpacity>
         </View>

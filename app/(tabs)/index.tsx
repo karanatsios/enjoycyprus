@@ -131,7 +131,7 @@ export default function HomeScreen() {
 
         {/* WETTER-KACHEL – dezent */}
         {weather && (
-          <TouchableOpacity style={[styles.weatherTile, { backgroundColor: colors.cardBg, borderColor: colors.border }]} activeOpacity={0.85} onPress={() => router.push('/(tabs)/weather' as any)}>
+          <TouchableOpacity style={[styles.weatherTile, { backgroundColor: colors.cardBg, borderColor: colors.border }]} activeOpacity={0.85} onPress={() => router.push('/weather' as any)}>
             <Text style={styles.weatherTileIcon}>{weather.icon}</Text>
             <View style={styles.weatherTileBody}>
               <Text style={styles.weatherTileTitle}>Wetter auf Zypern</Text>
@@ -143,7 +143,7 @@ export default function HomeScreen() {
         )}
 
         {/* ADD BUSINESS CTA */}
-        <TouchableOpacity style={styles.ctaBanner} activeOpacity={0.88} onPress={() => router.push('/(tabs)/submit')}>
+        <TouchableOpacity style={styles.ctaBanner} activeOpacity={0.88} onPress={() => router.push('/submit')}>
           <Text style={styles.ctaIcon}>🏢</Text>
           <View style={styles.ctaText}>
             <Text style={styles.ctaTitle}>{t('addBusiness')}</Text>

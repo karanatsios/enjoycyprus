@@ -106,7 +106,7 @@ export default function CommunityScreen() {
         <View style={s.ctaCard}>
           <Text style={s.ctaTitle}>🏢 Unternehmen eintragen</Text>
           <Text style={s.ctaText}>Bist du selbstständig oder kennst du ein deutschsprachiges Unternehmen auf Zypern? Trag es kostenlos ein!</Text>
-          <TouchableOpacity style={s.ctaBtn} onPress={() => router.push('/(tabs)/submit' as any)}>
+          <TouchableOpacity style={s.ctaBtn} onPress={() => router.push('/submit' as any)}>
             <Text style={s.ctaBtnText}>Jetzt eintragen →</Text>
           </TouchableOpacity>
         </View>
