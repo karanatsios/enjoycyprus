@@ -5,8 +5,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import AppHeader from '../../components/AppHeader';
+import AppHeader, { ALL_MENU_SECTIONS } from '../../components/AppHeader';
 import { supabase } from '../../lib/supabase';
+import { getAllMenuVisibility, setMenuItemVisible } from '../../lib/menuVisibility';
 
 const ADMIN_EMAILS = ['karanatsios@mailbox.org', 'vitali.vs@gmx.de'];
 
@@ -27,7 +28,7 @@ type Business = {
   status: string; created_at: string; expires_at: string | null; user_id: string;
 };
 
-type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'users';
+type Tab = 'pending' | 'approved' | 'expired' | 'all' | 'users' | 'menu';
 
 const ROLE_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   admin:   { label: 'Admin',   color: '#9B59B6', bg: '#F5EEF8', icon: '🔐' },
@@ -68,6 +69,7 @@ export default function AdminScreen() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [counts, setCounts] = useState({ pending: 0, approved: 0, expired: 0, all: 0 });
+  const [menuVis, setMenuVis] = useState<Record<string, boolean>>({});
 
   useEffect(() => { checkAdmin(); }, []);
 
@@ -75,6 +77,7 @@ export default function AdminScreen() {
     if (!isAdmin) return;
     fetchAll();
     fetchUsers();
+    getAllMenuVisibility().then(setMenuVis);
 
     // Echtzeit-Abo: Änderungen sofort anzeigen ohne Neuladen
     const bizSub = supabase.channel('businesses-changes')
@@ -198,6 +201,13 @@ export default function AdminScreen() {
     ]);
   };
 
+  const toggleMenuItem = async (id: string) => {
+    const current = menuVis[id] !== false; // default true
+    const newVal = !current;
+    await setMenuItemVisible(id, newVal);
+    setMenuVis(prev => ({ ...prev, [id]: newVal }));
+  };
+
   const filtered = tab === 'all' ? businesses : businesses.filter(b => b.status === tab);
 
   // ── Login ────────────────────────────────────────────────────────
@@ -274,6 +284,7 @@ export default function AdminScreen() {
           { key: 'expired', label: `Abgelaufen (${counts.expired})` },
           { key: 'all', label: `Alle (${counts.all})` },
           { key: 'users', label: `👥 Nutzer (${users.length})` },
+          { key: 'menu', label: '👁 Menü' },
         ] as const).map(t => (
           <TouchableOpacity key={t.key} style={[bs.tabChip, tab === t.key && bs.tabChipActive]}
             onPress={() => setTab(t.key)}>
@@ -282,7 +293,36 @@ export default function AdminScreen() {
         ))}
       </ScrollView>
 
-      {tab === 'users' ? (
+      {tab === 'menu' ? (
+        <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }}>
+          <View style={bs.menuInfoBox}>
+            <Text style={bs.menuInfoTitle}>👁 Menü-Einträge ein-/ausblenden</Text>
+            <Text style={bs.menuInfoSub}>Ausgeblendete Einträge sind nur für Admins nicht sichtbar in der App. Tippe auf das Auge zum Umschalten.</Text>
+          </View>
+          {ALL_MENU_SECTIONS.map(section => (
+            <View key={section.title} style={bs.menuSection}>
+              <Text style={bs.menuSectionTitle}>{section.title}</Text>
+              {section.items.map(item => {
+                const visible = menuVis[item.id] !== false;
+                return (
+                  <TouchableOpacity key={item.id} style={bs.menuRow} onPress={() => toggleMenuItem(item.id)}>
+                    <View style={[bs.menuIconWrap, !visible && bs.menuIconWrapHidden]}>
+                      <Text style={bs.menuIcon}>{item.icon}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[bs.menuLabel, !visible && bs.menuLabelHidden]}>{item.label}</Text>
+                      <Text style={bs.menuSub}>{item.sub}</Text>
+                    </View>
+                    <View style={[bs.eyeBtn, visible ? bs.eyeBtnOn : bs.eyeBtnOff]}>
+                      <Text style={bs.eyeIcon}>{visible ? '👁' : '🙈'}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ))}
+        </ScrollView>
+      ) : tab === 'users' ? (
         <FlatList
           data={users}
           keyExtractor={item => item.id}
@@ -554,4 +594,38 @@ const bs = StyleSheet.create({
   permSwitchDotOn: { alignSelf: 'flex-end' },
 
   noBiz: { fontSize: 11, color: '#bbb', marginTop: 8, fontStyle: 'italic' },
+
+  menuInfoBox: {
+    backgroundColor: Colors.primary + '12', borderRadius: 14, padding: 14, marginBottom: 16,
+    borderLeftWidth: 4, borderLeftColor: Colors.primary,
+  },
+  menuInfoTitle: { fontSize: 14, fontWeight: '800', color: Colors.primary, marginBottom: 4 },
+  menuInfoSub: { fontSize: 12, color: '#555', lineHeight: 17 },
+
+  menuSection: { marginBottom: 8 },
+  menuSectionTitle: {
+    fontSize: 10, fontWeight: '800', color: '#aaa', letterSpacing: 1,
+    paddingVertical: 8, paddingHorizontal: 2,
+  },
+  menuRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#fff', borderRadius: 14, padding: 12, marginBottom: 6,
+    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1,
+  },
+  menuIconWrap: {
+    width: 40, height: 40, borderRadius: 12, backgroundColor: '#F0F4F8',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  menuIconWrapHidden: { backgroundColor: '#F0F0F0', opacity: 0.5 },
+  menuIcon: { fontSize: 20 },
+  menuLabel: { fontSize: 14, fontWeight: '700', color: '#1A1A2E' },
+  menuLabelHidden: { color: '#bbb', textDecorationLine: 'line-through' },
+  menuSub: { fontSize: 11, color: '#aaa', marginTop: 2 },
+  eyeBtn: {
+    width: 40, height: 40, borderRadius: 12,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  eyeBtnOn: { backgroundColor: Colors.primary + '15' },
+  eyeBtnOff: { backgroundColor: '#F0F0F0' },
+  eyeIcon: { fontSize: 18 },
 });

@@ -204,39 +204,41 @@ export default function JobsScreen() {
                 {/* Quelle / Plattform-Badge */}
                 <View style={s.jobSourceRow}>
                   <View style={s.jobSourceBadge}>
-                    <Text style={s.jobSourceTxt}>📢 {job.source.toUpperCase()}</Text>
+                    <Text style={s.jobSourceTxt} numberOfLines={1}>📢 {(job.source || '').toUpperCase()}</Text>
                   </View>
                   {job.created ? <Text style={s.jobDate}>{formatDate(job.created)}</Text> : null}
                 </View>
 
                 {/* Titel */}
-                <Text style={s.jobTitle}>{job.title}</Text>
+                <Text style={s.jobTitle} numberOfLines={2}>{job.title}</Text>
 
                 {/* Firma + Ort */}
                 <View style={s.jobMeta}>
                   {job.company !== 'Unbekannt' && (
                     <View style={s.jobMetaItem}>
                       <Text style={s.jobMetaIcon}>🏢</Text>
-                      <Text style={s.jobMetaTxt}>{job.company}</Text>
+                      <Text style={s.jobMetaTxt} numberOfLines={1}>{job.company}</Text>
                     </View>
                   )}
                   {job.location ? (
                     <View style={s.jobMetaItem}>
                       <Text style={s.jobMetaIcon}>📍</Text>
-                      <Text style={s.jobMetaTxt}>{job.location}</Text>
+                      <Text style={s.jobMetaTxt} numberOfLines={1}>{job.location}</Text>
                     </View>
                   ) : null}
                 </View>
 
                 {/* Zusammenfassung der Stelle */}
                 {job.description ? (
-                  <Text style={s.jobDesc}>{summarize(job.description)}</Text>
+                  <Text style={s.jobDesc} numberOfLines={3}>{summarize(job.description)}</Text>
                 ) : null}
 
                 {/* Button */}
-                <TouchableOpacity style={s.jobBtn} onPress={() => openUrl(job.url)}>
-                  <Text style={s.jobBtnTxt}>Anzeige ansehen</Text>
-                </TouchableOpacity>
+                {job.url ? (
+                  <TouchableOpacity style={s.jobBtn} onPress={() => openUrl(job.url)}>
+                    <Text style={s.jobBtnTxt}>Anzeige ansehen ↗</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             ))
           )}
@@ -279,21 +281,21 @@ const s = StyleSheet.create({
   locTxt: { fontSize: 13, fontWeight: '700', color: '#555' },
   locTxtActive: { color: '#fff' },
 
-  listContent: { padding: 12, paddingBottom: 40 },
+  listContent: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 40 },
 
   /* Job-Karte */
-  jobCard: { backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 10, elevation: 3 },
-  jobSourceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  jobSourceBadge: { backgroundColor: Colors.primary + '18', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
+  jobCard: { backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 10, elevation: 3, overflow: 'hidden' },
+  jobSourceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8 },
+  jobSourceBadge: { backgroundColor: Colors.primary + '18', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, flexShrink: 1 },
   jobSourceTxt: { fontSize: 10, fontWeight: '800', color: Colors.primary, letterSpacing: 0.5 },
-  jobDate: { fontSize: 11, color: '#bbb' },
+  jobDate: { fontSize: 11, color: '#bbb', flexShrink: 0 },
   jobTitle: { fontSize: 15, fontWeight: '800', color: '#1A1A2E', marginBottom: 8, lineHeight: 21 },
-  jobMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 10 },
-  jobMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  jobMetaIcon: { fontSize: 12 },
-  jobMetaTxt: { fontSize: 12, color: '#555', fontWeight: '600' },
+  jobMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
+  jobMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 1, maxWidth: '48%' },
+  jobMetaIcon: { fontSize: 12, flexShrink: 0 },
+  jobMetaTxt: { fontSize: 12, color: '#555', fontWeight: '600', flexShrink: 1 },
   jobDesc: { fontSize: 12, color: '#777', lineHeight: 18, marginBottom: 12 },
-  jobBtn: { alignSelf: 'flex-start', backgroundColor: Colors.primary, paddingHorizontal: 18, paddingVertical: 9, borderRadius: 10 },
+  jobBtn: { backgroundColor: Colors.primary, paddingHorizontal: 18, paddingVertical: 9, borderRadius: 10, alignSelf: 'flex-start' },
   jobBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
 
   noKeyBox: { backgroundColor: '#fff', borderRadius: 16, padding: 20, marginBottom: 16, borderLeftWidth: 4, borderLeftColor: Colors.primary },
