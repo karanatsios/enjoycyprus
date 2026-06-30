@@ -1,6 +1,6 @@
 # Inside Cyprus – Funktionsliste & Arbeitsweise
 
-Stand: 28. Juni 2026 — zuletzt automatisch aktualisiert
+Stand: 28. Juni 2026 — zuletzt aktualisiert
 
 ---
 
@@ -9,7 +9,7 @@ Stand: 28. Juni 2026 — zuletzt automatisch aktualisiert
 **Inside Cyprus** ist eine deutschsprachige Informations- und Serviceplattform für Zypern – konzipiert für Expats, Touristen und Unternehmen. Die App ist als Progressive Web App (PWA) verfügbar und läuft auf Desktop, Tablet und Smartphone.
 
 - **Technologie:** React Native (Expo SDK 56) mit expo-router, statisch exportiert für das Web
-- **Backend:** Supabase (PostgreSQL, Auth, Realtime)
+- **Backend:** Supabase (PostgreSQL, Auth, Realtime, Edge Functions)
 - **Hosting:** Vercel (statisches Deployment aus dem `dist/`-Ordner)
 - **Sprache:** Deutsch
 
@@ -40,27 +40,19 @@ Vierstufige Struktur mit allen weiteren Screens:
 **FÜR UNTERNEHMEN**
 - ➕ Eintrag erstellen – Unternehmen eintragen
 - 👤 Mein Eintrag – Eintrag bearbeiten / verlängern
+- 📣 Marketing – Push-Aktionen & Geo-Notifications
 
 **INFORMATIONEN**
 - 👥 Community – Inside Cyprus Community
-- ❓ Zypern FAQ – 100 Fragen & Antworten (geplant)
-- 📰 News – Nachrichten aus Zypern ✅
-- 💼 Jobs in Zypern – Stellenangebote (geplant)
+- ❓ Zypern FAQ – 35+ Fragen & Antworten (7 Kategorien)
+- 📰 News – Nachrichten aus Zypern
 - 🚨 Notfallnummern – Wichtige Nummern auf Zypern
-- 🏥 Krankenhäuser & Botschaften – Adressen und Karte (geplant)
 - 🚌 Busverbindungen – Route mit Bus, Umstieg & Haltestellen
 - 🎉 Events – Veranstaltungen, Partys & Konzerte
-- 📍 Sehenswürdigkeiten – Die schönsten Orte der Insel (geplant)
-- 🏖️ Blaue Flagge Strände – Zertifizierte Strände (geplant)
 - 🌤️ Wetter – 7-Tage-Vorschau
 
 **MEHR**
-- 📲 App installieren – Android / iPhone Startbildschirm
-- ℹ️ Info – Über Inside Cyprus (geplant)
-- 📄 Impressum – Rechtliche Angaben (geplant)
-- 📋 AGB – Allgemeine Geschäftsbedingungen (geplant)
 - 👤 Profil – Mein Profil
-- ⚙️ Einstellungen – App konfigurieren (geplant)
 - 🔐 Admin – Verwaltung & Freischaltung (nur für Admins)
 
 ---
@@ -90,14 +82,47 @@ Vierstufige Struktur mit allen weiteren Screens:
 ### 📰 News (news)
 - Aktuelle Nachrichtenquellen aus Zypern (Süden & Norden)
 - Filter: Alle / Süden / Norden
-- 7 Quellen: Cyprus Mail, Kathimerini, Financial Mirror, Cyprus Today Online, Cyprus Scene + je ein deutschsprachiger Inside-Cyprus-Überblick
-- Alle Links öffnen direkt im Browser (externer Link)
+- Alle Links öffnen direkt im Browser
 
 ### 🌤️ Wetter (weather)
 - 7-Tage-Wettervorschau für Zypern
 
-### 🗺️ Karte (map)
-- Interaktive Karte mit eingetragenen Unternehmen und Orten
+### 🗺️ Karte (map) ✅ komplett überarbeitet
+
+Interaktive Leaflet-Karte mit folgenden Ebenen:
+
+**Layer-System (Filter-Chips)**
+| Chip | Farbe | Inhalt |
+|------|-------|--------|
+| 📍 Sehenswürdigkeiten | Orange | 15 Orte (Aphrodite Felsen, Kolossi Burg, Kyrenia Burg, Bellapais, Kourion, Cape Greco, Kykkos, Troodos, Nikosia Altstadt u.v.m.) |
+| 🏖️ Strände | Blau | 8 Strände (Nissi Beach, Fig Tree Bay, Coral Bay, Lara Beach, Governor's Beach u.a.) |
+| 🏥 Krankenhäuser | Rot | 5 Krankenhäuser (Limassol, Nikosia, Larnaka, Paphos, Nordzypern) |
+| ℹ️ Tourist Info | Lila | 5 Infopunkte (Larnaka Flughafen, Paphos, Limassol, Nikosia, Ayia Napa) |
+| 🏢 Unternehmen | Grün | Alle freigeschalteten Einträge aus Supabase |
+
+**Marker:**
+- 40px große farbige Kreise mit weißem Rand, sofort sichtbar
+- Klick öffnet Popup mit: Name, Typ-Label, Beschreibung, Bewertung, Adresse, Telefon
+- Buttons im Popup: 🔊 Vorlesen · 🗺️ Route (Google Maps) · ⭐ Bewerten
+
+**Bewertungs-Modal:**
+- 1–5 Sterne auswählen
+- Kommentar + Name (optional)
+- Speichert direkt in Supabase `place_reviews`
+
+**Sprachausgabe:**
+- Web Speech API (`SpeechSynthesisUtterance`, Sprache: `de-DE`)
+- Funktioniert in Chrome, Edge, Safari
+- Vorlesen im Popup und im Detail-Panel
+
+**Ortsliste unter der Karte:**
+- Horizontal scrollbare Karten aller sichtbaren Orte
+- Tippen öffnet Detail-Panel mit vollständiger Info + Sprachausgabe + Route
+
+**Daten:**
+- 34 Orte statisch eingebaut (Fallback, funktioniert auch ohne Supabase-Tabelle)
+- Nach SQL-Migration lädt die Karte aus `places`-Tabelle in Supabase
+- SQL: `supabase/migrations/20260628_places_reviews.sql`
 
 ### 🗂️ Alle Einträge (categories)
 - Alle Unternehmen und Dienstleister durchsuchbar
@@ -107,11 +132,11 @@ Vierstufige Struktur mit allen weiteren Screens:
 - Mehrstufiges Formular zur Erfassung eines Unternehmenseintrags
 - Felder: Name, Kategorie, Region, Beschreibung, Kontaktdaten, Adresse, Website, Logo
 - Direkt-Veröffentlichung für Admins (Status: approved, Plan-Score: 100)
-- Admin-Testmodus: Checkbox zum sofortigen Freischalten beim Testen (🧪)
 - Normale Einträge landen zur Prüfung in der Warteschlange
 
 ### 👤 Mein Eintrag (mein-eintrag)
 - Eigenen Eintrag einsehen, bearbeiten und verlängern
+- Marketing-Button → direkt zur Push-Aktion-Erstellung
 
 ### ⭐ Partner werden (partner)
 - Informationen zum Affiliate-/Partnerprogramm
@@ -120,6 +145,11 @@ Vierstufige Struktur mit allen weiteren Screens:
 ### 👤 Profil (profile)
 - Benutzerprofil anzeigen und bearbeiten
 - Supabase Auth (E-Mail / Passwort)
+
+### ❓ FAQ (faq)
+- 35+ Fragen & Antworten zu Zypern
+- 7 Kategorien: Einreise, Wohnen, Arbeit, Finanzen, Gesundheit, Alltag, Sonstiges
+- Accordion-Format (aufklappbar)
 
 ---
 
@@ -138,10 +168,6 @@ Strandboxen-Mietservice für Zypern.
 - Preis: 10 €/Tag
 - Sicherheitspfand: 80 € (reserviert, nicht abgebucht)
 - Maximale Mietdauer: 60 Tage
-- Buchung pro Box und Zeitraum
-
-**Strände (Auswahl):**
-Nissi Beach, Fig Tree Bay, Coral Bay, Kourion Beach, Lady's Mile, Mackenzie Beach, Lara Beach, Agia Napa Municipal, Governor's Beach, Curium Beach, Evdimou Beach, Cape Greco
 
 ---
 
@@ -152,39 +178,53 @@ Intelligenter Reiseplaner speziell für Zypern, betrieben mit der Claude API (An
 **Funktionen:**
 - Chat-Interface auf Deutsch
 - Schnellstart-Chips: „Strand empfehlen", „Rundreise planen", „Restaurants in Limassol", „Sehenswürdigkeiten", „Budget-Tipps", „Familienurlaub"
-- **Spracheingabe:** Mikrofon-Button (Web Speech API) – spricht man, wird der Text automatisch ins Eingabefeld übertragen und gesendet
-- **Standorterkennung:** Nutzerstandort wird per Geolocation-API erkannt und einer Zypern-Region (Paphos / Limassol / Nikosia / Ayia Napa / Nordteil) zugeordnet
-- KI antwortet kontextbezogen auf Zypern-Reisefragen
+- **Spracheingabe:** Mikrofon-Button (Web Speech API)
+- **Standorterkennung:** Nutzerstandort → Zypern-Region
 
 **Technisch:**
 - Modell: `claude-sonnet-4-6`
-- Direkte Browser-API-Anfrage (Header: `anthropic-dangerous-direct-browser-access: true`)
-- API-Key via Umgebungsvariable `EXPO_PUBLIC_ANTHROPIC_API_KEY`
-- Konversationsverlauf bleibt während der Sitzung erhalten
+- API-Key via `EXPO_PUBLIC_ANTHROPIC_API_KEY`
+
+---
+
+## 📣 Marketing / Push-Notifications
+
+Geo-zielgerichtete Push-Aktionen für Unternehmen.
+
+**Funktionen:**
+- 3 Tabs: Aktion erstellen / Meine Kampagnen / Credits
+- Radius-Auswahl: 5 / 10 / 25 / 50 km
+- Zeitplanung: Startdatum + Enddatum
+- Credit-Badge im Header (live aus Supabase)
+
+**Credit-Pakete:**
+| Paket | Credits | Preis |
+|-------|---------|-------|
+| Starter | 1 | 5 € |
+| Basic | 5 | 20 € |
+| Pro | 15 | 45 € |
+| Business | 40 | 99 € |
+| Unlimited | ∞ | 199 € |
+
+**Technisch:**
+- Supabase-Tabellen: `push_subscriptions`, `notifications`, `notification_credits`, `credit_purchases`
+- PostGIS: `get_subscriptions_in_radius()` für Geo-Filterung
+- Edge Function: `send-notifications` (Deno, web-push@3.6.7)
+- pg_cron: alle 5 Minuten → Edge Function aufrufen
+- VAPID-Schlüssel: in `.env` und Supabase Secrets
+
+**Setup-Status → Details in TODO.md**
 
 ---
 
 ## 🔐 Admin-Bereich
 
-Nur für autorisierte Administratoren zugänglich (`karanatsios@mailbox.org`, `vitali.vs@gmx.de`).
+Nur für: `karanatsios@mailbox.org`, `vitali.vs@gmx.de`
 
-**Benutzerverwaltung:**
-- Alle registrierten Nutzer werden aufgelistet
-- E-Mail-Adresse, Registrierungsdatum und aktueller Status sichtbar
-
-**Rollen & Tags:**
-| Rolle | Tag | Farbe | Bedeutung |
-|-------|-----|-------|-----------|
-| admin | Admin | 🔐 Lila | Vollzugriff auf alle Bereiche |
-| partner | Affiliate-Partner | ⭐ Orange | Partnerprogramm-Mitglied |
-| user | Kunde | 👤 Grün | Normaler Nutzer |
-
-- Tags werden automatisch berechnet und in der Supabase-Datenbank (`profiles.tag`) gespeichert
-- Umschalten Admin ↔ Kunde per Toggle-Switch mit sofortiger Wirkung
-- Änderungen werden sofort in der UI und in der Datenbank gespeichert
-
-**Eintragsfreischaltung:**
-- Neue Unternehmenseinträge zur Prüfung und Freigabe
+**Funktionen:**
+- Alle Nutzer auflisten mit Status
+- Admin ↔ Kunde umschalten (Toggle)
+- Einträge freischalten
 
 ---
 
@@ -193,58 +233,43 @@ Nur für autorisierte Administratoren zugänglich (`karanatsios@mailbox.org`, `v
 ### Frontend
 - React Native + Expo SDK 56
 - expo-router (file-based routing, Tab + Stack Navigation)
-- react-native-web für Browserdarstellung
-- i18next für Mehrsprachigkeit (aktuell: Deutsch)
+- Leaflet.js in iframe für die Karte
 - Statischer Export → `dist/` Ordner
 
 ### Backend (Supabase)
 - **Auth:** E-Mail/Passwort-Authentifizierung
 - **Datenbank:** PostgreSQL mit Row Level Security (RLS)
-- **Tabellen:**
-  - `profiles` – Nutzerprofile (role, tag, is_partner)
-  - `listings` – Unternehmenseinträge (status, plan_score, region, …)
-  - `events` – Veranstaltungen
-- **Realtime:** Subscriptions für Live-Updates
+
+**Tabellen:**
+| Tabelle | Inhalt |
+|---------|--------|
+| `profiles` | Nutzerprofile (role, tag, is_partner) |
+| `businesses` | Unternehmenseinträge |
+| `events` | Veranstaltungen |
+| `push_subscriptions` | Browser Push Endpoints + Geo-Koordinaten |
+| `notifications` | Geplante Push-Aktionen (status, radius_km, starts_at, ends_at) |
+| `notification_credits` | Credit-Guthaben pro Nutzer |
+| `credit_purchases` | Kaufhistorie |
+| `places` | Sehenswürdigkeiten, Strände, Krankenhäuser, Tourist-Info *(SQL noch auszuführen)* |
+| `place_reviews` | Nutzerbewertungen für Orte *(SQL noch auszuführen)* |
 
 ### Deployment
 - **Plattform:** Vercel
-- **Methode:** Statisches Deployment aus `dist/`
-- **Build:** `npx expo export -p web` → post-build Viewport-Patch via `scripts/fix-viewport.js`
-- **Branches:** `main` → Produktion
-
-### Mobile-Optimierungen
-- Viewport: `maximum-scale=1, user-scalable=no` verhindert ungewolltes Zoomen
-- Patchscript: `scripts/fix-viewport.js` setzt Viewport nach jedem Build korrekt
+- **Branch:** `main` → Produktion
+- **Build:** `npx expo export -p web` → `node scripts/fix-viewport.js` → `git push`
 
 ---
 
-## 📣 Marketing / Push-Notifications (neu)
+## Git / Secrets
 
-- Geo-zielgerichtete Push-Aktionen für Unternehmen
-- Radius: 5 / 10 / 25 / 50 km
-- Credit-System: 1 Credit = 1 Aktion
-- Pakete: Starter 5 €, Basic 20 €, Pro 45 €, Business 99 €, Unlimited 199 €
-- Kampagnenübersicht mit Status und Empfängeranzahl
-- Service Worker (sw.js) für Push-Empfang im Browser
-- Supabase: push_subscriptions, notifications, notification_credits, credit_purchases
-
-**Offene Setup-Schritte → siehe TODO.md**
-- [ ] VAPID-Schlüssel generieren und in Vercel/Supabase eintragen
-- [ ] Supabase Edge Function `send-notifications` einrichten
-- [ ] Stripe Payment Links erstellen und in marketing.tsx eintragen
-- [ ] Stripe Webhook für automatische Credit-Vergabe
-
----
-
-## Geplante Features (Roadmap)
-
-- 💼 Jobportal – Stellenangebote suchen und aufgeben
-- 🏥 Krankenhäuser & Botschaften – mit Karte und Kontaktdaten
-- 📍 Sehenswürdigkeiten – Top-Orte der Insel mit Fotos
-- 🏖️ Blaue Flagge Strände – Liste und Karte zertifizierter Strände
-- 📲 PWA-Installation – Anleitung für Android und iPhone
-- ℹ️ Info / Impressum / AGB – rechtliche Pflichtseiten
-- ⚙️ Einstellungen – Sprache, Benachrichtigungen, Dark Mode
+- **GitHub Repo:** `karanatsios/enjoycyprus`
+- **Branch:** `main`
+- **PAT:** in git remote URL für Pushes
+- **Supabase URL:** `https://jewactcyhvzrceoiajau.supabase.co`
+- **Supabase Anon Key:** `sb_publishable_pL8YXchXN3EsRs8_K7A8PA_C45DftbB`
+- **Admin-E-Mails:** `karanatsios@mailbox.org`, `vitali.vs@gmx.de`
+- **VAPID Public Key:** `BAMdRkE7TM8jYPbJ7ONbGWgKsqH74u3y8fAplr7GKK6Qz26wVykoAX-Cg8IEhNO61aHVB0a-PmrGWqHGF_r03JM`
+- **VAPID Private Key:** *(in Supabase Secrets gespeichert – nie committen!)*
 
 ---
 
