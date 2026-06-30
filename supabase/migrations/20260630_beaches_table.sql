@@ -38,7 +38,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('p6',  'Faros Beach',              'Paphos',      'Paphos',    34.7469, 32.4222, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Faros%20Beach.webp'),
   ('p7',  'Municipal Baths Beach',    'Paphos',      'Paphos',    34.7592, 32.4083, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Municipal%20Baths%20Beach.webp'),
   ('p8',  'Alykes Beach',             'Paphos',      'Paphos',    34.7756, 32.4044, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Alykes%20Beach.jpg'),
-  ('p9',  'Vrysoudia A Beach',        'Paphos',      'Paphos',    34.7839, 32.4011, 'https://picsum.photos/seed/vrysoudia-a/800/534'),
+  ('p9',  'Vrysoudia A Beach',        'Paphos',      'Paphos',    34.7839, 32.4011, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Polis%20Chrysochous%20Municipal%20Beach.jpg'),
   ('p10', 'Vrysoudia B Beach',        'Geroskipou',  'Paphos',    34.7906, 32.4094, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Vrysoudia%20B%20Beach.jpg'),
   ('p11', 'Pachyammos Beach',         'Paphos',      'Paphos',    34.8028, 32.3961, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pachyammos%20Beach.jpg'),
   ('p12', 'Pachyammos 2 Beach',       'Geroskipou',  'Paphos',    34.7944, 32.4047, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pachyammos%202%20Beach.jpg'),
