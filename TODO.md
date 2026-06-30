@@ -54,6 +54,24 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 ---
 
+## 🟠 Wichtig – Domain & SSL
+
+- [ ] **Eigene Domain kaufen** (z.B. `insidecyprus.de` oder `insidecyprus.app`)
+  - Empfehlung: Namecheap, IONOS oder Cloudflare Registrar
+  - Alternativen: `insidecyprus.eu`, `inside-cyprus.com`, `zypern-portal.de`
+
+- [ ] **Domain in Vercel verknüpfen**
+  - Vercel Dashboard → Projekt `enjoycyprus` → Settings → Domains → Add Domain
+  - DNS-Einträge beim Registrar setzen (A-Record oder CNAME auf Vercel)
+  - Vercel stellt automatisch ein **SSL-Zertifikat (Let's Encrypt)** aus
+
+- [ ] **Google Safe Browsing bereinigen** (nach Domain-Wechsel)
+  - Neue Domain bei [search.google.com/search-console](https://search.google.com/search-console) verifizieren
+  - Security Issues prüfen → falls nötig, Überprüfung beantragen
+  - Das "Schädlich"-Banner verschwindet automatisch mit einer sauberen neuen Domain
+
+---
+
 ## 🟡 Geplante Features (Roadmap)
 
 - [ ] **Zypern FAQ erweitern** – weitere Fragen aus PDFs ergänzen (aktuell ~35 Einträge)
