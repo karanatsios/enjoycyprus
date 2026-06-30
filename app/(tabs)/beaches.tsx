@@ -16,22 +16,31 @@ type Beach = {
   image: string;
 };
 
-// Wikimedia Commons – verified thumbnail URLs
-const W = 'https://upload.wikimedia.org/wikipedia/commons';
+// Unsplash – CORS-friendly, Cyprus beach photos sourced by region search
+const U = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
 const IMG = {
-  nissi:      `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
-  nissi2:     `${W}/thumb/1/1c/2022_03_Nissi_beach_1.jpg/800px-2022_03_Nissi_beach_1.jpg`,
-  nissi3:     `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
-  figtree:    `${W}/thumb/b/b9/25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG/800px-25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG`,
-  protaras:   `${W}/thumb/c/c4/Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
-  coral:      `${W}/thumb/e/ec/Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg/800px-Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg`,
-  paphos:     `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
-  paphos2:    `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
-  pissouri:   `${W}/thumb/4/45/Pissouri_Beach.jpg/800px-Pissouri_Beach.jpg`,
-  pissouri2:  `${W}/thumb/b/b0/Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg/800px-Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg`,
-  governors:  `${W}/thumb/5/5c/Governor%27s_Beach.JPG/800px-Governor%27s_Beach.JPG`,
-  finikoudes: `${W}/thumb/a/aa/Finikoudes_Beach%2C_Larnaca.jpg/800px-Finikoudes_Beach%2C_Larnaca.jpg`,
-  larnaca:    `${W}/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/800px-Larnaca_01-2017_img27_Finikoudes.jpg`,
+  // Famagusta / Ayia Napa / Nissi Beach area
+  nissi:      U('dkUn2_2tNdQ'),
+  nissi2:     U('FrfHhHUbo9c'),
+  nissi3:     U('s3I5pePhIxI'),
+  // Protaras / Fig Tree Bay area
+  figtree:    U('3UWvKhHpatg'),
+  figtree2:   U('6fiazmNHrvo'),
+  protaras:   U('ZbzO6h1HFFw'),
+  // Paphos area
+  coral:      U('QpvrsHpY7yM'),
+  paphos:     U('HgKsx-5yt0g'),
+  paphos2:    U('r1rai5cIfq8'),
+  paphos3:    U('pSto0MJ1tG4'),
+  // Limassol area
+  pissouri:   U('to1eWRdGQ60'),
+  pissouri2:  U('8-GGu6SlJ2Y'),
+  governors:  U('Kawj7bu4frQ'),
+  limassol:   U('Y9FByfASNhQ'),
+  // Larnaca area
+  finikoudes: U('qtsjDHePgS8'),
+  larnaca:    U('HHrUbR03QKI'),
+  larnaca2:   U('a1sHLPPQsks'),
 };
 
 const BEACHES: Beach[] = [
@@ -43,38 +52,38 @@ const BEACHES: Beach[] = [
   { id: 'f5',  name: 'Pantachou Beach',          location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9844, lng: 34.0022, image: IMG.nissi2 },
   { id: 'f6',  name: 'Louma Beach',              location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9900, lng: 34.0100, image: IMG.nissi3 },
   { id: 'f7',  name: 'Protaras Beach',           location: 'Protaras',   region: 'Famagusta', lat: 35.0094, lng: 34.0547, image: IMG.protaras },
-  { id: 'f8',  name: 'Sunrise Beach',            location: 'Protaras',   region: 'Famagusta', lat: 35.0178, lng: 34.0594, image: IMG.figtree },
-  { id: 'f9',  name: 'Konnos Bay',               location: 'Cape Greco', region: 'Famagusta', lat: 34.9736, lng: 34.0722, image: IMG.nissi2 },
+  { id: 'f8',  name: 'Sunrise Beach',            location: 'Protaras',   region: 'Famagusta', lat: 35.0178, lng: 34.0594, image: IMG.figtree2 },
+  { id: 'f9',  name: 'Konnos Bay',               location: 'Cape Greco', region: 'Famagusta', lat: 34.9736, lng: 34.0722, image: IMG.protaras },
 
   /* ── PAPHOS ── */
   { id: 'p1',  name: 'Coral Bay',                location: 'Peyia',      region: 'Paphos', lat: 34.8356, lng: 32.3700, image: IMG.coral },
   { id: 'p2',  name: 'Kaphizis Beach',           location: 'Peyia',      region: 'Paphos', lat: 34.8411, lng: 32.3644, image: IMG.coral },
-  { id: 'p3',  name: 'Laourou Beach',            location: 'Peyia',      region: 'Paphos', lat: 34.8389, lng: 32.3622, image: IMG.paphos2 },
+  { id: 'p3',  name: 'Laourou Beach',            location: 'Peyia',      region: 'Paphos', lat: 34.8389, lng: 32.3622, image: IMG.paphos3 },
   { id: 'p4',  name: 'Kotsias Beach',            location: 'Lemba',      region: 'Paphos', lat: 34.8133, lng: 32.3931, image: IMG.paphos },
   { id: 'p5',  name: 'Venus Beach',              location: 'Paphos',     region: 'Paphos', lat: 34.7681, lng: 32.4069, image: IMG.paphos2 },
-  { id: 'p6',  name: 'Faros Beach',              location: 'Paphos',     region: 'Paphos', lat: 34.7469, lng: 32.4222, image: IMG.paphos },
-  { id: 'p7',  name: 'Municipal Baths Beach',    location: 'Paphos',     region: 'Paphos', lat: 34.7592, lng: 32.4083, image: IMG.paphos2 },
-  { id: 'p8',  name: 'Alykes Beach',             location: 'Paphos',     region: 'Paphos', lat: 34.7756, lng: 32.4044, image: IMG.paphos },
-  { id: 'p9',  name: 'Vrysoudia A Beach',        location: 'Paphos',     region: 'Paphos', lat: 34.7839, lng: 32.4011, image: IMG.paphos2 },
+  { id: 'p6',  name: 'Faros Beach',              location: 'Paphos',     region: 'Paphos', lat: 34.7469, lng: 32.4222, image: IMG.paphos3 },
+  { id: 'p7',  name: 'Municipal Baths Beach',    location: 'Paphos',     region: 'Paphos', lat: 34.7592, lng: 32.4083, image: IMG.paphos },
+  { id: 'p8',  name: 'Alykes Beach',             location: 'Paphos',     region: 'Paphos', lat: 34.7756, lng: 32.4044, image: IMG.paphos2 },
+  { id: 'p9',  name: 'Vrysoudia A Beach',        location: 'Paphos',     region: 'Paphos', lat: 34.7839, lng: 32.4011, image: IMG.paphos3 },
   { id: 'p10', name: 'Vrysoudia B Beach',        location: 'Geroskipou', region: 'Paphos', lat: 34.7906, lng: 32.4094, image: IMG.paphos },
-  { id: 'p11', name: 'Pachyammos Beach',         location: 'Paphos',     region: 'Paphos', lat: 34.8028, lng: 32.3961, image: IMG.paphos2 },
-  { id: 'p12', name: 'Pachyammos 2 Beach',       location: 'Geroskipou', region: 'Paphos', lat: 34.7944, lng: 32.4047, image: IMG.coral },
-  { id: 'p13', name: 'Geroskipou Municipal Beach', location: 'Geroskipou', region: 'Paphos', lat: 34.7978, lng: 32.4069, image: IMG.paphos },
-  { id: 'p14', name: 'Polis Chrysochous Municipal Beach', location: 'Polis', region: 'Paphos', lat: 35.0358, lng: 32.4250, image: IMG.paphos2 },
+  { id: 'p11', name: 'Pachyammos Beach',         location: 'Paphos',     region: 'Paphos', lat: 34.8028, lng: 32.3961, image: IMG.coral },
+  { id: 'p12', name: 'Pachyammos 2 Beach',       location: 'Geroskipou', region: 'Paphos', lat: 34.7944, lng: 32.4047, image: IMG.paphos2 },
+  { id: 'p13', name: 'Geroskipou Municipal Beach', location: 'Geroskipou', region: 'Paphos', lat: 34.7978, lng: 32.4069, image: IMG.paphos3 },
+  { id: 'p14', name: 'Polis Chrysochous Municipal Beach', location: 'Polis', region: 'Paphos', lat: 35.0358, lng: 32.4250, image: IMG.paphos },
 
   /* ── LIMASSOL ── */
   { id: 'l1',  name: 'Pissouri Beach',           location: 'Pissouri',   region: 'Limassol', lat: 34.6681, lng: 32.7064, image: IMG.pissouri },
   { id: 'l2',  name: "Governor's Beach",         location: 'Pentakomo',  region: 'Limassol', lat: 34.7186, lng: 33.2683, image: IMG.governors },
-  { id: 'l3',  name: 'Kourion Beach',            location: 'Episkopi',   region: 'Limassol', lat: 34.6519, lng: 32.8744, image: IMG.pissouri2 },
-  { id: 'l4',  name: "Lady's Mile Beach",        location: 'Limassol',   region: 'Limassol', lat: 34.6456, lng: 33.0017, image: IMG.pissouri },
-  { id: 'l5',  name: 'Limassol Old Port Beach',  location: 'Limassol',   region: 'Limassol', lat: 34.6736, lng: 33.0444, image: IMG.governors },
-  { id: 'l6',  name: 'Amathus Beach',            location: 'Limassol',   region: 'Limassol', lat: 34.6997, lng: 33.1239, image: IMG.pissouri2 },
+  { id: 'l3',  name: 'Kourion Beach',            location: 'Episkopi',   region: 'Limassol', lat: 34.6519, lng: 32.8744, image: IMG.limassol },
+  { id: 'l4',  name: "Lady's Mile Beach",        location: 'Limassol',   region: 'Limassol', lat: 34.6456, lng: 33.0017, image: IMG.pissouri2 },
+  { id: 'l5',  name: 'Limassol Old Port Beach',  location: 'Limassol',   region: 'Limassol', lat: 34.6736, lng: 33.0444, image: IMG.limassol },
+  { id: 'l6',  name: 'Amathus Beach',            location: 'Limassol',   region: 'Limassol', lat: 34.6997, lng: 33.1239, image: IMG.governors },
   { id: 'l7',  name: 'Dasoudi Beach',            location: 'Limassol',   region: 'Limassol', lat: 34.7058, lng: 33.1433, image: IMG.pissouri },
 
   /* ── LARNACA ── */
   { id: 'lr1', name: 'Mackenzie Beach',          location: 'Larnaca',    region: 'Larnaca', lat: 34.8689, lng: 33.6336, image: IMG.larnaca },
   { id: 'lr2', name: 'Finikoudes Beach',         location: 'Larnaca',    region: 'Larnaca', lat: 34.9153, lng: 33.6425, image: IMG.finikoudes },
-  { id: 'lr3', name: 'Dhekelia Beach',           location: 'Dhekelia',   region: 'Larnaca', lat: 34.9806, lng: 33.7450, image: IMG.larnaca },
+  { id: 'lr3', name: 'Dhekelia Beach',           location: 'Dhekelia',   region: 'Larnaca', lat: 34.9806, lng: 33.7450, image: IMG.larnaca2 },
   { id: 'lr4', name: 'Pyla Beach',               location: 'Pyla',       region: 'Larnaca', lat: 34.9811, lng: 33.7222, image: IMG.finikoudes },
   { id: 'lr5', name: 'Pervolia Beach',           location: 'Pervolia',   region: 'Larnaca', lat: 34.8347, lng: 33.5789, image: IMG.larnaca },
   { id: 'lr6', name: 'Soft Beach',               location: 'Larnaca',    region: 'Larnaca', lat: 34.9183, lng: 33.6469, image: IMG.finikoudes },
