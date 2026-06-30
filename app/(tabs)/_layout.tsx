@@ -2,10 +2,12 @@ import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, View, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
+import { useTheme } from '../../context/ThemeContext';
 
 function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
+  const { colors } = useTheme();
   return (
-    <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+    <View style={[styles.iconWrap, focused && { backgroundColor: colors.primary + '18' }]}>
       <Text style={[styles.icon, focused && styles.iconActive]}>{icon}</Text>
     </View>
   );
@@ -13,14 +15,15 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
 
 export default function TabsLayout() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { backgroundColor: colors.tabBar }],
         tabBarLabelStyle: styles.label,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.tabBarInactive,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.tabBarInactive,
       }}
     >
       {/* 1 – Start */}
@@ -92,6 +95,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="marketing" options={{ href: null }} />
       <Tabs.Screen name="jobs" options={{ href: null }} />
       <Tabs.Screen name="hospitals" options={{ href: null }} />
+      <Tabs.Screen name="settings" options={{ href: null }} />
     </Tabs>
   );
 }

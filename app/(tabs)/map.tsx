@@ -222,7 +222,27 @@ export default function MapScreen() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [selectedBiz, setSelectedBiz]     = useState<Business | null>(null);
 
-  useEffect(() => { fetchData(); getLocation(); }, []);
+  useEffect(() => {
+    fetchData();
+    getLocation();
+
+    // Live-Rating-Updates via Supabase Realtime
+    const channel = supabase
+      .channel('places-ratings')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'places' }, payload => {
+        const updated = payload.new as Place;
+        setPlaces(prev => {
+          const idx = prev.findIndex(p => p.id === updated.id);
+          if (idx === -1) return prev;
+          const next = [...prev];
+          next[idx] = { ...next[idx], rating_avg: updated.rating_avg, rating_count: updated.rating_count };
+          return next;
+        });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const fetchData = async () => {
     const [bizRes, placesRes] = await Promise.all([

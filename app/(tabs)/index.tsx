@@ -11,6 +11,7 @@ import CategoryCard from '../../components/CategoryCard';
 import BusinessCard, { Business } from '../../components/BusinessCard';
 import EventCard, { Event } from '../../components/EventCard';
 import AppHeader from '../../components/AppHeader';
+import { useTheme } from '../../context/ThemeContext';
 
 const MOCK_BUSINESSES: Business[] = [
   { id: '1', name: 'Taverna Aphrodite', category: 'gastronomie', categoryIcon: '🍽️', rating: 4.8, reviewCount: 312, address: 'Limassol Seafront', isOpen: true, image: '', featured: true },
@@ -46,6 +47,7 @@ async function fetchMiniWeather(): Promise<MiniWeather> {
 export default function HomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { colors } = useTheme();
   const [weather, setWeather] = useState<MiniWeather | null>(null);
 
   useEffect(() => {
@@ -53,15 +55,15 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <AppHeader />
       {/* SEARCH */}
-      <View style={styles.searchBar}>
+      <View style={[styles.searchBar, { backgroundColor: colors.cardBg, borderColor: colors.border }]}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.text }]}
           placeholder={t('search')}
-          placeholderTextColor={Colors.textMuted}
+          placeholderTextColor={colors.textMuted}
         />
       </View>
 
@@ -83,7 +85,7 @@ export default function HomeScreen() {
         {/* CATEGORIES */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('categories')}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('categories')}</Text>
             <TouchableOpacity><Text style={styles.seeAll}>{t('seeAll')}</Text></TouchableOpacity>
           </View>
           <FlatList
@@ -100,7 +102,7 @@ export default function HomeScreen() {
         {/* FEATURED BUSINESSES */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('featuredBusiness')}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('featuredBusiness')}</Text>
             <TouchableOpacity><Text style={styles.seeAll}>{t('seeAll')}</Text></TouchableOpacity>
           </View>
           <FlatList
@@ -115,7 +117,7 @@ export default function HomeScreen() {
         {/* EVENTS */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('featuredEvents')}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('featuredEvents')}</Text>
             <TouchableOpacity><Text style={styles.seeAll}>{t('seeAll')}</Text></TouchableOpacity>
           </View>
           <FlatList
@@ -129,7 +131,7 @@ export default function HomeScreen() {
 
         {/* WETTER-KACHEL – dezent */}
         {weather && (
-          <TouchableOpacity style={styles.weatherTile} activeOpacity={0.85} onPress={() => router.push('/(tabs)/weather' as any)}>
+          <TouchableOpacity style={[styles.weatherTile, { backgroundColor: colors.cardBg, borderColor: colors.border }]} activeOpacity={0.85} onPress={() => router.push('/(tabs)/weather' as any)}>
             <Text style={styles.weatherTileIcon}>{weather.icon}</Text>
             <View style={styles.weatherTileBody}>
               <Text style={styles.weatherTileTitle}>Wetter auf Zypern</Text>
