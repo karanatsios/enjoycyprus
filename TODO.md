@@ -1,6 +1,8 @@
 # Inside Cyprus – Offene To-dos
 
-Stand: 28. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
+Stand: 29. Juni 2026 — bitte nach jeder erledigten Aufgabe abhaken ([ ] → [x])
+
+> 👋 **Beim nächsten Start:** Diese Datei zuerst lesen und offene [ ]-Punkte mit dem Nutzer besprechen.
 
 ---
 
@@ -56,19 +58,36 @@ Diese Punkte müssen erledigt werden, damit Push-Aktionen wirklich beim Nutzer a
 
 ## 🟠 Wichtig – Domain & SSL
 
-- [ ] **Eigene Domain kaufen** (z.B. `insidecyprus.de` oder `insidecyprus.app`)
-  - Empfehlung: Namecheap, IONOS oder Cloudflare Registrar
-  - Alternativen: `insidecyprus.eu`, `inside-cyprus.com`, `zypern-portal.de`
+- [x] **Eigene Domain gekauft** ✅ (.de-Domain vorhanden)
 
 - [ ] **Domain in Vercel verknüpfen**
   - Vercel Dashboard → Projekt `enjoycyprus` → Settings → Domains → Add Domain
-  - DNS-Einträge beim Registrar setzen (A-Record oder CNAME auf Vercel)
+  - .de-Domain eingeben → DNS-Einträge beim Registrar setzen (A-Record oder CNAME auf Vercel)
   - Vercel stellt automatisch ein **SSL-Zertifikat (Let's Encrypt)** aus
 
 - [ ] **Google Safe Browsing bereinigen** (nach Domain-Wechsel)
   - Neue Domain bei [search.google.com/search-console](https://search.google.com/search-console) verifizieren
   - Security Issues prüfen → falls nötig, Überprüfung beantragen
-  - Das "Schädlich"-Banner verschwindet automatisch mit einer sauberen neuen Domain
+  - Das "Schädlich"-Banner verschwindet automatisch mit der neuen Domain
+
+---
+
+## 🟠 Wichtig – Rechtliche Pflichtseiten
+
+- [ ] **Impressum** anlegen (`/app/(tabs)/impressum.tsx`)
+  - Pflicht in Deutschland/Österreich bei gewerblichen Webseiten
+  - Inhalt: Name, Adresse, E-Mail, ggf. Handelsregisternummer
+
+- [ ] **Datenschutzerklärung** anlegen (`/app/(tabs)/datenschutz.tsx`)
+  - DSGVO-konform: welche Daten werden gespeichert? (Supabase, Push-Notifications, Adzuna)
+  - Hinweis auf Supabase (EU-Server), keine Weitergabe an Dritte
+
+- [ ] **AGB** anlegen (`/app/(tabs)/agb.tsx`)
+  - Allgemeine Geschäftsbedingungen für Unternehmenseinträge & Marketing-Pakete
+  - Zahlungsbedingungen, Laufzeiten, Widerrufsrecht
+
+- [ ] **Alle drei Seiten im Hamburger-Menü verlinken**
+  - `components/AppHeader.tsx` → MEHR-Sektion → Impressum, Datenschutz, AGB → routes eintragen
 
 ---
 
