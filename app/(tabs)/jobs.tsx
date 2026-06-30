@@ -36,33 +36,56 @@ type Job = {
   created: string;
 };
 
-async function fetchAdzunaJobs(query: string, location: string, page = 1): Promise<{ jobs: Job[]; total: number }> {
+async function fetchAdzunaJobs(query: string, location: string, page = 1): Promise<{ jobs: Job[]; total: number; error?: string }> {
   if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) return { jobs: [], total: 0 };
-  const params = new URLSearchParams({
-    app_id: ADZUNA_APP_ID,
-    app_key: ADZUNA_APP_KEY,
-    results_per_page: '50',
-    sort_by: 'date',
-    'content-type': 'application/json',
-  });
-  if (query)    params.set('what', query);
-  if (location && location !== 'Alle Orte') params.set('where', location);
-  const res = await fetch(
-    `https://api.adzuna.com/v1/api/jobs/cy/search/${page}?${params.toString()}`
-  );
-  if (!res.ok) return { jobs: [], total: 0 };
-  const data = await res.json();
-  const jobs: Job[] = (data.results ?? []).map((r: any) => ({
-    id:          r.id,
-    title:       r.title,
-    company:     r.company?.display_name ?? 'Unbekannt',
-    location:    r.location?.display_name ?? '',
-    description: r.description ?? '',
-    url:         r.redirect_url,
-    source:      'Adzuna',
-    created:     r.created ?? '',
-  }));
-  return { jobs, total: data.count ?? 0 };
+  try {
+    // Adzuna: cy = Cyprus; wenn keine Ergebnisse, Fallback auf gb+cyprus
+    const buildParams = (what: string, where: string) => {
+      const p = new URLSearchParams({
+        app_id: ADZUNA_APP_ID,
+        app_key: ADZUNA_APP_KEY,
+        results_per_page: '50',
+        sort_by: 'date',
+      });
+      if (what)  p.set('what', what);
+      if (where) p.set('where', where);
+      return p;
+    };
+
+    const whereParam = location && location !== 'Alle Orte' ? location : '';
+    const whatParam  = query || '';
+
+    // Erst Cyprus-Endpoint probieren
+    let res = await fetch(
+      `https://api.adzuna.com/v1/api/jobs/cy/search/${page}?${buildParams(whatParam, whereParam)}`
+    );
+    let data = res.ok ? await res.json() : null;
+
+    // Falls keine Ergebnisse: GB-Endpoint mit "cyprus" als Where
+    if (!data || (data.count === 0 && !query && location === 'Alle Orte')) {
+      const fallbackWhere = whereParam ? `${whereParam} Cyprus` : 'Cyprus';
+      res = await fetch(
+        `https://api.adzuna.com/v1/api/jobs/gb/search/${page}?${buildParams(whatParam, fallbackWhere)}`
+      );
+      if (res.ok) data = await res.json();
+    }
+
+    if (!data) return { jobs: [], total: 0, error: `HTTP ${res.status}` };
+
+    const jobs: Job[] = (data.results ?? []).map((r: any) => ({
+      id:          r.id,
+      title:       r.title,
+      company:     r.company?.display_name ?? 'Unbekannt',
+      location:    r.location?.display_name ?? '',
+      description: r.description ?? '',
+      url:         r.redirect_url,
+      source:      'Adzuna',
+      created:     r.created ?? '',
+    }));
+    return { jobs, total: data.count ?? 0 };
+  } catch (e: any) {
+    return { jobs: [], total: 0, error: e?.message ?? 'Netzwerkfehler' };
+  }
 }
 
 export default function JobsScreen() {
@@ -73,14 +96,17 @@ export default function JobsScreen() {
   const [search, setSearch]         = useState('');
   const [location, setLocation]     = useState('Alle Orte');
   const [showSites, setShowSites]   = useState(false);
+  const [apiError, setApiError]     = useState('');
   const [noApiKey]                  = useState(!ADZUNA_APP_ID);
 
   const loadJobs = async (q: string, loc: string) => {
     if (noApiKey) return;
     setLoading(true);
-    const { jobs: j, total: t } = await fetchAdzunaJobs(q, loc);
+    setApiError('');
+    const { jobs: j, total: t, error } = await fetchAdzunaJobs(q, loc);
     setJobs(j);
     setTotal(t);
+    if (error) setApiError(error);
     setLoading(false);
   };
 
@@ -205,9 +231,32 @@ export default function JobsScreen() {
       ) : (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 32 }}>
           {filtered.length === 0 ? (
-            <View style={{ alignItems: 'center', marginTop: 60 }}>
-              <Text style={{ fontSize: 40 }}>🔍</Text>
-              <Text style={{ fontSize: 16, color: '#888', marginTop: 12 }}>Keine Jobs gefunden</Text>
+            <View>
+              {apiError ? (
+                <View style={s.noKeyBox}>
+                  <Text style={s.noKeyTitle}>⚠️ API-Fehler</Text>
+                  <Text style={s.noKeyText}>{apiError}</Text>
+                  <TouchableOpacity style={s.noKeyBtn} onPress={() => loadJobs(search, location)}>
+                    <Text style={s.noKeyBtnTxt}>↻ Erneut versuchen</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={{ alignItems: 'center', marginTop: 32, marginBottom: 24 }}>
+                  <Text style={{ fontSize: 36 }}>🔍</Text>
+                  <Text style={{ fontSize: 15, color: '#888', marginTop: 10 }}>Keine Jobs über Adzuna gefunden</Text>
+                  <Text style={{ fontSize: 12, color: '#aaa', marginTop: 4, textAlign: 'center', paddingHorizontal: 24 }}>Direkt auf den Job-Webseiten suchen:</Text>
+                </View>
+              )}
+              <Text style={s.sectionTitle}>🌐 Job-Webseiten direkt besuchen</Text>
+              {JOB_SITES.map(site => (
+                <TouchableOpacity key={site.name} style={s.siteCard} onPress={() => openUrl(site.url)}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.siteCardName}>{site.name}</Text>
+                    <Text style={s.siteCardDesc}>{site.desc}</Text>
+                  </View>
+                  <Text style={{ fontSize: 20 }}>↗</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           ) : (
             filtered.map(job => (
