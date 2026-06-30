@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, Image, Linking, FlatList,
@@ -16,26 +16,35 @@ type Beach = {
   image: string;
 };
 
-// picsum.photos – guaranteed CORS-friendly, stable seed-based beach photos
+// Wikimedia 330px thumbnails – verified via Wikipedia REST API (correct hashes)
+// 330px is the max reliable size; larger sizes return 400
+const WK = (hash: string, file: string) =>
+  `https://upload.wikimedia.org/wikipedia/commons/thumb/${hash}/${file}/330px-${file}`;
+// picsum.photos – guaranteed fallback, CORS-friendly
 const P = (seed: string) => `https://picsum.photos/seed/${seed}/800/534`;
+
 const IMG = {
-  nissi:      P('nissi-beach'),
-  nissi2:     P('ayia-napa'),
-  nissi3:     P('makronissos'),
-  figtree:    P('fig-tree-bay'),
-  figtree2:   P('sunrise-beach'),
-  protaras:   P('protaras-cy'),
-  coral:      P('coral-bay-cy'),
-  paphos:     P('paphos-beach'),
-  paphos2:    P('venus-beach'),
-  paphos3:    P('geroskipou'),
-  pissouri:   P('pissouri-beach'),
-  pissouri2:  P('kourion-beach'),
-  governors:  P('governors-beach'),
-  limassol:   P('limassol-beach'),
-  finikoudes: P('finikoudes'),
-  larnaca:    P('larnaca-beach'),
-  larnaca2:   P('mackenzie-beach'),
+  // Famagusta / Ayia Napa
+  nissi:      WK('9/93', 'Nissi-Beach.jpg'),
+  nissi2:     WK('7/7c', 'View_of_Agia_Napa_beach_located_in_vicinity_of_Nelia_Beach_Hotel.jpg'),
+  nissi3:     P('makronissos-cy'),
+  figtree:    WK('d/d6', 'Fig_Tree_Bay.jpg'),
+  figtree2:   P('protaras-sunrise'),
+  protaras:   WK('3/33', 'Modern_new_pedestrian_seaside_road_next_to_Protaras_beach_in_Paralimni.jpg'),
+  // Paphos
+  coral:      WK('d/d8', 'Coral_Bay%2C_Cyprus.jpg'),
+  paphos:     WK('1/1e', 'Paphos_Marine%2C_Cyprus_-_panoramio.jpg'),
+  paphos2:    P('venus-beach-paphos'),
+  paphos3:    P('geroskipou-beach'),
+  // Limassol
+  pissouri:   WK('d/d3', 'View_of_Pissouri_03.jpg'),
+  pissouri2:  P('kourion-beach-cy'),
+  governors:  P('governors-beach-cy'),
+  limassol:   P('limassol-coast'),
+  // Larnaca
+  finikoudes: WK('9/97', 'Larnaca_01-2017_img27_Finikoudes.jpg'),
+  larnaca:    P('larnaca-beach-cy'),
+  larnaca2:   P('mackenzie-beach-cy'),
 };
 
 const BEACHES: Beach[] = [
@@ -95,13 +104,26 @@ const REGION_COLORS: Record<string, string> = {
 
 function BeachImage({ uri, name, region }: { uri: string; name: string; region: string }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // If image hasn't loaded within 6s, switch to fallback
+    timerRef.current = setTimeout(() => {
+      if (!loaded) setFailed(true);
+    }, 6000);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [uri]);
+
+  const fallbackUri = `https://picsum.photos/seed/${encodeURIComponent(name)}/800/534`;
+
   if (failed) {
     return (
-      <View style={[styles.cardImg, { backgroundColor: REGION_COLORS[region] ?? '#0077B6', justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ fontSize: 36 }}>🏖️</Text>
-        <Text style={{ color: '#fff', fontWeight: '800', fontSize: 14, marginTop: 6, textAlign: 'center', paddingHorizontal: 12 }}>{name}</Text>
-        <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, marginTop: 2 }}>Blaue Flagge 2026</Text>
-      </View>
+      <Image
+        source={{ uri: fallbackUri }}
+        style={styles.cardImg}
+        resizeMode="cover"
+      />
     );
   }
   return (
@@ -109,6 +131,7 @@ function BeachImage({ uri, name, region }: { uri: string; name: string; region: 
       source={{ uri }}
       style={styles.cardImg}
       resizeMode="cover"
+      onLoad={() => { setLoaded(true); if (timerRef.current) clearTimeout(timerRef.current); }}
       onError={() => setFailed(true)}
     />
   );
