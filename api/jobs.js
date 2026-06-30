@@ -1,56 +1,95 @@
+/* Fetches Cyprus job listings from public RSS feeds of real job sites */
+
+const RSS_SOURCES = [
+  { name: 'carierista.com', url: 'https://www.carierista.com/en/rss/jobs' },
+  { name: 'cyprusjobs.com', url: 'https://www.cyprusjobs.com/rss/jobs.xml' },
+  { name: 'bazaraki.com',   url: 'https://www.bazaraki.com/jobs-and-services/?category=1&type=rss' },
+];
+
+function parseRSSItem(item, source) {
+  const get = (tag) => {
+    const m = item.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`, 'i'))
+           || item.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
+    return m ? m[1].trim() : '';
+  };
+  const title       = get('title');
+  const link        = get('link') || get('guid');
+  const description = get('description');
+  const pubDate     = get('pubDate');
+  const company     = get('author') || get('dc:creator') || '';
+  const location    = get('location') || 'Zypern';
+  const guid        = get('guid') || link;
+
+  if (!title || !link) return null;
+
+  return {
+    id:          guid,
+    title,
+    company,
+    location,
+    description: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim(),
+    url:         link,
+    source,
+    created:     pubDate ? new Date(pubDate).toISOString() : '',
+    salary_min:  null,
+    salary_max:  null,
+  };
+}
+
+async function fetchRSS(source) {
+  try {
+    const res = await fetch(source.url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; InsideCyprus/1.0)' },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return [];
+    const xml = await res.text();
+    const items = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || [];
+    return items.map(item => parseRSSItem(item, source.name)).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 's-maxage=300'); // 5 Min Cache
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const APP_ID  = process.env.ADZUNA_APP_ID  || process.env.EXPO_PUBLIC_ADZUNA_APP_ID;
-  const APP_KEY = process.env.ADZUNA_APP_KEY || process.env.EXPO_PUBLIC_ADZUNA_APP_KEY;
-
-  if (!APP_ID || !APP_KEY) {
-    return res.status(500).json({ error: 'API keys not configured', jobs: [], total: 0 });
-  }
-
-  const { what = '', where = '', page = '1' } = req.query;
-
-  const buildUrl = (country, w, loc) => {
-    const p = new URLSearchParams({
-      app_id: APP_ID,
-      app_key: APP_KEY,
-      results_per_page: '50',
-      sort_by: 'date',
-    });
-    if (w)   p.set('what', w);
-    if (loc) p.set('where', loc);
-    return `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}?${p}`;
-  };
+  const { what = '', where = '' } = req.query;
 
   try {
-    // Versuche zuerst Cyprus-Endpoint
-    let r = await fetch(buildUrl('cy', what, where !== 'Alle Orte' ? where : ''));
-    let data = r.ok ? await r.json() : null;
+    const results = await Promise.all(RSS_SOURCES.map(fetchRSS));
+    let jobs = results.flat();
 
-    // Fallback: GB mit "Cyprus" als Where
-    if (!data || data.count === 0) {
-      const gbWhere = where && where !== 'Alle Orte' ? `${where} Cyprus` : 'Cyprus';
-      r = await fetch(buildUrl('gb', what, gbWhere));
-      if (r.ok) data = await r.json();
+    // Filter nach Ort wenn angegeben
+    if (where && where !== 'Alle Orte') {
+      const w = where.toLowerCase();
+      jobs = jobs.filter(j =>
+        j.location.toLowerCase().includes(w) ||
+        j.title.toLowerCase().includes(w) ||
+        j.description.toLowerCase().includes(w)
+      );
     }
 
-    if (!data) return res.status(502).json({ error: `Adzuna error ${r.status}`, jobs: [], total: 0 });
+    // Filter nach Suchbegriff
+    if (what) {
+      const q = what.toLowerCase();
+      jobs = jobs.filter(j =>
+        j.title.toLowerCase().includes(q) ||
+        j.company.toLowerCase().includes(q) ||
+        j.description.toLowerCase().includes(q)
+      );
+    }
 
-    const jobs = (data.results ?? []).map(j => ({
-      id:          j.id,
-      title:       j.title,
-      company:     j.company?.display_name ?? '',
-      location:    j.location?.display_name ?? '',
-      description: j.description ?? '',
-      url:         j.redirect_url,
-      source:      j.adref ? new URL(j.redirect_url).hostname.replace('www.', '') : 'Adzuna',
-      created:     j.created ?? '',
-      salary_min:  j.salary_min ?? null,
-      salary_max:  j.salary_max ?? null,
-    }));
+    // Sortiere nach Datum (neueste zuerst)
+    jobs.sort((a, b) => {
+      if (!a.created) return 1;
+      if (!b.created) return -1;
+      return new Date(b.created).getTime() - new Date(a.created).getTime();
+    });
 
-    return res.status(200).json({ jobs, total: data.count ?? 0 });
+    return res.status(200).json({ jobs, total: jobs.length });
   } catch (e) {
     return res.status(500).json({ error: e.message, jobs: [], total: 0 });
   }
