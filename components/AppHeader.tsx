@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Image, ScrollView } fr
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/colors';
 import { useRouter } from 'expo-router';
+import { getHiddenMenuItems } from '../lib/menuVisibility';
 
 type Weather = { temp: number; wind: number; humidity: number; icon: string };
 
@@ -29,52 +30,52 @@ async function fetchWeather(): Promise<Weather> {
 const CY_FLAG   = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Flag_of_Cyprus.svg/60px-Flag_of_Cyprus.svg.png';
 const TRNC_FLAG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg/60px-Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg.png';
 
-const MENU_SECTIONS = [
+export const ALL_MENU_SECTIONS = [
   {
     title: 'NAVIGATION',
     items: [
-      { icon: '🌴', label: 'Urlaubsplaner', sub: 'KI-Reiseplaner für Zypern', route: '/(tabs)/planner' },
-      { icon: '🏠', label: 'Start', sub: 'Kategorien und Suche', route: '/(tabs)/' },
-      { icon: '🗂️', label: 'Alle Einträge', sub: 'Alle Unternehmen durchsuchen', route: '/(tabs)/categories' },
-      { icon: '🗺️', label: 'Karte', sub: 'Orte auf der Karte finden', route: '/(tabs)/map' },
-      { icon: '⭐', label: 'Partner werden', sub: 'Provisionen verdienen', route: '/(tabs)/partner' },
-      { icon: '📦', label: 'Beachbox', sub: 'Strandboxen mieten – 10 €/Tag', route: '/(tabs)/beachbox' },
+      { id: 'planner',      icon: '🌴', label: 'Urlaubsplaner',             sub: 'KI-Reiseplaner für Zypern',              route: '/(tabs)/planner' },
+      { id: 'home',         icon: '🏠', label: 'Start',                     sub: 'Kategorien und Suche',                   route: '/(tabs)/' },
+      { id: 'categories',   icon: '🗂️', label: 'Alle Einträge',             sub: 'Alle Unternehmen durchsuchen',            route: '/(tabs)/categories' },
+      { id: 'map',          icon: '🗺️', label: 'Karte',                     sub: 'Orte auf der Karte finden',              route: '/(tabs)/map' },
+      { id: 'partner',      icon: '⭐', label: 'Partner werden',             sub: 'Provisionen verdienen',                  route: '/(tabs)/partner' },
+      { id: 'beachbox',     icon: '📦', label: 'Beachbox',                  sub: 'Strandboxen mieten – 10 €/Tag',          route: '/(tabs)/beachbox' },
     ],
   },
   {
     title: 'FÜR UNTERNEHMEN',
     items: [
-      { icon: '➕', label: 'Eintrag erstellen', sub: 'Unternehmen eintragen', route: '/(tabs)/submit' },
-      { icon: '👤', label: 'Mein Eintrag', sub: 'Eintrag bearbeiten / verlängern', route: '/(tabs)/mein-eintrag' },
-      { icon: '📣', label: 'Marketing', sub: 'Push-Aktionen & Geo-Notifications', route: '/(tabs)/marketing' },
+      { id: 'submit',       icon: '➕', label: 'Eintrag erstellen',          sub: 'Unternehmen eintragen',                  route: '/(tabs)/submit' },
+      { id: 'mein-eintrag', icon: '👤', label: 'Mein Eintrag',              sub: 'Eintrag bearbeiten / verlängern',         route: '/(tabs)/mein-eintrag' },
+      { id: 'marketing',    icon: '📣', label: 'Marketing',                  sub: 'Push-Aktionen & Geo-Notifications',       route: '/(tabs)/marketing' },
     ],
   },
   {
     title: 'INFORMATIONEN',
     items: [
-      { icon: '👥', label: 'Community', sub: 'Inside Cyprus Community', route: '/(tabs)/community' },
-      { icon: '❓', label: 'Zypern FAQ', sub: '100 Fragen & Antworten zu Zypern', route: '/(tabs)/faq' },
-      { icon: '📰', label: 'News', sub: 'Nachrichten aus Zypern', route: '/(tabs)/news' },
-      { icon: '💼', label: 'Jobs in Zypern', sub: 'Stellenangebote suchen & filtern', route: '/(tabs)/jobs' },
-      { icon: '🚨', label: 'Notfallnummern', sub: 'Wichtige Nummern auf Zypern', route: '/(tabs)/emergency' },
-      { icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte', route: null },
-      { icon: '🚌', label: 'Busverbindungen', sub: 'Route mit Bus, Umstieg & Haltestellen', route: '/(tabs)/bus' },
-      { icon: '🎉', label: 'Events', sub: 'Veranstaltungen, Partys & Konzerte', route: '/(tabs)/events' },
-      { icon: '📍', label: 'Sehenswürdigkeiten', sub: 'Die schönsten Orte der Insel', route: null },
-      { icon: '🏖️', label: 'Blaue Flagge Strände', sub: 'Zertifizierte Strände auf Zypern', route: null },
-      { icon: '🌤️', label: 'Wetter', sub: '7-Tage-Vorschau', route: '/(tabs)/weather' },
+      { id: 'community',    icon: '👥', label: 'Community',                  sub: 'Inside Cyprus Community',                route: '/(tabs)/community' },
+      { id: 'faq',          icon: '❓', label: 'Zypern FAQ',                 sub: '100 Fragen & Antworten zu Zypern',       route: '/(tabs)/faq' },
+      { id: 'news',         icon: '📰', label: 'News',                       sub: 'Nachrichten aus Zypern',                 route: '/(tabs)/news' },
+      { id: 'jobs',         icon: '💼', label: 'Jobs in Zypern',             sub: 'Stellenangebote suchen & filtern',        route: '/(tabs)/jobs' },
+      { id: 'emergency',    icon: '🚨', label: 'Notfallnummern',             sub: 'Wichtige Nummern auf Zypern',            route: '/(tabs)/emergency' },
+      { id: 'hospitals',    icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte',       route: null },
+      { id: 'bus',          icon: '🚌', label: 'Busverbindungen',            sub: 'Route mit Bus, Umstieg & Haltestellen',  route: '/(tabs)/bus' },
+      { id: 'events',       icon: '🎉', label: 'Events',                     sub: 'Veranstaltungen, Partys & Konzerte',     route: '/(tabs)/events' },
+      { id: 'sights',       icon: '📍', label: 'Sehenswürdigkeiten',         sub: 'Die schönsten Orte der Insel',           route: null },
+      { id: 'beaches',      icon: '🏖️', label: 'Blaue Flagge Strände',      sub: 'Zertifizierte Strände auf Zypern',       route: null },
+      { id: 'weather',      icon: '🌤️', label: 'Wetter',                    sub: '7-Tage-Vorschau',                        route: '/(tabs)/weather' },
     ],
   },
   {
     title: 'MEHR',
     items: [
-      { icon: '📲', label: 'App installieren', sub: 'Android App / iPhone Startbildschirm', route: null },
-      { icon: 'ℹ️', label: 'Info', sub: 'Über Inside Cyprus', route: null },
-      { icon: '📄', label: 'Impressum', sub: 'Rechtliche Angaben', route: null },
-      { icon: '📋', label: 'AGB', sub: 'Allgemeine Geschäftsbedingungen', route: null },
-      { icon: '👤', label: 'Profil', sub: 'Mein Profil', route: '/(tabs)/profile' },
-      { icon: '⚙️', label: 'Einstellungen', sub: 'App konfigurieren', route: null },
-      { icon: '🔐', label: 'Admin', sub: 'Verwaltung & Freischaltung', route: '/(tabs)/admin' },
+      { id: 'install',      icon: '📲', label: 'App installieren',           sub: 'Android App / iPhone Startbildschirm',   route: null },
+      { id: 'info',         icon: 'ℹ️', label: 'Info',                       sub: 'Über Inside Cyprus',                     route: null },
+      { id: 'impressum',    icon: '📄', label: 'Impressum',                  sub: 'Rechtliche Angaben',                     route: null },
+      { id: 'agb',          icon: '📋', label: 'AGB',                        sub: 'Allgemeine Geschäftsbedingungen',         route: null },
+      { id: 'profile',      icon: '👤', label: 'Profil',                     sub: 'Mein Profil',                            route: '/(tabs)/profile' },
+      { id: 'settings',     icon: '⚙️', label: 'Einstellungen',              sub: 'App konfigurieren',                      route: null },
+      { id: 'admin',        icon: '🔐', label: 'Admin',                      sub: 'Verwaltung & Freischaltung',             route: '/(tabs)/admin' },
     ],
   },
 ];
@@ -95,10 +96,24 @@ export default function AppHeader() {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [hiddenItems, setHiddenItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchWeather().then(setWeather).catch(() => null);
+    getHiddenMenuItems().then(setHiddenItems);
   }, []);
+
+  // Re-load visibility each time the menu is opened
+  const openMenu = async () => {
+    const hidden = await getHiddenMenuItems();
+    setHiddenItems(hidden);
+    setMenuOpen(true);
+  };
+
+  const visibleSections = ALL_MENU_SECTIONS.map(section => ({
+    ...section,
+    items: section.items.filter(item => !hiddenItems.has(item.id)),
+  })).filter(section => section.items.length > 0);
 
   const currentLang = LANGUAGES.find(l => l.code === i18n.language) ?? LANGUAGES[0];
 
@@ -121,7 +136,7 @@ export default function AppHeader() {
               <Text style={styles.langFlag}>{currentLang.flag}</Text>
               <Text style={styles.langCode}>{currentLang.code.toUpperCase()} ▾</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuOpen(true)}>
+            <TouchableOpacity style={styles.menuBtn} onPress={openMenu}>
               <Text style={styles.menuIcon}>☰</Text>
             </TouchableOpacity>
           </View>
@@ -171,12 +186,12 @@ export default function AppHeader() {
               </TouchableOpacity>
             </View>
             <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-              {MENU_SECTIONS.map(section => (
+              {visibleSections.map(section => (
                 <View key={section.title}>
                   <Text style={styles.drawerSection}>{section.title}</Text>
                   {section.items.map(item => (
                     <TouchableOpacity
-                      key={item.label}
+                      key={item.id}
                       style={styles.drawerItem}
                       onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
                     >
