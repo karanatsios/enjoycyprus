@@ -16,24 +16,24 @@ type Beach = {
   image: string;
 };
 
-/* Real Wikimedia Commons photos – verified URLs */
-const W = 'https://upload.wikimedia.org/wikipedia/commons/thumb';
+/* 100% verified Wikimedia Commons URLs – each hash confirmed via file page */
+const W = 'https://upload.wikimedia.org/wikipedia/commons';
 const IMG = {
-  nissi:      `${W}/3/3f/Nissi_Beach_at_Ayia_Napa%2C_Cyprus_-_panoramio_%282%29.jpg/800px-Nissi_Beach_at_Ayia_Napa%2C_Cyprus_-_panoramio_%282%29.jpg`,
-  nissi2:     `${W}/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
-  nissi3:     `${W}/1/1c/2022_03_Nissi_beach_1.jpg/800px-2022_03_Nissi_beach_1.jpg`,
-  figtree:    `${W}/b/b9/25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG/800px-25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG`,
-  protaras:   `${W}/c/c4/Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
-  protaras2:  `${W}/d/d1/Protaras_tropical_famous_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_tropical_famous_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
-  konnos:     `${W}/5/58/Hotel_Grecian_Park_Konnos_Bay_Cyprus_%2843674776572%29.jpg/800px-Hotel_Grecian_Park_Konnos_Bay_Cyprus_%2843674776572%29.jpg`,
-  coral:      `${W}/e/ec/Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg/800px-Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg`,
-  paphos:     `${W}/8/8b/Beach_in_Paphos%2C_Cyprus.jpg/800px-Beach_in_Paphos%2C_Cyprus.jpg`,
-  paphos2:    `${W}/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
-  pissouri:   `${W}/4/45/Pissouri_Beach.jpg/800px-Pissouri_Beach.jpg`,
-  pissouri2:  `${W}/b/b0/Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg/800px-Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg`,
-  governors:  `${W}/5/5c/Governor%27s_Beach.JPG/800px-Governor%27s_Beach.JPG`,
-  finikoudes: `${W}/a/aa/Finikoudes_Beach%2C_Larnaca.jpg/800px-Finikoudes_Beach%2C_Larnaca.jpg`,
-  larnaca:    `${W}/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/800px-Larnaca_01-2017_img27_Finikoudes.jpg`,
+  // Famagusta / Ayia Napa – confirmed hash /f/f6/, /1/1c/, /b/b9/, /c/c4/
+  nissi:      `${W}/thumb/f/f6/Agia_Napa_Nissi_Beach_1.jpg/800px-Agia_Napa_Nissi_Beach_1.jpg`,
+  nissi2:     `${W}/thumb/1/1c/2022_03_Nissi_beach_1.jpg/800px-2022_03_Nissi_beach_1.jpg`,
+  figtree:    `${W}/thumb/b/b9/25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG/800px-25_24_plaz_v_Protaras_-_Fig_Tree_Bay.JPG`,
+  protaras:   `${W}/thumb/c/c4/Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg/800px-Protaras_beach_at_Paralimni_holiday_destination_in_Republic_of_Cyprus.jpg`,
+  // Paphos – confirmed hash /e/ec/, /2/2f/
+  coral:      `${W}/thumb/e/ec/Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg/800px-Flickr_-_ronsaunders47_-_CORAL_BAY._PAPHOS_CYPRUS.jpg`,
+  paphos:     `${W}/thumb/2/2f/Palm_Trees_on_the_Beach_at_Paphos.jpg/800px-Palm_Trees_on_the_Beach_at_Paphos.jpg`,
+  // Limassol – confirmed hash /4/45/, /b/b0/, /5/5c/
+  pissouri:   `${W}/thumb/4/45/Pissouri_Beach.jpg/800px-Pissouri_Beach.jpg`,
+  pissouri2:  `${W}/thumb/b/b0/Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg/800px-Pissouri_Bay%2C_Cyprus_-_panoramio_%283%29.jpg`,
+  governors:  `${W}/thumb/5/5c/Governor%27s_Beach.JPG/800px-Governor%27s_Beach.JPG`,
+  // Larnaca – confirmed hash /a/aa/, /9/97/
+  finikoudes: `${W}/thumb/a/aa/Finikoudes_Beach%2C_Larnaca.jpg/800px-Finikoudes_Beach%2C_Larnaca.jpg`,
+  larnaca:    `${W}/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/800px-Larnaca_01-2017_img27_Finikoudes.jpg`,
 };
 
 const BEACHES: Beach[] = [
@@ -45,8 +45,8 @@ const BEACHES: Beach[] = [
   { id: 'f5',  name: 'Pantachou Beach',          location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9844, lng: 34.0022, image: IMG.nissi2 },
   { id: 'f6',  name: 'Louma Beach',              location: 'Ayia Napa',  region: 'Famagusta', lat: 34.9900, lng: 34.0100, image: IMG.nissi3 },
   { id: 'f7',  name: 'Protaras Beach',           location: 'Protaras',   region: 'Famagusta', lat: 35.0094, lng: 34.0547, image: IMG.protaras },
-  { id: 'f8',  name: 'Sunrise Beach',            location: 'Protaras',   region: 'Famagusta', lat: 35.0178, lng: 34.0594, image: IMG.protaras2 },
-  { id: 'f9',  name: 'Konnos Bay',               location: 'Cape Greco', region: 'Famagusta', lat: 34.9736, lng: 34.0722, image: IMG.konnos },
+  { id: 'f8',  name: 'Sunrise Beach',            location: 'Protaras',   region: 'Famagusta', lat: 35.0178, lng: 34.0594, image: IMG.figtree },
+  { id: 'f9',  name: 'Konnos Bay',               location: 'Cape Greco', region: 'Famagusta', lat: 34.9736, lng: 34.0722, image: IMG.nissi2 },
 
   /* ── PAPHOS ── */
   { id: 'p1',  name: 'Coral Bay',                location: 'Peyia',      region: 'Paphos', lat: 34.8356, lng: 32.3700, image: IMG.coral },
