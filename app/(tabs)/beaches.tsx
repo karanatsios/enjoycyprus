@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Image, FlatList, TextInput, ActivityIndicator,
+  TouchableOpacity, FlatList, TextInput, ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
@@ -20,32 +20,27 @@ type Beach = {
 const REGIONS = ['Alle', 'Famagusta', 'Paphos', 'Limassol', 'Larnaca'] as const;
 
 function BeachImage({ uri, name }: { uri: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [src, setSrc] = useState(uri || `https://picsum.photos/seed/${encodeURIComponent(name)}/800/534`);
+  const fallback = `https://picsum.photos/seed/${encodeURIComponent(name)}/800/534`;
 
-  useEffect(() => {
-    setFailed(false);
-    setLoaded(false);
-    timerRef.current = setTimeout(() => {
-      if (!loaded) setFailed(true);
-    }, 8000);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [uri]);
-
-  const fallbackUri = `https://picsum.photos/seed/${encodeURIComponent(name)}/800/534`;
-
-  if (failed || !uri) {
-    return <Image source={{ uri: fallbackUri }} style={styles.cardImg} resizeMode="cover" />;
+  // On web: use a real <img> tag so onError fires reliably
+  // @ts-ignore
+  if (typeof document !== 'undefined') {
+    return (
+      // @ts-ignore
+      <img
+        src={src}
+        onError={() => setSrc(fallback)}
+        style={{ width: '100%', height: 200, objectFit: 'cover', backgroundColor: '#E0EAF4', display: 'block' }}
+      />
+    );
   }
+
   return (
-    <Image
-      source={{ uri }}
-      style={styles.cardImg}
-      resizeMode="cover"
-      onLoad={() => { setLoaded(true); if (timerRef.current) clearTimeout(timerRef.current); }}
-      onError={() => setFailed(true)}
-    />
+    // @ts-ignore
+    <View style={styles.cardImg}>
+      {/* native fallback – expo-image not installed */}
+    </View>
   );
 }
 
