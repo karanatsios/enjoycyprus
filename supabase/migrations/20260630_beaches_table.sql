@@ -23,7 +23,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f1',  'Nissi Beach',              'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Nissi-Beach.jpg/330px-Nissi-Beach.jpg'),
   ('f2',  'Fig Tree Bay',             'Protaras',    'Famagusta', 35.0125, 34.0572, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Fig_Tree_Bay.jpg/330px-Fig_Tree_Bay.jpg'),
   ('f3',  'Sandy Bay',                'Ayia Napa',   'Famagusta', 34.9944, 34.0197, 'https://picsum.photos/seed/sandy-bay-cy/800/534'),
-  ('f4',  'Makronissos Beach',        'Ayia Napa',   'Famagusta', 34.9803, 33.9878, 'https://picsum.photos/seed/makronissos-cy/800/534'),
+  ('f4',  'Makronissos Beach',        'Ayia Napa',   'Famagusta', 34.9803, 33.9878, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Makronissos%20Beach.jpg'),
   ('f5',  'Pantachou Beach',          'Ayia Napa',   'Famagusta', 34.9844, 34.0022, 'https://picsum.photos/seed/pantachou-cy/800/534'),
   ('f6',  'Louma Beach',              'Ayia Napa',   'Famagusta', 34.9900, 34.0100, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Louma%20Beach.jpg'),
   ('f7',  'Protaras Beach',           'Protaras',    'Famagusta', 35.0094, 34.0547, 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Modern_new_pedestrian_seaside_road_next_to_Protaras_beach_in_Paralimni.jpg/330px-Modern_new_pedestrian_seaside_road_next_to_Protaras_beach_in_Paralimni.jpg'),
