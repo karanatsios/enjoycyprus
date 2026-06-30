@@ -45,13 +45,15 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('p13', 'Geroskipou Municipal Beach','Geroskipou', 'Paphos',    34.7978, 32.4069, 'https://picsum.photos/seed/geroskipou-beach/800/534'),
   ('p14', 'Polis Chrysochous Municipal Beach','Polis','Paphos',   35.0358, 32.4250, 'https://picsum.photos/seed/polis-beach/800/534'),
   -- LIMASSOL
-  ('l1',  'Pissouri Beach',           'Pissouri',    'Limassol',  34.6681, 32.7064, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/View_of_Pissouri_03.jpg/330px-View_of_Pissouri_03.jpg'),
-  ('l2',  'Governor''s Beach',        'Pentakomo',   'Limassol',  34.7186, 33.2683, 'https://picsum.photos/seed/governors-beach/800/534'),
-  ('l3',  'Kourion Beach',            'Episkopi',    'Limassol',  34.6519, 32.8744, 'https://picsum.photos/seed/kourion-beach/800/534'),
+  ('l1',  'Pissouri Beach',           'Pissouri',    'Limassol',  34.6681, 32.7064, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pissouri%20Beach%20.jpg'),
+  ('l2',  'Governor''s Beach',        'Pentakomo',   'Limassol',  34.7186, 33.2683, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Governor''s%20Beach.jpg'),
+  ('l3',  'Kourion Beach',            'Episkopi',    'Limassol',  34.6519, 32.8744, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Kourion%20Beach.jpg'),
   ('l4',  'Lady''s Mile Beach',       'Limassol',    'Limassol',  34.6456, 33.0017, 'https://picsum.photos/seed/ladys-mile/800/534'),
   ('l5',  'Limassol Old Port Beach',  'Limassol',    'Limassol',  34.6736, 33.0444, 'https://picsum.photos/seed/limassol-port/800/534'),
   ('l6',  'Amathus Beach',            'Limassol',    'Limassol',  34.6997, 33.1239, 'https://picsum.photos/seed/amathus-beach/800/534'),
   ('l7',  'Dasoudi Beach',            'Limassol',    'Limassol',  34.7058, 33.1433, 'https://picsum.photos/seed/dasoudi-beach/800/534'),
+  ('l8',  'Parekklisia Beach',        'Parekklisia', 'Limassol',  34.6889, 33.0917, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Parekklisia%20Beach%20.jpg'),
+  ('l9',  'Limassol Marina',          'Limassol',    'Limassol',  34.6728, 33.0356, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Limassol%20Marina.jpg'),
   -- LARNACA
   ('lr1', 'Mackenzie Beach',          'Larnaca',     'Larnaca',   34.8689, 33.6336, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/330px-Larnaca_01-2017_img27_Finikoudes.jpg'),
   ('lr2', 'Finikoudes Beach',         'Larnaca',     'Larnaca',   34.9153, 33.6425, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Larnaca_01-2017_img27_Finikoudes.jpg/330px-Larnaca_01-2017_img27_Finikoudes.jpg'),
