@@ -16,31 +16,26 @@ type Beach = {
   image: string;
 };
 
-// Unsplash – CORS-friendly, Cyprus beach photos sourced by region search
-const U = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
+// picsum.photos – guaranteed CORS-friendly, stable seed-based beach photos
+const P = (seed: string) => `https://picsum.photos/seed/${seed}/800/534`;
 const IMG = {
-  // Famagusta / Ayia Napa / Nissi Beach area
-  nissi:      U('dkUn2_2tNdQ'),
-  nissi2:     U('FrfHhHUbo9c'),
-  nissi3:     U('s3I5pePhIxI'),
-  // Protaras / Fig Tree Bay area
-  figtree:    U('3UWvKhHpatg'),
-  figtree2:   U('6fiazmNHrvo'),
-  protaras:   U('ZbzO6h1HFFw'),
-  // Paphos area
-  coral:      U('QpvrsHpY7yM'),
-  paphos:     U('HgKsx-5yt0g'),
-  paphos2:    U('r1rai5cIfq8'),
-  paphos3:    U('pSto0MJ1tG4'),
-  // Limassol area
-  pissouri:   U('to1eWRdGQ60'),
-  pissouri2:  U('8-GGu6SlJ2Y'),
-  governors:  U('Kawj7bu4frQ'),
-  limassol:   U('Y9FByfASNhQ'),
-  // Larnaca area
-  finikoudes: U('qtsjDHePgS8'),
-  larnaca:    U('HHrUbR03QKI'),
-  larnaca2:   U('a1sHLPPQsks'),
+  nissi:      P('nissi-beach'),
+  nissi2:     P('ayia-napa'),
+  nissi3:     P('makronissos'),
+  figtree:    P('fig-tree-bay'),
+  figtree2:   P('sunrise-beach'),
+  protaras:   P('protaras-cy'),
+  coral:      P('coral-bay-cy'),
+  paphos:     P('paphos-beach'),
+  paphos2:    P('venus-beach'),
+  paphos3:    P('geroskipou'),
+  pissouri:   P('pissouri-beach'),
+  pissouri2:  P('kourion-beach'),
+  governors:  P('governors-beach'),
+  limassol:   P('limassol-beach'),
+  finikoudes: P('finikoudes'),
+  larnaca:    P('larnaca-beach'),
+  larnaca2:   P('mackenzie-beach'),
 };
 
 const BEACHES: Beach[] = [
