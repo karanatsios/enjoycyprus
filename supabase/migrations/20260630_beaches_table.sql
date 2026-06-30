@@ -33,6 +33,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f11', 'Ziatzi Beach',             'Ayia Napa',   'Famagusta', 34.9872, 34.0056, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Ziatzi%20Beach.webp'),
   ('f12', 'Landa Beach',              'Ayia Napa',   'Famagusta', 34.9847, 34.0003, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Landa%20Beach.jpg'),
   ('f13', 'Nissi Bay',               'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissi%20Bay.jpg'),
+  ('vb1', 'Vitalibeach',             'Limassol',    'Limassol',  34.6736, 33.0444, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/testbild.jpg'),
   -- PAPHOS
   ('p1',  'Coral Bay',                'Peyia',       'Paphos',    34.8356, 32.3700, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/coral-bay-beach-cyprus.webp'),
   ('p2',  'Kaphizis Beach',           'Peyia',       'Paphos',    34.8411, 32.3644, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Kaphizis%20Beach.jpg'),
