@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/colors';
 import { useRouter } from 'expo-router';
 import { getHiddenMenuItems } from '../lib/menuVisibility';
+import { useTheme } from '../context/ThemeContext';
 
 type Weather = { temp: number; wind: number; humidity: number; icon: string };
 
@@ -74,7 +75,7 @@ export const ALL_MENU_SECTIONS = [
       { id: 'impressum',    icon: '📄', label: 'Impressum',                  sub: 'Rechtliche Angaben',                     route: null },
       { id: 'agb',          icon: '📋', label: 'AGB',                        sub: 'Allgemeine Geschäftsbedingungen',         route: null },
       { id: 'profile',      icon: '👤', label: 'Profil',                     sub: 'Mein Profil',                            route: '/(tabs)/profile' },
-      { id: 'settings',     icon: '⚙️', label: 'Einstellungen',              sub: 'App konfigurieren',                      route: null },
+      { id: 'settings',     icon: '⚙️', label: 'Einstellungen',              sub: 'Dark Mode & App-Einstellungen',          route: '/(tabs)/settings' },
       { id: 'admin',        icon: '🔐', label: 'Admin',                      sub: 'Verwaltung & Freischaltung',             route: '/(tabs)/admin' },
     ],
   },
@@ -90,9 +91,12 @@ const LANGUAGES = [
   { code: 'pl', flag: '🇵🇱', label: 'Polski' },
 ];
 
-export default function AppHeader() {
+type Props = { title?: string };
+
+export default function AppHeader({ title }: Props) {
   const { i18n } = useTranslation();
   const router = useRouter();
+  const { colors } = useTheme();
   const [weather, setWeather] = useState<Weather | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -103,7 +107,6 @@ export default function AppHeader() {
     getHiddenMenuItems().then(setHiddenItems);
   }, []);
 
-  // Re-load visibility each time the menu is opened
   const openMenu = async () => {
     const hidden = await getHiddenMenuItems();
     setHiddenItems(hidden);
@@ -120,15 +123,14 @@ export default function AppHeader() {
   return (
     <>
       <View style={styles.header}>
-        {/* Row 1: Logo + Lang + Menu */}
         <View style={styles.row1}>
           <View style={styles.logo}>
             <View style={styles.logoFlags}>
               <Image source={{ uri: CY_FLAG }} style={styles.flagImg} resizeMode="contain" />
-              <Text style={styles.logoTitle}>Inside Cyprus</Text>
+              <Text style={styles.logoTitle}>{title ?? 'Inside Cyprus'}</Text>
               <Image source={{ uri: TRNC_FLAG }} style={styles.flagImg} resizeMode="contain" />
             </View>
-            <Text style={styles.logoSub}>Das Portal für Zypern</Text>
+            {!title && <Text style={styles.logoSub}>Das Portal für Zypern</Text>}
           </View>
 
           <View style={styles.rightActions}>
@@ -142,8 +144,7 @@ export default function AppHeader() {
           </View>
         </View>
 
-        {/* Row 2: Weather strip */}
-        {weather && (
+        {weather && !title && (
           <TouchableOpacity style={styles.weatherRow} onPress={() => router.push('/(tabs)/weather' as any)}>
             <Text style={styles.weatherText}>{weather.icon} {weather.temp}°C</Text>
             <Text style={styles.weatherDot}>·</Text>
@@ -157,15 +158,15 @@ export default function AppHeader() {
       {/* Language modal */}
       <Modal visible={langOpen} transparent animationType="fade" onRequestClose={() => setLangOpen(false)}>
         <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setLangOpen(false)}>
-          <View style={styles.langDropdown}>
+          <View style={[styles.langDropdown, { backgroundColor: colors.cardBg }]}>
             {LANGUAGES.map(lang => (
               <TouchableOpacity
                 key={lang.code}
-                style={[styles.langItem, i18n.language === lang.code && styles.langItemActive]}
+                style={[styles.langItem, { borderBottomColor: colors.border }, i18n.language === lang.code && { backgroundColor: Colors.primary + '15' }]}
                 onPress={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
               >
                 <Text style={styles.langItemFlag}>{lang.flag}</Text>
-                <Text style={[styles.langItemLabel, i18n.language === lang.code && styles.langItemLabelActive]}>
+                <Text style={[styles.langItemLabel, { color: colors.text }, i18n.language === lang.code && { color: Colors.primary, fontWeight: '700' }]}>
                   {lang.label}
                 </Text>
                 {i18n.language === lang.code && <Text style={styles.checkmark}>✓</Text>}
@@ -177,8 +178,8 @@ export default function AppHeader() {
 
       {/* Hamburger drawer */}
       <Modal visible={menuOpen} transparent animationType="slide" onRequestClose={() => setMenuOpen(false)}>
-        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setMenuOpen(false)}>
-          <View style={styles.drawer}>
+        <TouchableOpacity style={[styles.overlay, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={() => setMenuOpen(false)}>
+          <View style={[styles.drawer, { backgroundColor: colors.cardBg }]}>
             <View style={styles.drawerHeader}>
               <Text style={styles.drawerTitle}>🇨🇾 Inside Cyprus</Text>
               <TouchableOpacity onPress={() => setMenuOpen(false)}>
@@ -188,27 +189,27 @@ export default function AppHeader() {
             <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
               {visibleSections.map(section => (
                 <View key={section.title}>
-                  <Text style={styles.drawerSection}>{section.title}</Text>
+                  <Text style={[styles.drawerSection, { color: colors.textMuted }]}>{section.title}</Text>
                   {section.items.map(item => (
                     <TouchableOpacity
                       key={item.id}
-                      style={styles.drawerItem}
+                      style={[styles.drawerItem, { borderBottomColor: colors.border }]}
                       onPress={() => { setMenuOpen(false); if (item.route) router.push(item.route as any); }}
                     >
-                      <View style={styles.drawerItemIconWrap}>
+                      <View style={[styles.drawerItemIconWrap, { backgroundColor: colors.background }]}>
                         <Text style={styles.drawerItemIcon}>{item.icon}</Text>
                       </View>
                       <View style={styles.drawerItemText}>
-                        <Text style={styles.drawerItemLabel}>{item.label}</Text>
-                        <Text style={styles.drawerItemSub}>{item.sub}</Text>
+                        <Text style={[styles.drawerItemLabel, { color: colors.text }]}>{item.label}</Text>
+                        <Text style={[styles.drawerItemSub, { color: colors.textMuted }]}>{item.sub}</Text>
                       </View>
-                      <Text style={styles.drawerItemArrow}>›</Text>
+                      <Text style={[styles.drawerItemArrow, { color: colors.border }]}>›</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               ))}
               <View style={styles.drawerFooter}>
-                <Text style={styles.drawerFooterText}>Inside Cyprus v1.0</Text>
+                <Text style={[styles.drawerFooterText, { color: colors.textMuted }]}>Inside Cyprus v1.0</Text>
               </View>
             </ScrollView>
           </View>
@@ -270,19 +271,17 @@ const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-start', alignItems: 'flex-end' },
 
   langDropdown: {
-    backgroundColor: '#fff', borderRadius: 16, marginTop: 80, marginRight: 55,
+    borderRadius: 16, marginTop: 80, marginRight: 55,
     overflow: 'hidden', minWidth: 180,
     shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, elevation: 10,
   },
-  langItem: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1, borderBottomColor: '#F0F0F5' },
-  langItemActive: { backgroundColor: Colors.primary + '15' },
+  langItem: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderBottomWidth: 1 },
   langItemFlag: { fontSize: 18 },
-  langItemLabel: { flex: 1, fontSize: 14, color: '#1A1A2E', fontWeight: '500' },
-  langItemLabelActive: { color: Colors.primary, fontWeight: '700' },
+  langItemLabel: { flex: 1, fontSize: 14, fontWeight: '500' },
   checkmark: { color: Colors.primary, fontSize: 16, fontWeight: '700' },
 
   drawer: {
-    backgroundColor: '#fff', width: 280, height: '100%',
+    width: 280, height: '100%',
     shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, elevation: 15,
   },
   drawerHeader: {
@@ -292,23 +291,23 @@ const styles = StyleSheet.create({
   drawerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   drawerClose: { color: '#fff', fontSize: 20, fontWeight: '700' },
   drawerSection: {
-    fontSize: 11, fontWeight: '800', color: '#999', letterSpacing: 1,
+    fontSize: 11, fontWeight: '800', letterSpacing: 1,
     paddingHorizontal: 18, paddingTop: 18, paddingBottom: 6,
   },
   drawerItem: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 18, paddingVertical: 12,
-    borderBottomWidth: 1, borderBottomColor: '#F5F5F8',
+    borderBottomWidth: 1,
   },
   drawerItemIconWrap: {
     width: 38, height: 38, borderRadius: 10,
-    backgroundColor: '#F0F4F8', justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center', alignItems: 'center',
   },
   drawerItemIcon: { fontSize: 20 },
   drawerItemText: { flex: 1 },
-  drawerItemLabel: { fontSize: 15, fontWeight: '700', color: '#1A1A2E' },
-  drawerItemSub: { fontSize: 11, color: '#999', marginTop: 1 },
-  drawerItemArrow: { fontSize: 20, color: '#ccc' },
+  drawerItemLabel: { fontSize: 15, fontWeight: '700' },
+  drawerItemSub: { fontSize: 11, marginTop: 1 },
+  drawerItemArrow: { fontSize: 20 },
   drawerFooter: { padding: 20, marginTop: 'auto' },
-  drawerFooterText: { color: '#ccc', fontSize: 12 },
+  drawerFooterText: { fontSize: 12 },
 });
