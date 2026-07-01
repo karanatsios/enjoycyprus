@@ -21,12 +21,12 @@ create policy "beaches_admin"  on public.beaches for all using (true) with check
 insert into public.beaches (id, name, location, region, lat, lng, image_url) values
   -- FAMAGUSTA
   ('f1',  'Nissi Beach',              'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissi%20Beach.webp'),
-  ('f2',  'Fig Tree Bay',             'Protaras',    'Famagusta', 35.0125, 34.0572, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Fig_Tree_Bay.jpg/330px-Fig_Tree_Bay.jpg'),
+  ('f2',  'Fig Tree Bay',             'Protaras',    'Famagusta', 35.0125, 34.0572, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Protaras%20Beach.jpg'),
   ('f3',  'Sandy Bay',                'Ayia Napa',   'Famagusta', 34.9944, 34.0197, 'https://picsum.photos/seed/sandy-bay-cy/800/534'),
   ('f4',  'Makronissos Beach',        'Ayia Napa',   'Famagusta', 34.9803, 33.9878, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Makronissos%20Beach.jpg'),
   ('f5',  'Pantachou Beach',          'Ayia Napa',   'Famagusta', 34.9844, 34.0022, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pantachou%20Beach.jpg'),
   ('f6',  'Louma Beach',              'Ayia Napa',   'Famagusta', 34.9900, 34.0100, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Louma%20Beach.jpg'),
-  ('f7',  'Protaras Beach',           'Protaras',    'Famagusta', 35.0094, 34.0547, 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Modern_new_pedestrian_seaside_road_next_to_Protaras_beach_in_Paralimni.jpg/330px-Modern_new_pedestrian_seaside_road_next_to_Protaras_beach_in_Paralimni.jpg'),
+  ('f7',  'Protaras Beach',           'Protaras',    'Famagusta', 35.0094, 34.0547, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Protaras%20Beach.jpg'),
   ('f8',  'Sunrise Beach',            'Protaras',    'Famagusta', 35.0178, 34.0594, 'https://picsum.photos/seed/sunrise-protaras/800/534'),
   ('f9',  'Konnos Bay',               'Cape Greco',  'Famagusta', 34.9736, 34.0722, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Konnos%20Bay.jpg'),
   ('f10', 'Agia Thekla Beach',        'Ayia Napa',   'Famagusta', 34.9833, 33.9667, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Agia%20Thekla%20Beach.jpg'),
@@ -43,6 +43,7 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f21', 'Nissia Gardens Beach',    'Ayia Napa',   'Famagusta', 34.9972, 34.0314, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissia%20Gardens%20Beach.jpg'),
   ('f22', 'Nissia Beach',            'Ayia Napa',   'Famagusta', 34.9958, 34.0289, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissia%20Beach%20Famagusta%20.jpg'),
   ('f23', 'Vizakia Beach',           'Protaras',    'Famagusta', 35.0089, 34.0478, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Vizakia%20Beach.jpg'),
+  ('f24', 'Lombardi Beach',         'Protaras',    'Famagusta', 35.0203, 34.0511, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Lombardi%20Beach.jpg'),
   -- PAPHOS
   ('p1',  'Coral Bay',                'Peyia',       'Paphos',    34.8356, 32.3700, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/coral-bay-beach-cyprus.webp'),
   ('p2',  'Kaphizis Beach',           'Peyia',       'Paphos',    34.8411, 32.3644, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Kaphizis%20Beach.jpg'),
