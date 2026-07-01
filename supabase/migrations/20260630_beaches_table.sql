@@ -22,7 +22,6 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   -- FAMAGUSTA
   ('f1',  'Nissi Beach',              'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissi%20Beach.webp'),
   ('f2',  'Fig Tree Bay',             'Protaras',    'Famagusta', 35.0125, 34.0572, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Fig%20Tree%20Bay.jpg'),
-  ('f3',  'Sandy Bay',                'Ayia Napa',   'Famagusta', 34.9944, 34.0197, 'https://picsum.photos/seed/sandy-bay-cy/800/534'),
   ('f4',  'Makronissos Beach',        'Ayia Napa',   'Famagusta', 34.9803, 33.9878, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Makronissos%20Beach.jpg'),
   ('f5',  'Pantachou Beach',          'Ayia Napa',   'Famagusta', 34.9844, 34.0022, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pantachou%20Beach.jpg'),
   ('f6',  'Louma Beach',              'Ayia Napa',   'Famagusta', 34.9900, 34.0100, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Louma%20Beach.jpg'),
