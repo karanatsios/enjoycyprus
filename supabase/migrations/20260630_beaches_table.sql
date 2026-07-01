@@ -26,7 +26,6 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f5',  'Pantachou Beach',          'Ayia Napa',   'Famagusta', 34.9844, 34.0022, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Pantachou%20Beach.jpg'),
   ('f6',  'Louma Beach',              'Ayia Napa',   'Famagusta', 34.9900, 34.0100, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Louma%20Beach.jpg'),
   ('f7',  'Protaras Beach',           'Protaras',    'Famagusta', 35.0094, 34.0547, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Protaras%20Beach.jpg'),
-  ('f8',  'Sunrise Beach',            'Protaras',    'Famagusta', 35.0178, 34.0594, 'https://picsum.photos/seed/sunrise-protaras/800/534'),
   ('f9',  'Konnos Bay',               'Cape Greco',  'Famagusta', 34.9736, 34.0722, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Konnos%20Bay.jpg'),
   ('f10', 'Agia Thekla Beach',        'Ayia Napa',   'Famagusta', 34.9833, 33.9667, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Agia%20Thekla%20Beach.jpg'),
   ('f11', 'Ziatzi Beach',             'Ayia Napa',   'Famagusta', 34.9872, 34.0056, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Ziatzi%20Beach.webp'),
