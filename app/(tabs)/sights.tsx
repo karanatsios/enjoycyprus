@@ -6,6 +6,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { supabase } from '../../lib/supabase';
+import AppHeader from '../../components/AppHeader';
 
 type Sight = {
   id: string;
@@ -101,6 +102,7 @@ export default function SightsScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+      <AppHeader />
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
