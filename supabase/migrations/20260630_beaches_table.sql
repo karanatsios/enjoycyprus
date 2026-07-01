@@ -44,6 +44,8 @@ insert into public.beaches (id, name, location, region, lat, lng, image_url) val
   ('f22', 'Nissia Beach',            'Ayia Napa',   'Famagusta', 34.9958, 34.0289, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissia%20Beach%20Famagusta%20.jpg'),
   ('f23', 'Vizakia Beach',           'Protaras',    'Famagusta', 35.0089, 34.0478, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Vizakia%20Beach.jpg'),
   ('f24', 'Lombardi Beach',         'Protaras',    'Famagusta', 35.0203, 34.0511, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Lombardi%20Beach.jpg'),
+  ('f25', 'Vrisi Beach',           'Ayia Napa',   'Famagusta', 34.9861, 34.0133, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Vrisi%20Beach.jpg'),
+  ('f26', 'Ayia Napa Marina',      'Ayia Napa',   'Famagusta', 34.9875, 34.0056, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Ayia%20Napa%20Marina.jpg'),
   -- PAPHOS
   ('p1',  'Coral Bay',                'Peyia',       'Paphos',    34.8356, 32.3700, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/coral-bay-beach-cyprus.webp'),
   ('p2',  'Kaphizis Beach',           'Peyia',       'Paphos',    34.8411, 32.3644, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Kaphizis%20Beach.jpg'),
