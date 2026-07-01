@@ -51,16 +51,6 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
 
 ## 🟡 Neue Feature-Ideen (Roadmap-Erweiterung)
 
-- [ ] **Essen bestellen** – Lieferdienste auf Zypern integrieren (z.B. Wolt, Foody.com.cy, lokale Anbieter)
-  - Entweder eigene Übersicht mit Links/Deep-Links zu den Apps
-  - Oder direkte API-Anbindung falls verfügbar
-  - Ziel: Nutzer kann direkt aus Inside Cyprus heraus Essen bestellen
-
-- [ ] **Taxi / Ride-Hailing** – Bolt und lokale Taxidienste integrieren
-  - Bolt ist auf Zypern sehr verbreitet (Limassol, Nikosia, Larnaka, Paphos)
-  - Deep-Link zu Bolt-App + Übersicht lokaler Taxiunternehmen mit Telefonnummer
-  - Optional: Preisvergleich / Direktbuchung
-
 - [ ] **Flugplan** – Ankunfts- & Abflugzeiten Paphos (PFO) + Larnaka (LCA)
   - API-Anbindung: AeroDataBox, AviationStack oder FlightAware
   - Anzeige: Flugnummer, Airline, Herkunft/Ziel, Zeit, Status (pünktlich/verspätet)
