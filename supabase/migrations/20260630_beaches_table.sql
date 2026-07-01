@@ -20,7 +20,7 @@ create policy "beaches_admin"  on public.beaches for all using (true) with check
 -- Seed: alle 36 Blaue-Flagge-Strände Zypern 2026
 insert into public.beaches (id, name, location, region, lat, lng, image_url) values
   -- FAMAGUSTA
-  ('f1',  'Nissi Beach',              'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Nissi-Beach.jpg/330px-Nissi-Beach.jpg'),
+  ('f1',  'Nissi Beach',              'Ayia Napa',   'Famagusta', 34.9889, 34.0019, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Nissi%20Beach.webp'),
   ('f2',  'Fig Tree Bay',             'Protaras',    'Famagusta', 35.0125, 34.0572, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Fig_Tree_Bay.jpg/330px-Fig_Tree_Bay.jpg'),
   ('f3',  'Sandy Bay',                'Ayia Napa',   'Famagusta', 34.9944, 34.0197, 'https://picsum.photos/seed/sandy-bay-cy/800/534'),
   ('f4',  'Makronissos Beach',        'Ayia Napa',   'Famagusta', 34.9803, 33.9878, 'https://jewactcyhvzrceoiajau.supabase.co/storage/v1/object/public/beach-images/Makronissos%20Beach.jpg'),
