@@ -62,7 +62,7 @@ export const ALL_MENU_SECTIONS = [
       { id: 'hospitals',    icon: '🏥', label: 'Krankenhäuser & Botschaften', sub: 'Adressen, Telefonnummern, Karte',       route: '/(tabs)/hospitals' },
       { id: 'bus',          icon: '🚌', label: 'Busverbindungen',            sub: 'Route mit Bus, Umstieg & Haltestellen',  route: '/(tabs)/bus' },
       { id: 'events',       icon: '🎉', label: 'Events',                     sub: 'Veranstaltungen, Partys & Konzerte',     route: '/(tabs)/events' },
-      { id: 'sights',       icon: '📍', label: 'Sehenswürdigkeiten',         sub: 'Die schönsten Orte der Insel',           route: null },
+      { id: 'sights',       icon: '📍', label: 'Sehenswürdigkeiten',         sub: 'Die schönsten Orte der Insel',           route: '/(tabs)/sights' },
       { id: 'beaches',      icon: '🏖️', label: 'Blaue Flagge Strände',      sub: 'Zertifizierte Strände auf Zypern',       route: '/(tabs)/beaches' },
       { id: 'weather',      icon: '🌤️', label: 'Wetter',                    sub: '7-Tage-Vorschau',                        route: '/(tabs)/weather' },
     ],
