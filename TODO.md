@@ -123,17 +123,16 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
 
 ---
 
-## 🔵 Nächstes großes Feature – Sehenswürdigkeiten
+## 🟢 Sehenswürdigkeiten – ERLEDIGT ✅
 
-- [ ] **Sehenswürdigkeiten-Seite aufbauen** (analog zu Blaue Flagge Strände)
-  - Supabase-Tabelle `sights` anlegen (id, name, location, region, lat, lng, image_url, description, category)
-  - Bilder aus Supabase Storage
-  - Filter nach Region / Kategorie (Antike, Natur, Kirchen, Burgen, Museen …)
-  - Suchleiste
-  - Button „Auf Karte anzeigen" + „Route planen"
-  - Daten werden vom Nutzer als Vorlagen geliefert und eingetragen
-- [ ] **Bilder hochladen** in Supabase Storage (`sights-images` Bucket)
-- [ ] **Menülink aktivieren** (aktuell `route: null` in AppHeader)
+- [x] **Sehenswürdigkeiten-Seite aufgebaut** (analog zu Blaue Flagge Strände)
+  - Supabase-Tabelle `sights` mit 60 Einträgen (22 Norden + 38 Süden)
+  - Filter: Alle / Süden / Norden + Suchleiste
+  - Kategorie-Badges: Antike, Natur, Kirche, Burg, Stadt, Geschichte, Dorf
+  - Button „Auf Karte anzeigen" + „Route planen" (Google Maps)
+  - Hamburger-Menü (AppHeader) eingebunden
+- [x] **Bilder hochgeladen** in Supabase Storage (`beach-images` Bucket)
+- [x] **Menülink aktiviert** in AppHeader
 
 ---
 
