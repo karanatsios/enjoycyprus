@@ -149,14 +149,27 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
 
 ---
 
+## 🔴 MORGEN ZUERST – Strände komplett überarbeiten
+
+- [ ] **Menüpunkt „Blaue Flagge Strände" → „Strände / Blaue Flagge" umbenennen**
+  - Seite neu strukturieren: Süden (Regionen Limassol, Paphos, Larnaca, Famagusta) + Norden
+  - Analog zu Sehenswürdigkeiten: Filter-Chips nach Region, Süden/Norden-Badge
+  - Datei: `app/(tabs)/beaches.tsx` + AppHeader-Eintrag anpassen
+
+- [ ] **Alle Blaue-Flagge-Strände Zyperns integrieren** (~57 offizielle, aktuell ~35)
+  - Alle fehlenden Strände aus der offiziellen Liste ergänzen (Süden + Norden)
+  - Bilder hochladen und URLs in `beaches`-Tabelle eintragen
+
+---
+
 ## 📋 Als nächstes
 
-1. **Admin-Bereich** – Menünavigation fixen (siehe oben)
-2. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
-3. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
-4. **Impressum / Datenschutz / AGB** anlegen
-5. **Domain** in Vercel verknüpfen
-6. Restliche Strand-Bilder hochladen (Sandy Bay, Pantachou, Sunrise Beach, Konnos Bay)
+1. **Strände / Blaue Flagge** – Seite umstrukturieren (siehe oben)
+2. **Admin-Bereich** – Menünavigation fixen (siehe weiter oben)
+3. **Vercel:** `EXPO_PUBLIC_VAPID_PUBLIC_KEY` Environment Variable eintragen
+4. **Stripe-Konto** erstellen + 5 Payment Links anlegen + in `marketing.tsx` eintragen
+5. **Impressum / Datenschutz / AGB** anlegen
+6. **Domain** in Vercel verknüpfen
 
 ---
 
