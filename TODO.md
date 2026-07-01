@@ -67,11 +67,26 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
   - Filter: Ankünfte / Abflüge, nach Flughafen
   - Suche nach Flugnummer
 
-- [ ] **Parking Paphos & Zypern** – Parkplätze finden & Paphos Parking App
-  - Paphos hat eine eigene Parking-App (PafosParking)
+- [ ] **Parking Zypern** – Parkplätze finden, alle Städte
+  - Paphos: PafosParking App (bereits bekannt)
+  - Recherche: Gibt es ähnliche Apps/APIs für Limassol, Larnaka, Nikosia, Ayia Napa?
   - Integration: Karte mit verfügbaren Parkplätzen, P+R, Parkgebühren
   - API prüfen ob Echtzeit-Verfügbarkeit möglich
-  - Alternativ: statische Übersicht der wichtigsten Parkhäuser mit Adressen
+  - Alternativ: statische Übersicht der wichtigsten Parkhäuser mit Adressen je Stadt
+
+- [ ] **Strand-Bewertungen** – Nutzer können Strände bewerten & kommentieren
+  - Sternebewertung (1–5) pro Strand
+  - Kurzer Kommentar / Erfahrungsbericht
+  - Durchschnittsbewertung live anzeigen (Supabase-Trigger)
+  - Moderation durch Admin
+
+- [ ] **Community-Upload** – Nutzer können eigene Inhalte einreichen *(größeres Feature, Planung nötig)*
+  - **Eigene Bilder hochladen** zu bestehenden Stränden / Sehenswürdigkeiten
+  - **Neue Strände vorschlagen** – Name, Standort (GPS oder Karte), Foto → landet zur Prüfung beim Admin
+  - **Neue Sehenswürdigkeiten vorschlagen** – gleicher Flow wie Strände
+  - Admin-Freigabe-Workflow: Vorschlag → Admin prüft → freischalten oder ablehnen
+  - Supabase Storage für Bild-Upload, RLS für Zugriffsschutz
+  - ⚠️ Erfordert eigene Planungssession (Datenbankstruktur, Moderation, UI)
 
 ---
 
