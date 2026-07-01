@@ -120,7 +120,7 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
 - [x] Service Worker (sw.js) für Push-Empfang
 - [x] Supabase Edge Function `send-notifications` + pg_cron
 - [x] **Karte – Layer-System** ✅ (Sehenswürdigkeiten, Strände, Krankenhäuser, Tourist Info, Bewertungen)
-- [x] **Blaue Flagge Strände** ✅
+- [x] **Blaue Flagge Strände** ✅ (vollständig abgeschlossen)
   - Supabase `beaches`-Tabelle mit allen Feldern (name, location, region, lat, lng, image_url)
   - Strände ohne Code-Deploy hinzufügbar (nur SQL/Supabase Dashboard)
   - Suchleiste zum Filtern nach Name/Ort
@@ -130,6 +130,20 @@ Stand: 30. Juni 2026 (Abend) — bitte nach jeder erledigten Aufgabe abhaken ([ 
   - Button **„Route planen"** → Google Maps Routenplaner (Standort → Strand)
   - Vercel-Build-Fix: `build`-Script + `buildCommand` in `vercel.json` ergänzt
   - Aktuell ~35 Strände aktiv (Famagusta, Paphos, Limassol, Larnaca)
+
+---
+
+## 🔵 Nächstes großes Feature – Sehenswürdigkeiten
+
+- [ ] **Sehenswürdigkeiten-Seite aufbauen** (analog zu Blaue Flagge Strände)
+  - Supabase-Tabelle `sights` anlegen (id, name, location, region, lat, lng, image_url, description, category)
+  - Bilder aus Supabase Storage
+  - Filter nach Region / Kategorie (Antike, Natur, Kirchen, Burgen, Museen …)
+  - Suchleiste
+  - Button „Auf Karte anzeigen" + „Route planen"
+  - Daten werden vom Nutzer als Vorlagen geliefert und eingetragen
+- [ ] **Bilder hochladen** in Supabase Storage (`sights-images` Bucket)
+- [ ] **Menülink aktivieren** (aktuell `route: null` in AppHeader)
 
 ---
 
